@@ -1,10 +1,7 @@
 package com.scolastico.discord_exe.etc;
 
-public class CommandHandler {
+public interface CommandHandler {
 
-    public boolean respondToCommand(String cmd, String[] args) {
-
-        return false;
-    }
+    public boolean respondToCommand(String cmd, String[] args);
 
 }
