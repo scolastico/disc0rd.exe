@@ -1,5 +1,6 @@
 package com.scolastico.discord_exe;
 
+import com.scolastico.discord_exe.commands.CMD_help;
 import com.scolastico.discord_exe.config.ConfigDataStore;
 import com.scolastico.discord_exe.config.ConfigHandler;
 import com.scolastico.discord_exe.etc.CommandHandler;
@@ -80,6 +81,8 @@ public class Disc0rd {
             public void run() {
                 try {
                     CommandModule eventListener = new CommandModule();
+
+                    eventListener.registerCommand(new CMD_help());
 
                     Reflections reflections = new Reflections("com.scolastico.disc0rd_exe.commands");
                     Set<Class<? extends Object>> allClasses = reflections.getSubTypesOf(Object.class);

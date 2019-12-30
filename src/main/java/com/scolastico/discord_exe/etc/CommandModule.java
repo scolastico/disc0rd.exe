@@ -17,7 +17,10 @@ public class CommandModule extends ListenerAdapter {
                 if (message.substring(0,8).equalsIgnoreCase("disc0rd/")) {
 
                     String cmd = message.split(" ")[0];
-                    String[] args = message.replaceFirst(cmd, "").split(" ");
+                    String[] args = new ArrayList<String>().toArray(new String[0]);
+                    if (message.replaceFirst(cmd, "").length() != 0) {
+                        args = message.replaceFirst(cmd, "").split(" ");
+                    }
 
                     for (CommandHandler handler:commandHandlers) {
 

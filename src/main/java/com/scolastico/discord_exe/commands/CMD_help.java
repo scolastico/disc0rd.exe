@@ -6,14 +6,16 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.awt.*;
+import java.util.concurrent.TimeUnit;
 
 public class CMD_help implements CommandHandler {
 
     public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
 
         if(cmd.equalsIgnoreCase("disc0rd/help")) {
-
             if(args.length == 0) {
+                event.getMessage().delete().queue();
+
                 EmbedBuilder message = new EmbedBuilder();
 
                 message.setColor(Color.green);
