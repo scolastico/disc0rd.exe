@@ -4,11 +4,15 @@ import com.scolastico.discord_exe.config.ConfigDataStore;
 import com.scolastico.discord_exe.config.ConfigHandler;
 import com.scolastico.discord_exe.etc.ErrorHandler;
 import com.scolastico.discord_exe.etc.Tools;
+import com.scolastico.discord_exe.mysql.MysqlHandler;
+import com.scolastico.discord_exe.mysql.ServerSettings;
 
 public class Disc0rd {
 
     private static Tools tools = Tools.getInstance();
-    private static ConfigHandler config;
+    private static ConfigHandler configHandler;
+    private static ConfigDataStore config;
+    private static MysqlHandler mysql;
 
     public static void main(String[] args) {
 
@@ -27,8 +31,11 @@ public class Disc0rd {
         tools.asyncLoadingAnimationWhileWaitingResult(new Runnable() {
             public void run() {
                 try {
-                    config = new ConfigHandler(new ConfigDataStore(), "config.json", true);
-                    if (!(config.getConfigObject() instanceof ConfigDataStore)) {
+                    configHandler = new ConfigHandler(new ConfigDataStore(), "config.json", true);
+                    Object obj = configHandler.getConfigObject();
+                    if (obj instanceof ConfigDataStore) {
+                        config = (ConfigDataStore) obj;
+                    } else {
                         throw new Exception("Config not valid! Please delete you config and try again!");
                     }
                 } catch (Exception e) {
@@ -37,7 +44,16 @@ public class Disc0rd {
             }
         });
 
-
+        System.out.print("Loading MySQL module ");
+        tools.asyncLoadingAnimationWhileWaitingResult(new Runnable() {
+            public void run() {
+                try {
+                    mysql = new MysqlHandler(config.getMysql_server(), config.getMysql_user(), config.getMysql_pass(), config.getMysql_database(), config.getMysql_prefix());
+                } catch (Exception e) {
+                    ErrorHandler.getInstance().handleFatal(e);
+                }
+            }
+        });
 
     }
 
