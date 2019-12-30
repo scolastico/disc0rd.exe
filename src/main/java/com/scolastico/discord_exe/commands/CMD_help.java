@@ -13,7 +13,7 @@ public class CMD_help implements CommandHandler {
 
         if(cmd.equalsIgnoreCase("disc0rd/help")) {
 
-            if(args.lenght == 0) {
+            if(args.length == 0) {
                 EmbedBuilder message = new EmbedBuilder();
 
                 message.setColor(Color.green);
