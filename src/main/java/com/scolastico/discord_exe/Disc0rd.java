@@ -2,14 +2,17 @@ package com.scolastico.discord_exe;
 
 import com.scolastico.discord_exe.config.ConfigDataStore;
 import com.scolastico.discord_exe.config.ConfigHandler;
+import com.scolastico.discord_exe.etc.CommandHandler;
 import com.scolastico.discord_exe.etc.CommandModule;
 import com.scolastico.discord_exe.etc.ErrorHandler;
 import com.scolastico.discord_exe.etc.Tools;
 import com.scolastico.discord_exe.mysql.MysqlHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import org.reflections.Reflections;
 
 import javax.security.auth.login.LoginException;
+import java.util.Set;
 
 public class Disc0rd {
 
@@ -78,7 +81,13 @@ public class Disc0rd {
                 try {
                     CommandModule eventListener = new CommandModule();
 
-                    
+                    Reflections reflections = new Reflections("my.project.prefix");
+                    Set<Class<? extends Object>> allClasses = reflections.getSubTypesOf(Object.class);
+                    for (Object obj:allClasses) {
+                        if (obj instanceof CommandHandler) {
+                            eventListener.registerCommand((CommandHandler) obj);
+                        }
+                    }
 
                     jda.addEventListener(eventListener);
                 } catch (Exception e) {
