@@ -1,5 +1,8 @@
 package com.scolastico.discord_exe.etc;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 public class ErrorHandler {
 
     private Tools tools = Tools.getInstance();
@@ -14,14 +17,29 @@ public class ErrorHandler {
     }
 
     public void handle(Exception e) {
-        tools.generateNewSpacesInConsole(5);
-
+        tools.generateNewSpacesInConsole(1);
+        outputErrorInfo(e);
+        tools.generateNewSpacesInConsole(1);
     }
 
     public void handleFatal(Exception e) {
-        tools.generateNewSpacesInConsole(5);
-        System.out.println();
-        handle(e);
+        if (tools.isShowingLoadingAnimation()) {
+            System.out.println(" [FAIL]");
+        }
+        tools.generateNewSpacesInConsole(3);
+        System.out.println("FATAL ERROR! SHUTTING DOWN!");
+        outputErrorInfo(e);
+        tools.generateNewSpacesInConsole(1);
+        System.exit(1);
+    }
+
+    private void outputErrorInfo(Exception e) {
+        StringWriter stringWriter = new StringWriter();
+        e.printStackTrace(new PrintWriter(stringWriter));
+        String exceptionAsString = stringWriter.toString();
+        System.out.println("Message: " + e.getMessage());
+        System.out.println("StackTrace:");
+        System.out.println(exceptionAsString);
     }
 
 }
