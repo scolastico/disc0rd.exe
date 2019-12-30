@@ -5,7 +5,10 @@ import com.scolastico.discord_exe.config.ConfigHandler;
 import com.scolastico.discord_exe.etc.ErrorHandler;
 import com.scolastico.discord_exe.etc.Tools;
 import com.scolastico.discord_exe.mysql.MysqlHandler;
-import com.scolastico.discord_exe.mysql.ServerSettings;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+
+import javax.security.auth.login.LoginException;
 
 public class Disc0rd {
 
@@ -13,6 +16,7 @@ public class Disc0rd {
     private static ConfigHandler configHandler;
     private static ConfigDataStore config;
     private static MysqlHandler mysql;
+    private static JDA jda;
 
     public static void main(String[] args) {
 
@@ -51,6 +55,18 @@ public class Disc0rd {
                     mysql = new MysqlHandler(config.getMysql_server(), config.getMysql_user(), config.getMysql_pass(), config.getMysql_database(), config.getMysql_prefix());
                 } catch (Exception e) {
                     ErrorHandler.getInstance().handleFatal(e);
+                }
+            }
+        });
+
+        System.out.print("Loading java discord api module ");
+        tools.asyncLoadingAnimationWhileWaitingResult(new Runnable() {
+            public void run() {
+                try {
+                    JDABuilder builder = new JDABuilder(config.getDiscord_token());
+                    jda = builder.build();
+                } catch (LoginException e) {
+                    e.printStackTrace();
                 }
             }
         });

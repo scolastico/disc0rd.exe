@@ -7,6 +7,11 @@ public class ConfigDataStore {
     private String mysql_pass = "password";
     private String mysql_database = "database";
     private String mysql_prefix = "disc0rd_";
+    private String discord_token = "token";
+
+    public String getDiscord_token() {
+        return discord_token;
+    }
 
     public String getMysql_server() {
         return mysql_server;
@@ -26,6 +31,10 @@ public class ConfigDataStore {
 
     public String getMysql_user() {
         return mysql_user;
+    }
+
+    public void setDiscord_token(String discord_token) {
+        this.discord_token = discord_token;
     }
 
     public void setMysql_server(String mysql_server) {
