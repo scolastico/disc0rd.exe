@@ -1,6 +1,14 @@
 package com.scolastico.discord_exe;
 
+import com.scolastico.discord_exe.config.ConfigDataStore;
+import com.scolastico.discord_exe.config.ConfigHandler;
+import com.scolastico.discord_exe.etc.ErrorHandler;
+import com.scolastico.discord_exe.etc.Tools;
+
 public class Disc0rd {
+
+    private static Tools tools = Tools.getInstance();
+    private static ConfigHandler config;
 
     public static void main(String[] args) {
 
@@ -10,16 +18,26 @@ public class Disc0rd {
         System.out.println(" | |  | | / __|/ __| | | | '__/ _\\ | / _ \\ \\/ / _ \\");
         System.out.println(" | |__| | \\__ \\ (__| |_| | | | (_| ||  __/>  <  __/");
         System.out.println(" |_____/|_|___/\\___|\\___/|_|  \\__,_(_)___/_/\\_\\___|");
-        System.out.println("---------------------------------------------------");
-        System.out.println(" Disc0rd.exe | by scolastico | Version: pre-alpha");
+        System.out.println(" --------------------------------------------------");
+        System.out.println("  Disc0rd.exe | by scolastico | Version: PRE-ALPHA");
 
-        try {
+        tools.generateNewSpacesInConsole(1);
+
+        System.out.print("Loading configuration module ");
+        tools.asyncLoadingAnimationWhileWaitingResult(new Runnable() {
+            public void run() {
+                try {
+                    config = new ConfigHandler(new ConfigDataStore(), "config.json", true);
+                    if (!(config.getConfigObject() instanceof ConfigDataStore)) {
+                        throw new Exception("Config not valid! Please delete you config and try again!");
+                    }
+                } catch (Exception e) {
+                    ErrorHandler.getInstance().handleFatal(e);
+                }
+            }
+        });
 
 
-
-        } catch (Exception e) {
-
-        }
 
     }
 
