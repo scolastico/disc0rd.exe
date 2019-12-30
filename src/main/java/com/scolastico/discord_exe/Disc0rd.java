@@ -81,7 +81,7 @@ public class Disc0rd {
                 try {
                     CommandModule eventListener = new CommandModule();
 
-                    Reflections reflections = new Reflections("my.project.prefix");
+                    Reflections reflections = new Reflections("com.scolastico.disc0rd_exe.commands");
                     Set<Class<? extends Object>> allClasses = reflections.getSubTypesOf(Object.class);
                     for (Object obj:allClasses) {
                         if (obj instanceof CommandHandler) {
