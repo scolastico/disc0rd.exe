@@ -2,6 +2,7 @@ package com.scolastico.discord_exe;
 
 import com.scolastico.discord_exe.config.ConfigDataStore;
 import com.scolastico.discord_exe.config.ConfigHandler;
+import com.scolastico.discord_exe.etc.CommandModule;
 import com.scolastico.discord_exe.etc.ErrorHandler;
 import com.scolastico.discord_exe.etc.Tools;
 import com.scolastico.discord_exe.mysql.MysqlHandler;
@@ -66,6 +67,21 @@ public class Disc0rd {
                     JDABuilder builder = new JDABuilder(config.getDiscord_token());
                     jda = builder.build();
                 } catch (LoginException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        System.out.print("Loading command module ");
+        tools.asyncLoadingAnimationWhileWaitingResult(new Runnable() {
+            public void run() {
+                try {
+                    CommandModule eventListener = new CommandModule();
+
+                    
+
+                    jda.addEventListener(eventListener);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
