@@ -9,7 +9,7 @@
     <version>SNAPSHOT-ALPHA-1</version>
     <packaging>jar</packaging>
     <build>
-        <finalName>disc0rd-exe.jar</finalName>
+        <finalName>disc0rd-exe</finalName>
     </build>
 
     <repositories>
