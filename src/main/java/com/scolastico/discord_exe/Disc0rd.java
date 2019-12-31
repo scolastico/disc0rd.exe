@@ -7,7 +7,6 @@ import com.scolastico.discord_exe.etc.*;
 import com.scolastico.discord_exe.mysql.MysqlHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.Activity;
 
 import javax.security.auth.login.LoginException;
 import java.util.List;
@@ -27,6 +26,14 @@ public class Disc0rd {
 
     public static void main(String[] args) {
 
+        long startTime = System.currentTimeMillis();
+
+        String version = "Can't read Version! This build is corrupt!";
+
+        try {
+            version = VersionController.getVersion() + "-" + VersionController.getCommit();
+        } catch (Exception ignored) {}
+
         System.out.println("  _____  _           ___          _                ");
         System.out.println(" |  __ \\(_)         / _ \\        | |               ");
         System.out.println(" | |  | |_ ___  ___| | | |_ __ __| |  _____  _____ ");
@@ -34,7 +41,7 @@ public class Disc0rd {
         System.out.println(" | |__| | \\__ \\ (__| |_| | | | (_| ||  __/>  <  __/");
         System.out.println(" |_____/|_|___/\\___|\\___/|_|  \\__,_(_)___/_/\\_\\___|");
         System.out.println(" --------------------------------------------------");
-        System.out.println("  Disc0rd.exe | by scolastico | Version: PRE-ALPHA");
+        System.out.println("Disc0rd.exe | by scolastico | Version: " + version);
 
         tools.generateNewSpacesInConsole(1);
 
@@ -101,6 +108,9 @@ public class Disc0rd {
                 }
             }
         });
+
+        tools.generateNewSpacesInConsole(1);
+        System.out.println("Loading Finished! Took " + (System.currentTimeMillis() - startTime) + " ms!");
 
         ready = true;
 
