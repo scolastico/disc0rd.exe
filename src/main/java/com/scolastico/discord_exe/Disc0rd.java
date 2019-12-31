@@ -19,6 +19,11 @@ public class Disc0rd {
     private static MysqlHandler mysql;
     private static JDA jda;
     private static boolean ready = false;
+    private static String version = "Can't read Version! This build is corrupt!";
+
+    public static String getVersion() {
+        return version;
+    }
 
     public static boolean isReady() {
         return ready;
@@ -27,8 +32,6 @@ public class Disc0rd {
     public static void main(String[] args) {
 
         long startTime = System.currentTimeMillis();
-
-        String version = "Can't read Version! This build is corrupt!";
 
         try {
             version = VersionController.getVersion() + "-" + VersionController.getCommit();
