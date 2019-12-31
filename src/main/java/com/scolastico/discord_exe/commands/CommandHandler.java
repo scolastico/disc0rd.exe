@@ -1,4 +1,4 @@
-package com.scolastico.discord_exe.etc;
+package com.scolastico.discord_exe.commands;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;

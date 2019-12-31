@@ -1,5 +1,6 @@
 package com.scolastico.discord_exe.etc;
 
+import com.scolastico.discord_exe.commands.CommandHandler;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 

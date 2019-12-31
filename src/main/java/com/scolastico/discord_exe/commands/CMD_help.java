@@ -1,12 +1,11 @@
 package com.scolastico.discord_exe.commands;
 
-import com.scolastico.discord_exe.etc.CommandHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.awt.*;
-import java.util.concurrent.TimeUnit;
+
 
 public class CMD_help implements CommandHandler {
 
