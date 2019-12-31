@@ -7,6 +7,7 @@ import com.scolastico.discord_exe.etc.*;
 import com.scolastico.discord_exe.mysql.MysqlHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Activity;
 
 import javax.security.auth.login.LoginException;
 import java.util.List;
@@ -18,6 +19,11 @@ public class Disc0rd {
     private static ConfigDataStore config;
     private static MysqlHandler mysql;
     private static JDA jda;
+    private static boolean ready = false;
+
+    public static boolean isReady() {
+        return ready;
+    }
 
     public static void main(String[] args) {
 
@@ -65,9 +71,12 @@ public class Disc0rd {
             public void run() {
                 try {
                     JDABuilder builder = new JDABuilder(config.getDiscord_token());
-                    jda = builder.build();
+                    builder.setAutoReconnect(true);
+                    jda = builder.build().awaitReady();
                 } catch (LoginException e) {
-                    e.printStackTrace();
+                    ErrorHandler.getInstance().handleFatal(e);
+                } catch (InterruptedException e) {
+                    ErrorHandler.getInstance().handleFatal(e);
                 }
             }
         });
@@ -92,6 +101,8 @@ public class Disc0rd {
                 }
             }
         });
+
+        ready = true;
 
     }
 

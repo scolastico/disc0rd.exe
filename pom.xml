@@ -8,6 +8,7 @@
     <artifactId>disc0rd.exe</artifactId>
     <version>SNAPSHOT-ALPHA-1</version>
     <packaging>jar</packaging>
+
     <build>
         <finalName>disc0rd-exe</finalName>
     </build>
@@ -33,9 +34,9 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-            <version>1.7.28</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -53,5 +54,7 @@
             <version>0.9.11</version>
         </dependency>
     </dependencies>
+
+
 
 </project>
