@@ -1,0 +1,9 @@
+<gitVersioning>
+    <branch>
+        <pattern>master</pattern>
+        <versionFormat>${version}</versionFormat>
+    </branch>
+    <commit>
+        <versionFormat>${commit.short}</versionFormat>
+    </commit>
+</gitVersioning>

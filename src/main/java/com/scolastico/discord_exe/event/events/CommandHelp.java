@@ -1,14 +1,15 @@
-package com.scolastico.discord_exe.commands;
+package com.scolastico.discord_exe.event.events;
 
-import com.scolastico.discord_exe.etc.CommandHandler;
+import com.scolastico.discord_exe.event.EventRegister;
+import com.scolastico.discord_exe.event.handlers.CommandHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.awt.*;
-import java.util.concurrent.TimeUnit;
 
-public class CMD_help implements CommandHandler {
+
+public class CommandHelp implements EventHandler, CommandHandler {
 
     public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
 
@@ -26,9 +27,12 @@ public class CMD_help implements CommandHandler {
             }
 
             return true;
-
         }
 
         return false;
+    }
+
+    public void registerEvents(EventRegister eventRegister) {
+        eventRegister.registerCommand(this);
     }
 }

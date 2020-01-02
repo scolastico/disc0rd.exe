@@ -26,8 +26,8 @@ public class ErrorHandler {
         if (tools.isShowingLoadingAnimation()) {
             System.out.println(" [FAIL]");
         }
-        tools.generateNewSpacesInConsole(3);
-        System.out.println("FATAL ERROR! SHUTTING DOWN!");
+        tools.generateNewSpacesInConsole(1);
+        System.err.println("FATAL ERROR! SHUTTING DOWN!");
         outputErrorInfo(e);
         tools.generateNewSpacesInConsole(1);
         System.exit(1);
@@ -37,9 +37,9 @@ public class ErrorHandler {
         StringWriter stringWriter = new StringWriter();
         e.printStackTrace(new PrintWriter(stringWriter));
         String exceptionAsString = stringWriter.toString();
-        System.out.println("Message: " + e.getMessage());
-        System.out.println("StackTrace:");
-        System.out.println(exceptionAsString);
+        System.err.println("Message: " + e.getMessage());
+        System.err.println("StackTrace:");
+        System.err.println(exceptionAsString);
     }
 
 }

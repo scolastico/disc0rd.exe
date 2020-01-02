@@ -1,19 +1,16 @@
 package com.scolastico.discord_exe;
 
-import com.scolastico.discord_exe.commands.CMD_help;
+import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.config.ConfigDataStore;
 import com.scolastico.discord_exe.config.ConfigHandler;
-import com.scolastico.discord_exe.etc.CommandHandler;
-import com.scolastico.discord_exe.etc.CommandModule;
-import com.scolastico.discord_exe.etc.ErrorHandler;
-import com.scolastico.discord_exe.etc.Tools;
+import com.scolastico.discord_exe.etc.*;
+import com.scolastico.discord_exe.event.events.EventHandler;
 import com.scolastico.discord_exe.mysql.MysqlHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import org.reflections.Reflections;
 
 import javax.security.auth.login.LoginException;
-import java.util.Set;
+import java.util.List;
 
 public class Disc0rd {
 
@@ -22,8 +19,24 @@ public class Disc0rd {
     private static ConfigDataStore config;
     private static MysqlHandler mysql;
     private static JDA jda;
+    private static boolean ready = false;
+    private static String version = "Can't read Version! This build is corrupt!";
+
+    public static String getVersion() {
+        return version;
+    }
+
+    public static boolean isReady() {
+        return ready;
+    }
 
     public static void main(String[] args) {
+
+        long startTime = System.currentTimeMillis();
+
+        try {
+            version = VersionController.getVersion() + "-" + VersionController.getCommit();
+        } catch (Exception ignored) {}
 
         System.out.println("  _____  _           ___          _                ");
         System.out.println(" |  __ \\(_)         / _ \\        | |               ");
@@ -32,7 +45,7 @@ public class Disc0rd {
         System.out.println(" | |__| | \\__ \\ (__| |_| | | | (_| ||  __/>  <  __/");
         System.out.println(" |_____/|_|___/\\___|\\___/|_|  \\__,_(_)___/_/\\_\\___|");
         System.out.println(" --------------------------------------------------");
-        System.out.println("  Disc0rd.exe | by scolastico | Version: PRE-ALPHA");
+        System.out.println("Disc0rd.exe | by scolastico | Version: " + version);
 
         tools.generateNewSpacesInConsole(1);
 
@@ -69,35 +82,41 @@ public class Disc0rd {
             public void run() {
                 try {
                     JDABuilder builder = new JDABuilder(config.getDiscord_token());
-                    jda = builder.build();
+                    builder.setAutoReconnect(true);
+                    jda = builder.build().awaitReady();
                 } catch (LoginException e) {
-                    e.printStackTrace();
+                    ErrorHandler.getInstance().handleFatal(e);
+                } catch (InterruptedException e) {
+                    ErrorHandler.getInstance().handleFatal(e);
                 }
             }
         });
 
-        System.out.print("Loading command module ");
+        System.out.print("Loading event module ");
         tools.asyncLoadingAnimationWhileWaitingResult(new Runnable() {
             public void run() {
                 try {
-                    CommandModule eventListener = new CommandModule();
+                    EventRegister eventRegister = EventRegister.getInstance();
 
-                    eventListener.registerCommand(new CMD_help());
-
-                    Reflections reflections = new Reflections("com.scolastico.disc0rd_exe.commands");
-                    Set<Class<? extends Object>> allClasses = reflections.getSubTypesOf(Object.class);
-                    for (Object obj:allClasses) {
-                        if (obj instanceof CommandHandler) {
-                            eventListener.registerCommand((CommandHandler) obj);
+                    List<Class<?>> eventHandlers = ReflectionHelper.findClassesImpmenenting(EventHandler.class, EventHandler.class.getPackage());
+                    for (Class<?> eventHandler:eventHandlers) {
+                        Object obj = eventHandler.newInstance();
+                        if (obj instanceof EventHandler) {
+                            ((EventHandler) obj).registerEvents(eventRegister);
                         }
                     }
 
-                    jda.addEventListener(eventListener);
+                    jda.addEventListener(eventRegister);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    ErrorHandler.getInstance().handleFatal(e);
                 }
             }
         });
+
+        tools.generateNewSpacesInConsole(1);
+        System.out.println("Loading Finished! Took " + (System.currentTimeMillis() - startTime) + " ms!");
+
+        ready = true;
 
     }
 
