@@ -30,6 +30,10 @@ public class Disc0rd {
         return ready;
     }
 
+    public static MysqlHandler getMysql() {
+        return mysql;
+    }
+
     public static void main(String[] args) {
 
         long startTime = System.currentTimeMillis();
