@@ -1,9 +1,10 @@
 package com.scolastico.discord_exe;
 
-import com.scolastico.discord_exe.commands.CommandHandler;
+import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.config.ConfigDataStore;
 import com.scolastico.discord_exe.config.ConfigHandler;
 import com.scolastico.discord_exe.etc.*;
+import com.scolastico.discord_exe.event.events.EventHandler;
 import com.scolastico.discord_exe.mysql.MysqlHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -91,23 +92,23 @@ public class Disc0rd {
             }
         });
 
-        System.out.print("Loading command module ");
+        System.out.print("Loading event module ");
         tools.asyncLoadingAnimationWhileWaitingResult(new Runnable() {
             public void run() {
                 try {
-                    CommandModule eventListener = new CommandModule();
+                    EventRegister eventRegister = EventRegister.getInstance();
 
-                    List<Class<?>> commandHandlers = ReflectionHelper.findClassesImpmenenting(CommandHandler.class, CommandHandler.class.getPackage());
-                    for (Class<?> commandHandler : commandHandlers) {
-                        Object obj = commandHandler.newInstance();
-                        if (obj instanceof CommandHandler) {
-                            eventListener.registerCommand((CommandHandler) obj);
+                    List<Class<?>> eventHandlers = ReflectionHelper.findClassesImpmenenting(EventHandler.class, EventHandler.class.getPackage());
+                    for (Class<?> eventHandler:eventHandlers) {
+                        Object obj = eventHandler.newInstance();
+                        if (obj instanceof EventHandler) {
+                            ((EventHandler) obj).registerEvents(eventRegister);
                         }
                     }
 
-                    jda.addEventListener(eventListener);
+                    jda.addEventListener(eventRegister);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    ErrorHandler.getInstance().handleFatal(e);
                 }
             }
         });
