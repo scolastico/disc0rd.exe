@@ -4,13 +4,16 @@ import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.config.ConfigDataStore;
 import com.scolastico.discord_exe.config.ConfigHandler;
 import com.scolastico.discord_exe.etc.*;
+import com.scolastico.discord_exe.event.events.CommandHelp;
 import com.scolastico.discord_exe.event.events.EventHandler;
 import com.scolastico.discord_exe.mysql.MysqlHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import org.reflections.Reflections;
 
 import javax.security.auth.login.LoginException;
 import java.util.List;
+import java.util.Set;
 
 public class Disc0rd {
 
@@ -102,7 +105,8 @@ public class Disc0rd {
                 try {
                     EventRegister eventRegister = EventRegister.getInstance();
 
-                    List<Class<?>> eventHandlers = ReflectionHelper.findClassesImpmenenting(EventHandler.class, EventHandler.class.getPackage());
+                    Reflections reflections = new Reflections("com.scolastico.discord_exe");
+                    Set<Class<? extends EventHandler>> eventHandlers = reflections.getSubTypesOf(EventHandler.class);
                     for (Class<?> eventHandler:eventHandlers) {
                         Object obj = eventHandler.newInstance();
                         if (obj instanceof EventHandler) {
