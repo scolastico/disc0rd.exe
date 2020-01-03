@@ -50,7 +50,7 @@ public class EventRegister extends ListenerAdapter {
                     String cmd = message.split(" ")[0];
                     String[] args = new ArrayList<String>().toArray(new String[0]);
                     if (message.replaceFirst(cmd, "").length() != 0) {
-                        args = message.replaceFirst(cmd, "").split(" ");
+                        args = message.replaceFirst(cmd + " ", "").split(" ");
                     }
 
                     for (CommandHandler handler:commandHandlers) {
