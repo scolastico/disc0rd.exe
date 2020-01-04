@@ -2,6 +2,7 @@ package com.scolastico.discord_exe.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.scolastico.discord_exe.etc.ErrorHandler;
 
 import java.io.*;
 
@@ -12,7 +13,7 @@ public class ConfigHandler {
     private File _file;
     private Gson _gson;
 
-    public ConfigHandler(Object configObject, String filename, Boolean throwErrorOnCreation) throws Exception {
+    public ConfigHandler(Object configObject, String filename, Boolean throwErrorOnCreation) throws IOException {
 
         _filename = filename;
         _file = new File(filename);
@@ -22,7 +23,7 @@ public class ConfigHandler {
             _configObject = _gson.fromJson(new FileReader(_file), configObject.getClass());
         } else {
             writeStringToFile(_gson.toJson(configObject));
-            throw new Exception("Config created! Please edit it and then restart!");
+            ErrorHandler.getInstance().handleFatal(new Exception("Config created! Please edit it and then restart!"));
         }
 
     }

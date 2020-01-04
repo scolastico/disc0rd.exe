@@ -14,8 +14,12 @@ import java.util.HashMap;
 
 public class EventRegister extends ListenerAdapter {
 
-    private EventRegister() {}
+    private ArrayList<CommandHandler> commandHandlers = new ArrayList<CommandHandler>();
+    private ArrayList<MessageReceivedHandler> messageReceivedHandlers = new ArrayList<MessageReceivedHandler>();
+    private HashMap<ScheduleHandler, Integer> scheduleHandlers = new HashMap<ScheduleHandler, Integer>();
     private static EventRegister instance = null;
+
+    private EventRegister() {}
     public static EventRegister getInstance() {
         if (instance == null) {
             instance = new EventRegister();
@@ -23,9 +27,6 @@ public class EventRegister extends ListenerAdapter {
         return instance;
     }
 
-    private ArrayList<CommandHandler> commandHandlers = new ArrayList<CommandHandler>();
-    private ArrayList<MessageReceivedHandler> messageReceivedHandlers = new ArrayList<MessageReceivedHandler>();
-    private HashMap<ScheduleHandler, Integer> scheduleHandlers = new HashMap<ScheduleHandler, Integer>();
 
     public void registerCommand(CommandHandler handler) {
         if (!commandHandlers.contains(handler)) commandHandlers.add(handler);
@@ -88,26 +89,22 @@ public class EventRegister extends ListenerAdapter {
             }
 
             String message = event.getMessage().getContentRaw();
-            if (message.length() >= 8) {
-                if (message.substring(0,8).equalsIgnoreCase("disc0rd/")) {
+            if (message.length() >= 8 && message.substring(0,8).equalsIgnoreCase("disc0rd/")) {
+                String cmd = message.split(" ")[0];
+                String[] args = new ArrayList<String>().toArray(new String[0]);
+                if (message.replaceFirst(cmd, "").length() != 0) {
+                    args = message.replaceFirst(cmd + " ", "").split(" ");
+                }
 
-                    String cmd = message.split(" ")[0];
-                    String[] args = new ArrayList<String>().toArray(new String[0]);
-                    if (message.replaceFirst(cmd, "").length() != 0) {
-                        args = message.replaceFirst(cmd + " ", "").split(" ");
-                    }
+                for (CommandHandler handler:commandHandlers) {
 
-                    for (CommandHandler handler:commandHandlers) {
+                    try {
 
-                        try {
+                        if (handler.respondToCommand(cmd, args, event.getJDA(), event, event.getAuthor().getIdLong(), event.getChannel().getIdLong())) break;
 
-                            if (handler.respondToCommand(cmd, args, event.getJDA(), event, event.getAuthor().getIdLong(), event.getChannel().getIdLong())) break;
+                    } catch (Exception e) {
 
-                        } catch (Exception e) {
-
-                            ErrorHandler.getInstance().handle(e);
-
-                        }
+                        ErrorHandler.getInstance().handle(e);
 
                     }
 
