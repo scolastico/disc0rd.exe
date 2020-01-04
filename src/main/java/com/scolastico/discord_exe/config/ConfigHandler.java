@@ -23,7 +23,7 @@ public class ConfigHandler {
             _configObject = _gson.fromJson(new FileReader(_file), configObject.getClass());
         } else {
             writeStringToFile(_gson.toJson(configObject));
-            ErrorHandler.getInstance().handleFatal(new Exception("Config created! Please edit it and then restart!"));
+            if (throwErrorOnCreation) ErrorHandler.getInstance().handleFatal(new Exception("Config created! Please edit it and then restart!"));
         }
 
     }
