@@ -6,9 +6,9 @@ import java.io.StringWriter;
 public class ErrorHandler {
 
     private Tools tools = Tools.getInstance();
+    private static ErrorHandler instance = null;
 
     private ErrorHandler() {}
-    private static ErrorHandler instance = null;
     public static ErrorHandler getInstance() {
         if (instance == null) {
             instance = new ErrorHandler();
@@ -30,7 +30,7 @@ public class ErrorHandler {
         System.err.println("FATAL ERROR! SHUTTING DOWN!");
         outputErrorInfo(e);
         tools.generateNewSpacesInConsole(1);
-        System.exit(1);
+        Runtime.getRuntime().exit(0);
     }
 
     private void outputErrorInfo(Exception e) {

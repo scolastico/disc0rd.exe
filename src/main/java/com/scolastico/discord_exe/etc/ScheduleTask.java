@@ -7,17 +7,18 @@ import java.util.ArrayList;
 @ScheduleHandler.ScheduleTime(tick = 1, runAsync = false)
 public class ScheduleTask implements ScheduleHandler {
 
-    private ScheduleTask() {}
+
+    private ArrayList<ScheduledTask> tasks = new ArrayList<>();
+    private Integer idCounter = 1000;
     private static ScheduleTask instance = null;
+
+    private ScheduleTask() {}
     public static ScheduleTask getInstance() {
         if (instance == null) {
             instance = new ScheduleTask();
         }
         return instance;
     }
-
-    private ArrayList<ScheduledTask> tasks = new ArrayList<>();
-    private Integer idCounter = 1000;
 
     public int runScheduledTaskRepeat(Runnable runnable, Integer ticks, Integer delay, boolean async) {
         idCounter++;

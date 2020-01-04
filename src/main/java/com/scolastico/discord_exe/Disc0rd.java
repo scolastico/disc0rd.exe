@@ -1,9 +1,12 @@
 package com.scolastico.discord_exe;
 
+import com.scolastico.discord_exe.etc.ErrorHandler;
+import com.scolastico.discord_exe.etc.ScheduleTask;
+import com.scolastico.discord_exe.etc.Tools;
+import com.scolastico.discord_exe.etc.VersionController;
 import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.config.ConfigDataStore;
 import com.scolastico.discord_exe.config.ConfigHandler;
-import com.scolastico.discord_exe.etc.*;
 import com.scolastico.discord_exe.event.events.EventHandler;
 import com.scolastico.discord_exe.mysql.MysqlHandler;
 import net.dv8tion.jda.api.JDA;
@@ -74,7 +77,7 @@ public class Disc0rd {
                     if (obj instanceof ConfigDataStore) {
                         config = (ConfigDataStore) obj;
                     } else {
-                        throw new Exception("Config not valid! Please delete you config and try again!");
+                        ErrorHandler.getInstance().handleFatal(new Exception("Config not valid! Please delete you config and try again!"));
                     }
                 } catch (Exception e) {
                     ErrorHandler.getInstance().handleFatal(e);
@@ -86,7 +89,7 @@ public class Disc0rd {
         tools.asyncLoadingAnimationWhileWaitingResult(new Runnable() {
             public void run() {
                 try {
-                    mysql = new MysqlHandler(config.getMysql_server(), config.getMysql_user(), config.getMysql_pass(), config.getMysql_database(), config.getMysql_prefix());
+                    mysql = new MysqlHandler(config.getMysqlServer(), config.getMysqlUser(), config.getMysqlPass(), config.getMysqlDatabase(), config.getMysqlPrefix());
                 } catch (Exception e) {
                     ErrorHandler.getInstance().handleFatal(e);
                 }
@@ -97,7 +100,7 @@ public class Disc0rd {
         tools.asyncLoadingAnimationWhileWaitingResult(new Runnable() {
             public void run() {
                 try {
-                    JDABuilder builder = new JDABuilder(config.getDiscord_token());
+                    JDABuilder builder = new JDABuilder(config.getDiscordToken());
                     builder.setAutoReconnect(true);
                     jda = builder.build().awaitReady();
                 } catch (LoginException | InterruptedException e) {

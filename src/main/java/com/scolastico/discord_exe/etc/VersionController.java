@@ -8,14 +8,14 @@ import java.io.InputStreamReader;
 
 public class VersionController {
 
-    private static String version = "";
-    private static String commit = "";
-    private static String versionInfo = "";
+    private static String version = null;
+    private static String commit = null;
+    private static String versionInfo = null;
 
     public static String getVersion() {
-        if (version == "") {
+        if (version == null) {
             try {
-                if (versionInfo == "") {
+                if (versionInfo == null) {
                     versionInfo = new VersionController().versionInformation();
                 }
                 JSONObject object = new JSONObject(versionInfo);
@@ -29,9 +29,9 @@ public class VersionController {
     }
 
     public static String getCommit() {
-        if (commit == "") {
+        if (commit == null) {
             try {
-                if (versionInfo == "") {
+                if (versionInfo == null) {
                     versionInfo = new VersionController().versionInformation();
                 }
                 JSONObject object = new JSONObject(versionInfo);
@@ -59,7 +59,7 @@ public class VersionController {
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("[ERROR] This build is corrupt!");
-            System.exit(1);
+            Runtime.getRuntime().exit(0);
             return "Version information could not be retrieved";
         }
     }
