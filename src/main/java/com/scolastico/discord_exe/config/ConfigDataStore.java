@@ -2,58 +2,105 @@ package com.scolastico.discord_exe.config;
 
 public class ConfigDataStore {
 
-    private String mysql_server = "localhost:3306";
-    private String mysql_user = "username";
-    private String mysql_pass = "password";
-    private String mysql_database = "database";
-    private String mysql_prefix = "disc0rd_";
     private String discord_token = "token";
+    private WebServerData webServer = new WebServerData();
+    private MysqlData mysql = new MysqlData();
 
     public String getDiscordToken() {
         return discord_token;
     }
 
-    public String getMysqlServer() {
-        return mysql_server;
+    public MysqlData getMysql() {
+        return mysql;
     }
 
-    public String getMysqlDatabase() {
-        return mysql_database;
-    }
-
-    public String getMysqlPass() {
-        return mysql_pass;
-    }
-
-    public String getMysqlPrefix() {
-        return mysql_prefix;
-    }
-
-    public String getMysqlUser() {
-        return mysql_user;
+    public WebServerData getWebServer() {
+        return webServer;
     }
 
     public void setDiscordToken(String discord_token) {
         this.discord_token = discord_token;
     }
 
-    public void setMysqlServer(String mysql_server) {
-        this.mysql_server = mysql_server;
+    public void setMysql(MysqlData mysql) {
+        this.mysql = mysql;
     }
 
-    public void setMysqlDatabase(String mysql_database) {
-        this.mysql_database = mysql_database;
+    public void setWebServer(WebServerData webServer) {
+        this.webServer = webServer;
     }
 
-    public void setMysqlPass(String mysql_pass) {
-        this.mysql_pass = mysql_pass;
+    public static class WebServerData {
+        private int port = 8040;
+        private int buffer = 1024;
+
+        public int getPort() {
+            return port;
+        }
+
+        public int getBuffer() {
+            return buffer;
+        }
+
+        public void setPort(int port) {
+            this.port = port;
+        }
+
+        public void setBuffer(int buffer) {
+            this.buffer = buffer;
+        }
+
+        private WebServerData() {}
     }
 
-    public void setMysqlPrefix(String mysql_prefix) {
-        this.mysql_prefix = mysql_prefix;
+    public static class MysqlData {
+        private String server = "localhost:3306";
+        private String user = "username";
+        private String pass = "password";
+        private String database = "database";
+        private String prefix = "disc0rd_";
+
+        public String getServer() {
+            return server;
+        }
+
+        public String getDatabase() {
+            return database;
+        }
+
+        public String getPass() {
+            return pass;
+        }
+
+        public String getPrefix() {
+            return prefix;
+        }
+
+        public String getUser() {
+            return user;
+        }
+
+        public void setServer(String server) {
+            this.server = server;
+        }
+
+        public void setDatabase(String database) {
+            this.database = database;
+        }
+
+        public void setPass(String pass) {
+            this.pass = pass;
+        }
+
+        public void setPrefix(String prefix) {
+            this.prefix = prefix;
+        }
+
+        public void setUser(String user) {
+            this.user = user;
+        }
+
+        private MysqlData() {}
     }
 
-    public void setMysqlUser(String mysql_user) {
-        this.mysql_user = mysql_user;
-    }
 }
