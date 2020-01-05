@@ -1,4 +1,4 @@
-package com.scolastico.discord_exe.event.events;
+package com.scolastico.discord_exe.event.handlers;
 
 import com.scolastico.discord_exe.event.EventRegister;
 

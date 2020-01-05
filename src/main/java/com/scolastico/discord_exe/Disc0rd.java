@@ -7,7 +7,7 @@ import com.scolastico.discord_exe.etc.VersionController;
 import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.config.ConfigDataStore;
 import com.scolastico.discord_exe.config.ConfigHandler;
-import com.scolastico.discord_exe.event.events.EventHandler;
+import com.scolastico.discord_exe.event.handlers.EventHandler;
 import com.scolastico.discord_exe.mysql.MysqlHandler;
 import com.scolastico.discord_exe.webserver.WebServerManager;
 import net.dv8tion.jda.api.JDA;
