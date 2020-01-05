@@ -1,6 +1,5 @@
 package com.scolastico.discord_exe.mysql;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ServerSettings {

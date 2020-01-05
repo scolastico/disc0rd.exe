@@ -4,8 +4,10 @@ import java.util.concurrent.TimeUnit;
 
 public class Tools {
 
-    private Tools() {}
+    private Boolean _isShowingLoadingAnimation = false;
     private static Tools instance = null;
+
+    private Tools() {}
     public static Tools getInstance() {
         if (instance == null) {
             instance = new Tools();
@@ -19,7 +21,6 @@ public class Tools {
         }
     }
 
-    private Boolean _isShowingLoadingAnimation = false;
     public Boolean isShowingLoadingAnimation() {
         return _isShowingLoadingAnimation;
     }
