@@ -9,6 +9,8 @@ import com.scolastico.discord_exe.config.ConfigDataStore;
 import com.scolastico.discord_exe.config.ConfigHandler;
 import com.scolastico.discord_exe.event.events.EventHandler;
 import com.scolastico.discord_exe.mysql.MysqlHandler;
+import com.scolastico.discord_exe.webserver.WebHandler;
+import com.scolastico.discord_exe.webserver.WebServerManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import org.reflections.Reflections;
@@ -47,6 +49,10 @@ public class Disc0rd {
 
     public static MysqlHandler getMysql() {
         return mysql;
+    }
+
+    public static ConfigDataStore getConfig() {
+        return config;
     }
 
     public static void main(String[] args) {
@@ -89,7 +95,7 @@ public class Disc0rd {
         tools.asyncLoadingAnimationWhileWaitingResult(new Runnable() {
             public void run() {
                 try {
-                    mysql = new MysqlHandler(config.getMysqlServer(), config.getMysqlUser(), config.getMysqlPass(), config.getMysqlDatabase(), config.getMysqlPrefix());
+                    mysql = new MysqlHandler(config.getMysql().getServer(), config.getMysql().getUser(), config.getMysql().getPass(), config.getMysql().getDatabase(), config.getMysql().getPrefix());
                 } catch (Exception e) {
                     ErrorHandler.getInstance().handleFatal(e);
                 }
@@ -149,8 +155,20 @@ public class Disc0rd {
             }
         });
 
+        System.out.print("Loading web server module ");
+        tools.asyncLoadingAnimationWhileWaitingResult(new Runnable() {
+            public void run() {
+                try {
+                    WebServerManager.getInstance();
+                } catch (Exception e) {
+                    ErrorHandler.getInstance().handleFatal(e);
+                }
+            }
+        });
+
         tools.generateNewSpacesInConsole(1);
         System.out.println("Loading Finished! Took " + (System.currentTimeMillis() - startTime) + " ms!");
+        tools.generateNewSpacesInConsole(1);
 
         ready = true;
 

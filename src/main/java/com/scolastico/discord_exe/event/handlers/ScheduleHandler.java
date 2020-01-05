@@ -11,7 +11,6 @@ public interface ScheduleHandler {
         public boolean runAsync() default true;
     }
 
-    @ScheduleTime()
     public void scheduledTask();
 
 }
