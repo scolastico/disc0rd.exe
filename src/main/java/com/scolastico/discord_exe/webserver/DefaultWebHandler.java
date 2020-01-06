@@ -6,6 +6,8 @@ import com.sun.net.httpserver.HttpExchange;
 
 import java.io.*;
 import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -13,6 +15,7 @@ public class DefaultWebHandler {
 
     private static DefaultWebHandler instance = null;
     private HashMap<String, String> paths = new HashMap<>();
+    private ArrayList<String> filesRaw = new ArrayList<>();
 
     public static DefaultWebHandler getInstance() {
         if (instance == null) {
@@ -22,10 +25,22 @@ public class DefaultWebHandler {
     }
 
     private DefaultWebHandler() {
-        ArrayList<String> paths = getResourceFiles("/webServer/");
-        for (String path:paths) this.paths.put("/" + path, "/webServer/" + path);
+        getResourceFilesRecursive("/webServer/");
+        for (String path:filesRaw) this.paths.put(path.replaceFirst("/webServer", ""), path);
         if (this.paths.containsKey("/index.html")) {
             this.paths.put("/", this.paths.get("/index.html"));
+        }
+    }
+
+    private void getResourceFilesRecursive(String path) {
+        ArrayList<String> filePaths = getResourceFiles(path);
+        for (String filePath:filePaths) {
+            File file = new File(getClass().getResource(path + filePath).getPath());
+            if (file.isDirectory()) {
+                getResourceFilesRecursive(path + filePath + "/");
+            } else {
+                filesRaw.add(path + filePath);
+            }
         }
     }
 

@@ -37,6 +37,8 @@ public class WebServerManager implements HttpHandler {
         try {
             httpServer = HttpServer.create(new InetSocketAddress(Disc0rd.getConfig().getWebServer().getPort()), 0);
 
+            DefaultWebHandler.getInstance().getAllPaths();
+
             Reflections reflections = new Reflections("com.scolastico.discord_exe");
             Set<Class<? extends WebHandler>> eventHandlers = reflections.getSubTypesOf(WebHandler.class);
             for (Class<?> eventHandler:eventHandlers) {
