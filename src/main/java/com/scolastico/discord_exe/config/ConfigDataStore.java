@@ -33,6 +33,15 @@ public class ConfigDataStore {
     public static class WebServerData {
         private int port = 8040;
         private int buffer = 1024;
+        private String domain = "http://localhost:8040/";
+
+        public String getDomain() {
+            return domain;
+        }
+
+        public void setDomain(String domain) {
+            this.domain = domain;
+        }
 
         public int getPort() {
             return port;
