@@ -7,6 +7,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import org.reflections.Reflections;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -36,27 +37,24 @@ public class WebServerManager implements HttpHandler {
         try {
             httpServer = HttpServer.create(new InetSocketAddress(Disc0rd.getConfig().getWebServer().getPort()), 0);
 
-            for (String path:DefaultWebHandler.getInstance().getAllPaths()) httpServer.createContext(path, this);
-
             Reflections reflections = new Reflections("com.scolastico.discord_exe");
             Set<Class<? extends WebHandler>> eventHandlers = reflections.getSubTypesOf(WebHandler.class);
             for (Class<?> eventHandler:eventHandlers) {
                 Object obj = eventHandler.newInstance();
                 if (obj instanceof WebHandler) {
-
                     WebHandler.WebHandlerRegistration annotation = obj.getClass().getDeclaredAnnotation(WebHandler.WebHandlerRegistration.class);
                     if (annotation == null) {
                         ErrorHandler.getInstance().handleFatal(new Exception("Missing WebHandlerRegistration annotation at '" + obj.getClass().getName() + "'!"));
                     } else {
                         ArrayList<String> context = new ArrayList<>(annotation.context().length);
                         context.addAll(Arrays.asList(annotation.context()));
-                        for (String path:context) httpServer.createContext(path, this);
                         webHandlers.put((WebHandler) obj, context);
                     }
 
                 }
             }
 
+            httpServer.createContext("/", this);
             httpServer.start();
         } catch (Exception e) {
             ErrorHandler.getInstance().handleFatal(e);
@@ -72,23 +70,38 @@ public class WebServerManager implements HttpHandler {
                 return;
             }
             for (WebHandler webHandler:webHandlers.keySet()) for (String key:webHandlers.get(webHandler)) {
-                if (key.equals(httpExchange.getRequestURI().getPath())) {
-                    String response = webHandler.onWebServer(httpExchange);
-                    if (response != null) {
-                        httpExchange.sendResponseHeaders(200, response.length());
-                        OutputStream outputStream = httpExchange.getResponseBody();
-                        outputStream.write(response.getBytes());
-                        outputStream.close();
-                        httpExchange.close();
+                if (key.endsWith("*")) {
+                    if (httpExchange.getRequestURI().getPath().startsWith(key.substring(0, key.length()-1))) {
+                        sendToHandler(httpExchange, webHandler);
+                        return;
                     }
-                    httpExchange.close();
-                    return;
+                } else {
+                    if (key.equals(httpExchange.getRequestURI().getPath())) {
+                        sendToHandler(httpExchange, webHandler);
+                        return;
+                    }
                 }
             }
             httpExchange.sendResponseHeaders(404, error404.length());
             OutputStream outputStream = httpExchange.getResponseBody();
             outputStream.write(error404.getBytes());
             outputStream.close();
+            httpExchange.close();
+        } catch (Exception e) {
+            ErrorHandler.getInstance().handle(e);
+        }
+    }
+
+    private void sendToHandler(HttpExchange httpExchange, WebHandler webHandler) {
+        try {
+            String response = webHandler.onWebServer(httpExchange);
+            if (response != null) {
+                httpExchange.sendResponseHeaders(200, response.length());
+                OutputStream outputStream = httpExchange.getResponseBody();
+                outputStream.write(response.getBytes());
+                outputStream.close();
+                httpExchange.close();
+            }
             httpExchange.close();
         } catch (Exception e) {
             ErrorHandler.getInstance().handle(e);

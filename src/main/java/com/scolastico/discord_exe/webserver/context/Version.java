@@ -4,7 +4,7 @@ import com.scolastico.discord_exe.Disc0rd;
 import com.scolastico.discord_exe.webserver.WebHandler;
 import com.sun.net.httpserver.HttpExchange;
 
-@WebHandler.WebHandlerRegistration(context = {"/version"})
+@WebHandler.WebHandlerRegistration(context = {"/api/v1/version"})
 public class Version implements WebHandler {
     @Override
     public String onWebServer(HttpExchange httpExchange) {
