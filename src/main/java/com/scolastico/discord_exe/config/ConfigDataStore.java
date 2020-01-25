@@ -1,13 +1,26 @@
 package com.scolastico.discord_exe.config;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class ConfigDataStore {
 
-    private String discord_token = "token";
+    private String discordToken = "token";
     private WebServerData webServer = new WebServerData();
     private MysqlData mysql = new MysqlData();
 
+    public List<String> getDisabledColors() {
+        return disabledColors;
+    }
+
+    public void setDisabledColors(List<String> disabledColors) {
+        this.disabledColors = disabledColors;
+    }
+
+    private List<String> disabledColors = Arrays.asList("ffffff", "000000", "2C2F33", "23272A");
+
     public String getDiscordToken() {
-        return discord_token;
+        return discordToken;
     }
 
     public MysqlData getMysql() {
@@ -18,8 +31,8 @@ public class ConfigDataStore {
         return webServer;
     }
 
-    public void setDiscordToken(String discord_token) {
-        this.discord_token = discord_token;
+    public void setDiscordToken(String discordToken) {
+        this.discordToken = discordToken;
     }
 
     public void setMysql(MysqlData mysql) {

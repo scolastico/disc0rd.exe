@@ -119,8 +119,11 @@ public class CommandColorName implements EventHandler, CommandHandler, WebHandle
                     HashMap<String, String> postValues = Tools.getInstance().getPostValuesFromHttpExchange(httpExchange);
                     if (postValues.containsKey("color")) {
                         String colorHash = postValues.get("color");
-                        if (colorHash.length() == 6) {
-                            Color color = Tools.getInstance().hex2Rgb("#" + colorHash);
+                        if (colorHash.length() == 7) {
+                            Color color = Tools.getInstance().hex2Rgb(colorHash);
+                            if (Disc0rd.getConfig().getDisabledColors().contains(Tools.getInstance().rgb2Hex(color))) {
+                                return "{\"status\":\"error\",\"error\":\"color not supported\"}";
+                            }
                             ColorChangeInfo colorChangeInfo = colorChangeInfos.get(key);
                             Guild guild = Disc0rd.getJda().getGuildById(colorChangeInfo.getGuildId());
                             User user = Disc0rd.getJda().getUserById(colorChangeInfo.getUserId());
@@ -144,7 +147,8 @@ public class CommandColorName implements EventHandler, CommandHandler, WebHandle
                                     Member botMember = guild.getMember(Disc0rd.getJda().getSelfUser());
                                     if (botMember == null) {
                                         ErrorHandler.getInstance().handle(new Exception("Not in guild?"));
-                                        return "{\"status\":\"error\",\"error\":\"not supported\"}";
+                                        colorChangeInfos.remove(key);
+                                        return "{\"status\":\"error\",\"error\":\"internal error\"}";
                                     }
                                     guild.modifyRolePositions().selectPosition(role).moveTo(botMember.getRoles().get(0).getPositionRaw()-2).queue();
                                     guild.addRoleToMember(member, role).queue();
@@ -153,14 +157,16 @@ public class CommandColorName implements EventHandler, CommandHandler, WebHandle
                                     colorNameConfig.setRoles(roles);
                                     serverSettings.setColorNameConfig(colorNameConfig);
                                     mysql.setServerSettings(guild.getIdLong(), serverSettings);
+                                    colorChangeInfos.remove(key);
                                     return "{\"status\":\"ok\"}";
                                 }
                             }
+                            colorChangeInfos.remove(key);
+                            return "{\"status\":\"error\",\"error\":\"not supported\"}";
                         }
                     }
                 }
-                colorChangeInfos.remove(key);
-                return "{\"status\":\"error\",\"error\":\"not supported\"}";
+                return "{\"status\":\"error\",\"error\":\"color not supported\"}";
             } else {
                 return "{\"status\":\"error\",\"error\":\"key not valid\"}";
             }

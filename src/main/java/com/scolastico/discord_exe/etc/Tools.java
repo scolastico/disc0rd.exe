@@ -91,4 +91,17 @@ public class Tools {
                 Integer.valueOf( colorStr.substring( 5, 7 ), 16 ) );
     }
 
+    public String rgb2Hex(Color color) {
+        return "#" + Integer.toHexString(color.getRGB()).substring(2);
+    }
+
+    public String sendPostRequest(String url, HashMap<String, String> postValues) {
+        try {
+
+        } catch (Exception e) {
+            ErrorHandler.getInstance().handle(e);
+        }
+        return null;
+    }
+
 }

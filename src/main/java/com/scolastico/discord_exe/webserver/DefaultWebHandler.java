@@ -6,8 +6,6 @@ import com.sun.net.httpserver.HttpExchange;
 
 import java.io.*;
 import java.net.URLConnection;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -26,9 +24,11 @@ public class DefaultWebHandler {
 
     private DefaultWebHandler() {
         getResourceFilesRecursive("/webServer/");
-        for (String path:filesRaw) this.paths.put(path.replaceFirst("/webServer", ""), path);
-        if (this.paths.containsKey("/index.html")) {
-            this.paths.put("/", this.paths.get("/index.html"));
+        for (String path:filesRaw) {
+            this.paths.put(path.replaceFirst("/webServer", ""), path);
+            if (path.endsWith("/index.html")) {
+                this.paths.put(path.replaceFirst("/webServer", "").substring(0, path.length() - 20), path);
+            }
         }
     }
 
