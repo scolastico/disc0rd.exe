@@ -1,4 +1,4 @@
-const huebee = new Huebee('.color-input', {
+const huebee = new Huebee(".color-input", {
     notation: "hex",
     setBGColor: false,
     saturations: 1
