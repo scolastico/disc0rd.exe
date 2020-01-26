@@ -4,10 +4,6 @@ const huebee = new Huebee('.color-input', {
     saturations: 1
 });
 
-$("#input").on("input", function(e) {
-    onColorChange();
-});
-
 let key = null;
 
 function fireSWAL(title, text, icon) {
@@ -141,6 +137,10 @@ function onColorChange() {
         }
     }, 25);
 }
+
+$("#input").on("input", function(e) {
+    onColorChange();
+});
 
 huebee.on( "change", function( color, hue, sat, lum ) {
     onColorChange();
