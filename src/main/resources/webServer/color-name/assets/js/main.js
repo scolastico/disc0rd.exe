@@ -1,5 +1,5 @@
 const huebee = new Huebee('.color-input', {
-    notation: 'hex',
+    notation: "hex",
     setBGColor: false,
     saturations: 1
 });
@@ -10,27 +10,28 @@ $("#input").on("input", function(e) {
 
 let key = null;
 
-function fireNotValidSWAL() {
-    fireErrorSWAL('The given key (url) is not valid...\nYou need to request a new url by the bot!\nExecute "disc0rd/color" again!');
-}
-
-function fireGenericErrorSWAL() {
-    fireErrorSWAL('An internal error occurred!\n\nYou can try to reload the page or\nexecute "disc0rd/color" again!');
-}
-
-function fireErrorSWAL(text) {
-    fireSWAL("Oops...", text, "error");
-}
 function fireSWAL(title, text, icon) {
     swal({
-        icon: icon,
-        title: title,
-        text: text,
+        icon() {return icon;},
+        title() {return title;},
+        text() {return text;},
         button: false,
         closeOnClickOutside: false,
         closeOnEsc: false,
         closeOnScroll: false
     });
+}
+
+function fireErrorSWAL(text) {
+    fireSWAL("Oops...", text, "error");
+}
+
+function fireNotValidSWAL() {
+    fireErrorSWAL("The given key (url) is not valid...\nYou need to request a new url by the bot!\nExecute 'disc0rd/color' again!");
+}
+
+function fireGenericErrorSWAL() {
+    fireErrorSWAL("An internal error occurred!\n\nYou can try to reload the page or\nexecute 'disc0rd/color' again!");
 }
 
 $(document).ready(function() {
@@ -40,7 +41,7 @@ $(document).ready(function() {
     if (hash.length === 16) {
         try {
             const xmlHttp = new XMLHttpRequest();
-            xmlHttp.open( "GET", '../api/v1/color-name/isActive/' + hash, true );
+            xmlHttp.open( "GET", "../api/v1/color-name/isActive/" + hash, true );
             xmlHttp.onreadystatechange = function() {
                 if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
                     if (JSON.parse(xmlHttp.responseText).status === "ok") {
@@ -57,7 +58,7 @@ $(document).ready(function() {
     }
 });
 
-huebee.on( 'change', function( color, hue, sat, lum ) {
+huebee.on( "change", function( color, hue, sat, lum ) {
    onColorChange();
 });
 
@@ -71,8 +72,8 @@ function hexToRgb(hex) {
 }
 
 function rgbStringToRgb(col)  {
-    if(col.charAt(0) ==='r') {
-        col=col.replace('rgb(','').replace(')','').split(',');
+    if(col.charAt(0) === "r") {
+        col=col.replace("rgb(", "").replace(")", "").split(",");
         return {
             r: parseInt(col[0], 10),
             g: parseInt(col[1], 10),
@@ -85,37 +86,13 @@ function rgbStringToRgb(col)  {
 let scheduler = null;
 let selectedColor = "rgb(255,255,255)";
 
-function onColorChange() {
-    const rgbColor = hexToRgb(document.getElementById("color").value);
-    let finalColorBG = "rgb(255,255,255)";
-    let finalColorField = "rgb(255,255,255)";
-    if (scheduler !== null) {
-        clearInterval(scheduler);
-        scheduler = null;
+function calculateFade(oldColor, newColor, step) {
+    if (oldColor !== newColor) if (newColor > oldColor) {
+        return Math.round((((newColor - oldColor) / 20) * step) + oldColor);
+    } else {
+        return Math.round(oldColor - (((oldColor - newColor) / 20) * step));
     }
-    if (rgbColor !== null) {
-        finalColorBG = "rgb(" + rgbColor.r + "," + rgbColor.g + "," + rgbColor.b + ")";
-        rgbColor.r += -25;
-        if (rgbColor.r < 0) rgbColor.r = 0;
-        rgbColor.g += -25;
-        if (rgbColor.g < 0) rgbColor.g = 0;
-        rgbColor.b += -25;
-        if (rgbColor.b < 0) rgbColor.b = 0;
-        finalColorField = "rgb(" + rgbColor.r + "," + rgbColor.g + "," + rgbColor.b + ")";
-    }
-    let step = 0;
-    selectedColor = finalColorBG;
-    const currentColorBG = document.body.style.backgroundColor;
-    const currentColorField = document.getElementById("color").style.backgroundColor;
-    scheduler = setInterval(() => {
-        if (step !== 20) {
-            step++;
-            doFadeStep(currentColorBG, currentColorField, finalColorBG, finalColorField, step);
-        } else {
-            clearInterval(scheduler);
-            scheduler = null;
-        }
-    }, 25)
+    return newColor;
 }
 
 function doFadeStep(currentColorBG, currentColorField, finalColorBG, finalColorField, step) {
@@ -136,13 +113,37 @@ function doFadeStep(currentColorBG, currentColorField, finalColorBG, finalColorF
     $("#colorBG").css("background-color","rgb("+backgroundR+","+backgroundG+","+backgroundB+")");
 }
 
-function calculateFade(oldColor, newColor, step) {
-    if (oldColor !== newColor) if (newColor > oldColor) {
-        return Math.round((((newColor - oldColor) / 20) * step) + oldColor);
-    } else {
-        return Math.round(oldColor - (((oldColor - newColor) / 20) * step));
+function onColorChange() {
+    const rgbColor = hexToRgb(document.getElementById("color").value);
+    let finalColorBG = "rgb(255,255,255)";
+    let finalColorField = "rgb(255,255,255)";
+    if (scheduler !== null) {
+        clearInterval(scheduler);
+        scheduler = null;
     }
-    return newColor;
+    if (rgbColor !== null) {
+        finalColorBG = "rgb(" + rgbColor.r + "," + rgbColor.g + "," + rgbColor.b + ")";
+        rgbColor.r += -25;
+        if (rgbColor.r < 0) {rgbColor.r = 0;}
+        rgbColor.g += -25;
+        if (rgbColor.g < 0) {rgbColor.g = 0;}
+        rgbColor.b += -25;
+        if (rgbColor.b < 0) {rgbColor.b = 0;}
+        finalColorField = "rgb(" + rgbColor.r + "," + rgbColor.g + "," + rgbColor.b + ")";
+    }
+    let step = 0;
+    selectedColor = finalColorBG;
+    const currentColorBG = document.body.style.backgroundColor;
+    const currentColorField = document.getElementById("color").style.backgroundColor;
+    scheduler = setInterval(() => {
+        if (step !== 20) {
+            step++;
+            doFadeStep(currentColorBG, currentColorField, finalColorBG, finalColorField, step);
+        } else {
+            clearInterval(scheduler);
+            scheduler = null;
+        }
+    }, 25);
 }
 
 function rgb2hex(rgb){
@@ -150,7 +151,7 @@ function rgb2hex(rgb){
     return (rgb && rgb.length === 4) ? "#" +
         ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
         ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
-        ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '#ffffff';
+        ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : "#ffffff";
 }
 
 function submitColor() {
@@ -159,7 +160,7 @@ function submitColor() {
     if (key !== null) {
         try {
             const xmlHttp = new XMLHttpRequest();
-            xmlHttp.open( "POST", '../api/v1/color-name/change/' + key, true );
+            xmlHttp.open( "POST", "../api/v1/color-name/change/" + key, true );
             xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xmlHttp.onreadystatechange = function() {
                 if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
@@ -178,21 +179,21 @@ function submitColor() {
                         } else if (response.error === "key not valid") {
                             fireNotValidSWAL();
                         } else {
-                            console.warn("Response from server not in matching pattern:", response);
+                            console.log("Response from server not in matching pattern:", response);
                             fireGenericErrorSWAL();
                         }
                     } else {
-                        console.warn("Response from server not in matching pattern:", response);
+                        console.log("Response from server not in matching pattern:", response);
                         fireGenericErrorSWAL();
                     }
                 } else {
-                    console.warn("Response from server is not '200'!")
+                    console.log("Response from server is not '200'!");
                     fireGenericErrorSWAL();
                 }
             };
             xmlHttp.send( "color=" + rgb2hex(selectedColor));
         } catch (e) {
-            console.warn("Unknown error:", e)
+            console.log("Unknown error:", e);
             fireGenericErrorSWAL();
         }
     } else {
