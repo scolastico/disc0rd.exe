@@ -38,6 +38,7 @@ public class ServerSettings {
         private boolean isEnabled = false;
         private int sensitivity = 30;
         private List<String> disabledColors = Arrays.asList("#ffffff", "#2C2F33", "#23272A");
+        private HashMap<Long, Long> roles = new HashMap<>();
 
         public List<String> getDisabledColors() {
             return disabledColors;
@@ -54,8 +55,6 @@ public class ServerSettings {
         public void setSensitivity(int sensitivity) {
             this.sensitivity = sensitivity;
         }
-
-        private HashMap<Long, Long> roles = new HashMap<>();
 
         public boolean isEnabled() {
             return isEnabled;

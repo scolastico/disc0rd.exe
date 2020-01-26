@@ -58,10 +58,6 @@ $(document).ready(function() {
     }
 });
 
-huebee.on( "change", function( color, hue, sat, lum ) {
-   onColorChange();
-});
-
 function hexToRgb(hex) {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? {
@@ -87,11 +83,11 @@ let scheduler = null;
 let selectedColor = "rgb(255,255,255)";
 
 function calculateFade(oldColor, newColor, step) {
-    if (oldColor !== newColor) if (newColor > oldColor) {
+    if (oldColor !== newColor) { if (newColor > oldColor) {
         return Math.round((((newColor - oldColor) / 20) * step) + oldColor);
     } else {
         return Math.round(oldColor - (((oldColor - newColor) / 20) * step));
-    }
+    } }
     return newColor;
 }
 
@@ -146,6 +142,10 @@ function onColorChange() {
     }, 25);
 }
 
+huebee.on( "change", function( color, hue, sat, lum ) {
+    onColorChange();
+});
+
 function rgb2hex(rgb){
     rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
     return (rgb && rgb.length === 4) ? "#" +
@@ -179,21 +179,17 @@ function submitColor() {
                         } else if (response.error === "key not valid") {
                             fireNotValidSWAL();
                         } else {
-                            console.log("Response from server not in matching pattern:", response);
                             fireGenericErrorSWAL();
                         }
                     } else {
-                        console.log("Response from server not in matching pattern:", response);
                         fireGenericErrorSWAL();
                     }
                 } else {
-                    console.log("Response from server is not '200'!");
                     fireGenericErrorSWAL();
                 }
             };
             xmlHttp.send( "color=" + rgb2hex(selectedColor));
         } catch (e) {
-            console.log("Unknown error:", e);
             fireGenericErrorSWAL();
         }
     } else {
