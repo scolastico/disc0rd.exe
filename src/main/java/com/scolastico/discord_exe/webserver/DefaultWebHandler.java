@@ -13,6 +13,7 @@ public class DefaultWebHandler {
 
     private static DefaultWebHandler instance = null;
     private HashMap<String, String> paths = new HashMap<>();
+    private ArrayList<String> filesRaw = new ArrayList<>();
 
     public static DefaultWebHandler getInstance() {
         if (instance == null) {
@@ -22,10 +23,24 @@ public class DefaultWebHandler {
     }
 
     private DefaultWebHandler() {
-        ArrayList<String> paths = getResourceFiles("/webServer/");
-        for (String path:paths) this.paths.put("/" + path, "/webServer/" + path);
-        if (this.paths.containsKey("/index.html")) {
-            this.paths.put("/", this.paths.get("/index.html"));
+        getResourceFilesRecursive("/webServer/");
+        for (String path:filesRaw) {
+            this.paths.put(path.replaceFirst("/webServer", ""), path);
+            if (path.endsWith("/index.html")) {
+                this.paths.put(path.replaceFirst("/webServer", "").substring(0, path.length() - 20), path);
+            }
+        }
+    }
+
+    private void getResourceFilesRecursive(String path) {
+        ArrayList<String> filePaths = getResourceFiles(path);
+        for (String filePath:filePaths) {
+            File file = new File(getClass().getResource(path + filePath).getPath());
+            if (file.isDirectory()) {
+                getResourceFilesRecursive(path + filePath + "/");
+            } else {
+                filesRaw.add(path + filePath);
+            }
         }
     }
 

@@ -2,12 +2,21 @@ package com.scolastico.discord_exe.config;
 
 public class ConfigDataStore {
 
-    private String discord_token = "token";
+    private String discordToken = "token";
     private WebServerData webServer = new WebServerData();
     private MysqlData mysql = new MysqlData();
+    private int maxErrorCountToShutDown = 10;
+
+    public int getMaxErrorCountToShutDown() {
+        return maxErrorCountToShutDown;
+    }
+
+    public void setMaxErrorCountToShutDown(int maxErrorCountToShutDown) {
+        this.maxErrorCountToShutDown = maxErrorCountToShutDown;
+    }
 
     public String getDiscordToken() {
-        return discord_token;
+        return discordToken;
     }
 
     public MysqlData getMysql() {
@@ -18,8 +27,8 @@ public class ConfigDataStore {
         return webServer;
     }
 
-    public void setDiscordToken(String discord_token) {
-        this.discord_token = discord_token;
+    public void setDiscordToken(String discordToken) {
+        this.discordToken = discordToken;
     }
 
     public void setMysql(MysqlData mysql) {
@@ -33,6 +42,15 @@ public class ConfigDataStore {
     public static class WebServerData {
         private int port = 8040;
         private int buffer = 1024;
+        private String domain = "http://localhost:8040/";
+
+        public String getDomain() {
+            return domain;
+        }
+
+        public void setDomain(String domain) {
+            this.domain = domain;
+        }
 
         public int getPort() {
             return port;
