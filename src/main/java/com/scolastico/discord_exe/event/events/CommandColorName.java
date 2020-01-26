@@ -19,7 +19,10 @@ import net.dv8tion.jda.api.managers.RoleManager;
 import java.awt.*;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @WebHandler.WebHandlerRegistration(context = {"/api/v1/color-name/isActive/*", "/api/v1/color-name/change/*"})
 public class CommandColorName implements EventHandler, CommandHandler, WebHandler {
@@ -86,6 +89,98 @@ public class CommandColorName implements EventHandler, CommandHandler, WebHandle
                         }
                         event.getChannel().sendMessage(embedBuilder.build()).queue();
                         return true;
+                    } else if (args[0].equalsIgnoreCase("listBlockedColors")) {
+                        embedBuilder.setTitle("All blocked colors:");
+                        embedBuilder.addField("#000000", "", true);
+                        List<String> blockedColors = colorNameConfig.getDisabledColors();
+                        for (String color:blockedColors) {
+                            embedBuilder.addField(color, "", true);
+                        }
+                        embedBuilder.setColor(Color.yellow);
+                        event.getChannel().sendMessage(embedBuilder.build()).queue();
+                    }
+                } else if (args.length == 2) {
+                    Pattern colorPattern = Pattern.compile("#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})");
+                    Matcher m = colorPattern.matcher(args[1].toLowerCase());
+                    if (args[0].equalsIgnoreCase("block")) {
+                        if (Tools.getInstance().isOwner(event.getGuild(), event.getAuthor())) {
+                            if (args[1].length() == 7) {
+                                if (!m.matches()) {
+                                    embedBuilder.setTitle("Sorry,");
+                                    embedBuilder.setDescription("but the color `" + args[1] + "` is not a valid hex color!");
+                                    embedBuilder.setColor(Color.red);
+                                }
+                                List<String> blockedColors = colorNameConfig.getDisabledColors();
+                                if (!blockedColors.contains(args[1])) {
+                                    blockedColors.add(args[1].toLowerCase());
+                                    colorNameConfig.setDisabledColors(blockedColors);
+                                }
+                                settings.setColorNameConfig(colorNameConfig);
+                                Disc0rd.getMysql().setServerSettings(event.getGuild().getIdLong(), settings);
+                                embedBuilder.setTitle("Success,");
+                                embedBuilder.setDescription("the color `" + args[1] + "` was added to the black list!");
+                                embedBuilder.setColor(Color.green);
+                            } else {
+                                embedBuilder.setTitle("Sorry,");
+                                embedBuilder.setDescription("but the color `" + args[1] + "` is not a valid hex color!");
+                                embedBuilder.setColor(Color.red);
+                            }
+                        } else {
+                            embedBuilder.setTitle("Sorry,");
+                            embedBuilder.setDescription("but only the guild owner has the permission to use this command!");
+                            embedBuilder.setColor(Color.red);
+                        }
+                        event.getChannel().sendMessage(embedBuilder.build()).queue();
+                    } else if (args[0].equalsIgnoreCase("unblock")) {
+                        if (Tools.getInstance().isOwner(event.getGuild(), event.getAuthor())) {
+                            if (args[1].length() == 7) {
+                                if (!m.matches()) {
+                                    embedBuilder.setTitle("Sorry,");
+                                    embedBuilder.setDescription("but the color `" + args[1] + "` is not a valid hex color!");
+                                    embedBuilder.setColor(Color.red);
+                                }
+                                List<String> blockedColors = colorNameConfig.getDisabledColors();
+                                if (blockedColors.contains(args[1])) {
+                                    blockedColors.remove(args[1]);
+                                    colorNameConfig.setDisabledColors(blockedColors);
+                                }
+                                settings.setColorNameConfig(colorNameConfig);
+                                Disc0rd.getMysql().setServerSettings(event.getGuild().getIdLong(), settings);
+                                embedBuilder.setTitle("Success,");
+                                embedBuilder.setDescription("the color `" + args[1] + "` was removed from the black list!");
+                                embedBuilder.setColor(Color.green);
+                            } else {
+                                embedBuilder.setTitle("Sorry,");
+                                embedBuilder.setDescription("but the color `" + args[1] + "` is not a valid hex color!");
+                                embedBuilder.setColor(Color.red);
+                            }
+                        } else {
+                            embedBuilder.setTitle("Sorry,");
+                            embedBuilder.setDescription("but only the guild owner has the permission to use this command!");
+                            embedBuilder.setColor(Color.red);
+                        }
+                        event.getChannel().sendMessage(embedBuilder.build()).queue();
+                    } else if (args[0].equalsIgnoreCase("sensitivity")) {
+                        if (Tools.getInstance().isOwner(event.getGuild(), event.getAuthor())) {
+                            int sensitivity = Integer.parseInt(args[1]);
+                            if (!(sensitivity > 120 || sensitivity < -1)) {
+                                colorNameConfig.setSensitivity(sensitivity);
+                                settings.setColorNameConfig(colorNameConfig);
+                                Disc0rd.getMysql().setServerSettings(event.getGuild().getIdLong(), settings);
+                                embedBuilder.setTitle("Success,");
+                                embedBuilder.setDescription("the sensitivity is set to `" + sensitivity + "` from the default value `30`.");
+                                embedBuilder.setColor(Color.green);
+                            } else {
+                                embedBuilder.setTitle("Sorry,");
+                                embedBuilder.setDescription("but the sensitivity can only between -1 and 120!");
+                                embedBuilder.setColor(Color.red);
+                            }
+                        } else {
+                            embedBuilder.setTitle("Sorry,");
+                            embedBuilder.setDescription("but only the guild owner has the permission to use this command!");
+                            embedBuilder.setColor(Color.red);
+                        }
+                        event.getChannel().sendMessage(embedBuilder.build()).queue();
                     }
                 }
             } else {
@@ -121,9 +216,6 @@ public class CommandColorName implements EventHandler, CommandHandler, WebHandle
                         String colorHash = postValues.get("color");
                         if (colorHash.length() == 7) {
                             Color color = Tools.getInstance().hex2Rgb(colorHash);
-                            if (Disc0rd.getConfig().getDisabledColors().contains(Tools.getInstance().rgb2Hex(color))) {
-                                return "{\"status\":\"error\",\"error\":\"color not supported\"}";
-                            }
                             ColorChangeInfo colorChangeInfo = colorChangeInfos.get(key);
                             Guild guild = Disc0rd.getJda().getGuildById(colorChangeInfo.getGuildId());
                             User user = Disc0rd.getJda().getUserById(colorChangeInfo.getUserId());
@@ -133,6 +225,12 @@ public class CommandColorName implements EventHandler, CommandHandler, WebHandle
                                     MysqlHandler mysql = Disc0rd.getMysql();
                                     ServerSettings serverSettings = mysql.getServerSettings(guild.getIdLong());
                                     ServerSettings.ColorNameConfig colorNameConfig = serverSettings.getColorNameConfig();
+                                    if (color.getRed() == 0 && color.getBlue() == 0 && color.getGreen() == 0) return "{\"status\":\"error\",\"error\":\"color not supported\"}";
+                                    for (String colorToCheckHex:colorNameConfig.getDisabledColors()) {
+                                        if (Tools.getInstance().isColorSimilar(Tools.getInstance().hex2Rgb(colorToCheckHex) , color, colorNameConfig.getSensitivity())) {
+                                            return "{\"status\":\"error\",\"error\":\"color not supported\"}";
+                                        }
+                                    }
                                     Role role = null;
                                     if (colorNameConfig.getRoles().containsKey(user.getIdLong())) {
                                         role = guild.getRoleById(colorNameConfig.getRoles().get(user.getIdLong()));

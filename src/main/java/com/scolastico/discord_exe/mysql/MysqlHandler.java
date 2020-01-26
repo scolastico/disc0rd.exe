@@ -19,7 +19,7 @@ public class MysqlHandler {
 
         this.prefix = prefix;
 
-        connection = DriverManager.getConnection("jdbc:mysql://" + server + "/" + db + "?user=" + user + "&password=" + pass + "&serverTimezone=UTC");
+        connection = DriverManager.getConnection("jdbc:mysql://" + server + "/" + db + "?user=" + user + "&password=" + pass + "&serverTimezone=UTC&autoReconnect=true");
         connection.prepareStatement("CREATE TABLE IF NOT EXISTS `" + prefix + "serverSettings` (`id` BIGINT NOT NULL, `json` text NOT NULL, PRIMARY KEY( `id` ));").execute();
 
     }

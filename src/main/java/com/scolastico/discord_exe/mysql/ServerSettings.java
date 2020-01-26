@@ -1,6 +1,8 @@
 package com.scolastico.discord_exe.mysql;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class ServerSettings {
 
@@ -34,6 +36,25 @@ public class ServerSettings {
 
     public static class ColorNameConfig {
         private boolean isEnabled = false;
+        private int sensitivity = 30;
+        private List<String> disabledColors = Arrays.asList("#ffffff", "#2C2F33", "#23272A");
+
+        public List<String> getDisabledColors() {
+            return disabledColors;
+        }
+
+        public void setDisabledColors(List<String> disabledColors) {
+            this.disabledColors = disabledColors;
+        }
+
+        public int getSensitivity() {
+            return sensitivity;
+        }
+
+        public void setSensitivity(int sensitivity) {
+            this.sensitivity = sensitivity;
+        }
+
         private HashMap<Long, Long> roles = new HashMap<>();
 
         public boolean isEnabled() {

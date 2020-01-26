@@ -95,13 +95,15 @@ public class Tools {
         return "#" + Integer.toHexString(color.getRGB()).substring(2);
     }
 
-    public String sendPostRequest(String url, HashMap<String, String> postValues) {
-        try {
-
-        } catch (Exception e) {
-            ErrorHandler.getInstance().handle(e);
+    public boolean isColorSimilar(Color colorBase, Color color, int sensitivity) {
+        for (int r = (-sensitivity); sensitivity >= r; r++) {
+            for (int g = (-sensitivity); sensitivity >= g; g++) {
+                for (int b = (-sensitivity); sensitivity >= b; b++) {
+                    if ((colorBase.getRed() - r) == color.getRed() && (colorBase.getGreen() - g) == color.getGreen() && (colorBase.getBlue() - b) == color.getBlue()) return true;
+                }
+            }
         }
-        return null;
+        return false;
     }
 
 }

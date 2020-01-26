@@ -1,23 +1,19 @@
 package com.scolastico.discord_exe.config;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class ConfigDataStore {
 
     private String discordToken = "token";
     private WebServerData webServer = new WebServerData();
     private MysqlData mysql = new MysqlData();
+    private int maxErrorCountToShutDown = 10;
 
-    public List<String> getDisabledColors() {
-        return disabledColors;
+    public int getMaxErrorCountToShutDown() {
+        return maxErrorCountToShutDown;
     }
 
-    public void setDisabledColors(List<String> disabledColors) {
-        this.disabledColors = disabledColors;
+    public void setMaxErrorCountToShutDown(int maxErrorCountToShutDown) {
+        this.maxErrorCountToShutDown = maxErrorCountToShutDown;
     }
-
-    private List<String> disabledColors = Arrays.asList("ffffff", "000000", "2C2F33", "23272A");
 
     public String getDiscordToken() {
         return discordToken;
