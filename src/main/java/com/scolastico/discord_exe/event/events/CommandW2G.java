@@ -8,7 +8,6 @@ import com.scolastico.discord_exe.event.handlers.CommandHandler;
 import com.scolastico.discord_exe.event.handlers.EventHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
