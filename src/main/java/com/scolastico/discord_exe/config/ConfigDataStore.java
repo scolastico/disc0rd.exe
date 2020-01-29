@@ -6,6 +6,24 @@ public class ConfigDataStore {
     private WebServerData webServer = new WebServerData();
     private MysqlData mysql = new MysqlData();
     private int maxErrorCountToShutDown = 10;
+    private String w2gToken = "token";
+    private String w2gDefaultPlayback = "https://youtu.be/J5SRm9Wk-fM";
+
+    public String getW2gDefaultPlayback() {
+        return w2gDefaultPlayback;
+    }
+
+    public void setW2gDefaultPlayback(String w2gDefaultPlayback) {
+        this.w2gDefaultPlayback = w2gDefaultPlayback;
+    }
+
+    public String getW2gToken() {
+        return w2gToken;
+    }
+
+    public void setW2gToken(String w2gToken) {
+        this.w2gToken = w2gToken;
+    }
 
     public int getMaxErrorCountToShutDown() {
         return maxErrorCountToShutDown;
