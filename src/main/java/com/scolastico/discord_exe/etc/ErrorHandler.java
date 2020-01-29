@@ -1,5 +1,7 @@
 package com.scolastico.discord_exe.etc;
 
+import com.scolastico.discord_exe.Disc0rd;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -7,6 +9,7 @@ public class ErrorHandler {
 
     private Tools tools = Tools.getInstance();
     private static ErrorHandler instance = null;
+    private int errorCount = 0;
 
     private ErrorHandler() {}
     public static ErrorHandler getInstance() {
@@ -17,9 +20,13 @@ public class ErrorHandler {
     }
 
     public void handle(Exception e) {
+        if (Disc0rd.getConfig().getMaxErrorCountToShutDown() >= 0) errorCount++;
         tools.generateNewSpacesInConsole(1);
         outputErrorInfo(e);
         tools.generateNewSpacesInConsole(1);
+        if (errorCount >= Disc0rd.getConfig().getMaxErrorCountToShutDown()) {
+            handleFatal(new Exception("Max error count reached!"));
+        }
     }
 
     public void handleFatal(Exception e) {
