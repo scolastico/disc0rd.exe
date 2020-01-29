@@ -51,6 +51,8 @@ $(document).ready(function() {
         } catch (e) {
             fireGenericErrorSWAL();
         }
+    } else {
+        fireNotValidSWAL();
     }
 });
 
