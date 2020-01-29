@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 public class CommandW2G implements EventHandler,CommandHandler {
     @Override
     public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
-        if (cmd.equalsIgnoreCase("disc0rd/w2g")) {
+        if (cmd.equalsIgnoreCase("disc0rd/w2g") || cmd.equalsIgnoreCase("disc0rd/watch2gether")) {
             try {
                 if (args.length == 0 || args.length == 1) {
                     event.getMessage().delete().queue();
