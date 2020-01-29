@@ -22,3 +22,12 @@ jobs:
         args: target/disc0rd-exe-jar-with-dependencies.jar application/java-archive
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: CI to Main Server
+      if: github.event_name == 'release'
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        script: sh ~/disc0rd/update.sh
