@@ -36,10 +36,15 @@ public class Tools {
         _isShowingLoadingAnimation = true;
         Thread thread = new Thread(function);
         thread.start();
+        int counter = 50;
         while(thread.isAlive()) {
-            System.out.print(".");
+            if (counter >= 50) {
+                System.out.print(".");
+                counter = 0;
+            }
             try {
-                TimeUnit.MILLISECONDS.sleep(500);
+                TimeUnit.MILLISECONDS.sleep(10);
+                counter++;
             } catch (InterruptedException ignored) {}
         }
         System.out.println(" [OK]");

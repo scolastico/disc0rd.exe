@@ -7,14 +7,14 @@ const huebee = new Huebee(".color-input", {
 let key = null;
 
 function fireSWAL(title, text, icon) {
-    swal({
-        icon() {return icon;},
-        title() {return title;},
-        text() {return text;},
-        button: false,
-        closeOnClickOutside: false,
-        closeOnEsc: false,
-        closeOnScroll: false
+    swal.fire({
+        icon: icon,
+        title: title,
+        text: text,
+        showConfirmButton: false,
+        allowEscapeKey: false,
+        allowEnterKey: false,
+        allowOutsideClick: false
     });
 }
 
