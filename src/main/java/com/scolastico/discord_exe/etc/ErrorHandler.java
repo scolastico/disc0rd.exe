@@ -32,7 +32,7 @@ public class ErrorHandler {
         addToErrorLog(e);
         outputErrorInfo(e);
         tools.generateNewSpacesInConsole(1);
-        if (errorCount >= Disc0rd.getConfig().getMaxErrorCountToShutDown()) {
+        if (errorCount >= Disc0rd.getConfig().getMaxErrorCountToShutDown() && Disc0rd.getConfig().getMaxErrorCountToShutDown() >= 0) {
             handleFatal(new Exception("Max error count reached!"));
         }
     }
