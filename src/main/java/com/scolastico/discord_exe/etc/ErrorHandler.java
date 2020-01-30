@@ -1,6 +1,7 @@
 package com.scolastico.discord_exe.etc;
 
 import com.scolastico.discord_exe.Disc0rd;
+import com.scolastico.discord_exe.config.ConfigHandler;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -42,7 +43,9 @@ public class ErrorHandler {
         }
         tools.generateNewSpacesInConsole(1);
         System.err.println("FATAL ERROR! SHUTTING DOWN!");
+        addToErrorLog(e);
         outputErrorInfo(e);
+        writeErrorLogToFile();
         tools.generateNewSpacesInConsole(1);
         Runtime.getRuntime().exit(0);
     }
@@ -61,6 +64,12 @@ public class ErrorHandler {
         System.err.println("Message: " + e.getMessage());
         System.err.println("StackTrace:");
         System.err.println(exceptionAsString);
+    }
+
+    public void writeErrorLogToFile() {
+        try {
+            ConfigHandler configHandler = new ConfigHandler(errorLog, "error_log_" + Disc0rd.getStartTime() + ".log.json");
+        } catch (Exception ignore) {}
     }
 
 }
