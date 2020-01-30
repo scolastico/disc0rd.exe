@@ -58,7 +58,7 @@ public class ConfigHandler {
     }
 
     public void saveConfigObject() throws IOException {
-        _gson.toJson(_configObject, new FileWriter(_file));
+        writeStringToFile(_gson.toJson(_configObject));
     }
 
     public String getFilename() {

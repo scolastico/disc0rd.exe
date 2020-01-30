@@ -4,13 +4,14 @@ import com.scolastico.discord_exe.Disc0rd;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashMap;
 
 public class ErrorHandler {
 
     private Tools tools = Tools.getInstance();
     private static ErrorHandler instance = null;
     private int errorCount = 0;
-
+    private HashMap<Long, String> errorLog = new HashMap<>();
     private ErrorHandler() {}
     public static ErrorHandler getInstance() {
         if (instance == null) {
@@ -19,9 +20,15 @@ public class ErrorHandler {
         return instance;
     }
 
+    public HashMap<Long, String> getErrorLog() {
+        return errorLog;
+    }
+
+
     public void handle(Exception e) {
         if (Disc0rd.getConfig().getMaxErrorCountToShutDown() >= 0) errorCount++;
         tools.generateNewSpacesInConsole(1);
+        addToErrorLog(e);
         outputErrorInfo(e);
         tools.generateNewSpacesInConsole(1);
         if (errorCount >= Disc0rd.getConfig().getMaxErrorCountToShutDown()) {
@@ -38,6 +45,13 @@ public class ErrorHandler {
         outputErrorInfo(e);
         tools.generateNewSpacesInConsole(1);
         Runtime.getRuntime().exit(0);
+    }
+
+    private void addToErrorLog(Exception e) {
+        StringWriter stringWriter = new StringWriter();
+        e.printStackTrace(new PrintWriter(stringWriter));
+        String exceptionAsString = stringWriter.toString();
+        errorLog.put((System.currentTimeMillis() / 1000L), exceptionAsString);
     }
 
     private void outputErrorInfo(Exception e) {

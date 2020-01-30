@@ -29,6 +29,19 @@ public class Disc0rd {
     private static boolean ready = false;
     private static String version = "Can't read Version! This build is corrupt!";
     private static EventRegister eventRegister;
+    private static Long executedCommands = 0L;
+
+    public static ConfigHandler getConfigHandler() {
+        return configHandler;
+    }
+
+    public static void addExecutedCommand() {
+        executedCommands++;
+    }
+
+    public static Long getExecutedCommands() {
+        return executedCommands;
+    }
 
     public static JDA getJda() {
         return jda;
