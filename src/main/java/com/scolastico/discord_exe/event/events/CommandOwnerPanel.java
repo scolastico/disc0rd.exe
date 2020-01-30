@@ -15,20 +15,18 @@ public class CommandOwnerPanel implements EventHandler, CommandHandler {
 
     @Override
     public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
-        if (cmd.equalsIgnoreCase("disc0rd/owner-panel")) {
-            if (args.length == 0) {
-                event.getMessage().delete().queue();
-                if (event.getMessage().getAuthor().getIdLong() == Disc0rd.getConfig().getOwnerPanel().getOwnerId()) {
-                    event.getAuthor().openPrivateChannel().complete().sendMessage("You can login here: <" + Disc0rd.getConfig().getWebServer().getDomain() + "owner-panel/login.html#" + OwnerPanel.getAuthCode() + ">").queue();
-                } else {
-                    EmbedBuilder embedBuilder = new EmbedBuilder();
-                    embedBuilder.setColor(Color.red);
-                    embedBuilder.setTitle("Sorry,");
-                    embedBuilder.setDescription("but this is an system internal command!");
-                    event.getChannel().sendMessage(embedBuilder.build()).queue();
-                }
-                return true;
+        if (cmd.equalsIgnoreCase("disc0rd/owner-panel") && args.length == 0) {
+            event.getMessage().delete().queue();
+            if (event.getMessage().getAuthor().getIdLong() == Disc0rd.getConfig().getOwnerPanel().getOwnerId()) {
+                event.getAuthor().openPrivateChannel().complete().sendMessage("You can login here: <" + Disc0rd.getConfig().getWebServer().getDomain() + "owner-panel/login.html#" + OwnerPanel.getAuthCode() + ">").queue();
+            } else {
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+                embedBuilder.setColor(Color.red);
+                embedBuilder.setTitle("Sorry,");
+                embedBuilder.setDescription("but this is an system internal command!");
+                event.getChannel().sendMessage(embedBuilder.build()).queue();
             }
+            return true;
         }
         return false;
     }

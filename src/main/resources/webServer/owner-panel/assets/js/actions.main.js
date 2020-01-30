@@ -16,18 +16,18 @@ function sendMessage() {
             if (JSON.parse(xmlHttpActionsSend.responseText).status === "ok") {
                 const Toast = Swal.mixin({
                     toast: true,
-                    position: 'top-end',
+                    position: "top-end",
                     showConfirmButton: false,
                     timer: 3000,
                     timerProgressBar: true,
                     onOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer);
-                        toast.addEventListener('mouseleave', Swal.resumeTimer);
+                        toast.addEventListener("mouseenter", Swal.stopTimer);
+                        toast.addEventListener("mouseleave", Swal.resumeTimer);
                     }
                 });
                 Toast.fire({
-                    icon: 'success',
-                    title: 'Message Send!'
+                    icon: "success",
+                    title: "Message Send!"
                 });
             } else {
                 window.location.replace("logout.html");
