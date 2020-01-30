@@ -32,7 +32,7 @@ if (hash.length === 16) {
     xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
             if (JSON.parse(xmlHttp.responseText).status === "ok") {
-                fireSWAL("Success,", "you will be redirected in 3 seconds!", "success")
+                fireSWAL("Success,", "you will be redirected in 3 seconds!", "success");
                 setTimeout(function() {
                     window.location.replace("index.html");
                 }, 3000);
