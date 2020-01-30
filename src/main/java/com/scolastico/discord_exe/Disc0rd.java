@@ -30,6 +30,11 @@ public class Disc0rd {
     private static String version = "Can't read Version! This build is corrupt!";
     private static EventRegister eventRegister;
     private static Long executedCommands = 0L;
+    private static long startTime = System.currentTimeMillis();
+
+    public static long getStartTime() {
+        return startTime;
+    }
 
     public static ConfigHandler getConfigHandler() {
         return configHandler;
@@ -68,8 +73,6 @@ public class Disc0rd {
     }
 
     public static void main(String[] args) {
-
-        long startTime = System.currentTimeMillis();
 
         try {
             version = VersionController.getVersion() + "-" + VersionController.getCommit();
