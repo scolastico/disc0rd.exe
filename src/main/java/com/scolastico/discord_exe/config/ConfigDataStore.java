@@ -8,6 +8,15 @@ public class ConfigDataStore {
     private int maxErrorCountToShutDown = 10;
     private String w2gToken = "token";
     private String w2gDefaultPlayback = "https://youtu.be/J5SRm9Wk-fM";
+    private OwnerPanelData ownerPanel = new OwnerPanelData();
+
+    public OwnerPanelData getOwnerPanel() {
+        return ownerPanel;
+    }
+
+    public void setOwnerPanel(OwnerPanelData ownerPanel) {
+        this.ownerPanel = ownerPanel;
+    }
 
     public String getW2gDefaultPlayback() {
         return w2gDefaultPlayback;
@@ -137,6 +146,46 @@ public class ConfigDataStore {
         }
 
         private MysqlData() {}
+    }
+
+    public static class OwnerPanelData {
+
+        private long ownerId = 441419741316251670L;
+        private Integer timeOut = 3600;
+        private Integer keyValidTimeOut = 60;
+        private boolean secureCookie = true;
+
+        public boolean isSecureCookie() {
+            return secureCookie;
+        }
+
+        public void setSecureCookie(boolean secureCookie) {
+            this.secureCookie = secureCookie;
+        }
+
+        public Integer getKeyValidTimeOut() {
+            return keyValidTimeOut;
+        }
+
+        public void setKeyValidTimeOut(Integer keyValidTimeOut) {
+            this.keyValidTimeOut = keyValidTimeOut;
+        }
+
+        public long getOwnerId() {
+            return ownerId;
+        }
+
+        public void setOwnerId(long ownerId) {
+            this.ownerId = ownerId;
+        }
+
+        public Integer getTimeOut() {
+            return timeOut;
+        }
+
+        public void setTimeOut(Integer timeOut) {
+            this.timeOut = timeOut;
+        }
     }
 
 }
