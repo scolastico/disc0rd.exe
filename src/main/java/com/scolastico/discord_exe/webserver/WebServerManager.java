@@ -7,6 +7,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import org.reflections.Reflections;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -99,7 +100,9 @@ public class WebServerManager implements HttpHandler {
             if (response != null) {
                 httpExchange.sendResponseHeaders(200, response.length());
                 OutputStream outputStream = httpExchange.getResponseBody();
-                outputStream.write(response.getBytes());
+                try {
+                    outputStream.write(response.getBytes());
+                } catch (IOException ignored) {}
                 outputStream.close();
                 httpExchange.close();
             }
