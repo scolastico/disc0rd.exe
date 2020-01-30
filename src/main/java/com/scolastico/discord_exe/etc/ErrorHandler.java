@@ -69,6 +69,7 @@ public class ErrorHandler {
     public void writeErrorLogToFile() {
         try {
             ConfigHandler configHandler = new ConfigHandler(errorLog, "error_log_" + Disc0rd.getStartTime() + ".log.json");
+            configHandler.saveConfigObject();
         } catch (Exception ignore) {}
     }
 
