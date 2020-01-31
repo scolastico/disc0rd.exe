@@ -59,8 +59,9 @@ public class DefaultWebHandler {
 
                 int buffer = Disc0rd.getConfig().getWebServer().getBuffer();
                 byte[] read = new byte[buffer];
-                while (0 < (buffer = inputStream.read(read))) outputStream.write(read, 0, buffer);
-
+                try {
+                    while (0 < (buffer = inputStream.read(read))) outputStream.write(read, 0, buffer);
+                } catch (IOException ignored) {}
                 outputStream.close();
                 inputStream.close();
                 return;
