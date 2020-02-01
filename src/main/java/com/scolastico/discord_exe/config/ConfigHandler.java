@@ -13,7 +13,7 @@ public class ConfigHandler {
     private File _file;
     private Gson _gson;
 
-    public ConfigHandler(Object configObject, String filename, Boolean throwErrorOnCreation) throws IOException {
+    public ConfigHandler(Object configObject, String filename, Boolean throwErrorOnCreation) throws Exception {
 
         _filename = filename;
         _file = new File(filename);
@@ -23,7 +23,7 @@ public class ConfigHandler {
             _configObject = _gson.fromJson(new FileReader(_file), configObject.getClass());
         } else {
             writeStringToFile(_gson.toJson(configObject));
-            if (throwErrorOnCreation) ErrorHandler.getInstance().handleFatal(new Exception("Config created! Please edit it and then restart!"));
+            if (throwErrorOnCreation) throw new Exception("Config created! Please edit it and then restart!");
         }
 
     }

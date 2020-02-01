@@ -132,4 +132,5 @@ buildNumber.properties
 # End of https://www.gitignore.io/api/java,maven,intellij
 
 config.json
+otpConfig.json
 .idea/discord.xml

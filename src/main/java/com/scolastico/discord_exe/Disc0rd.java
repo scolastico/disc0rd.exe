@@ -36,6 +36,10 @@ public class Disc0rd {
         return startTime;
     }
 
+    public static void setConfig(ConfigDataStore config) {
+        Disc0rd.config = config;
+    }
+
     public static ConfigHandler getConfigHandler() {
         return configHandler;
     }
@@ -98,7 +102,7 @@ public class Disc0rd {
                     if (obj instanceof ConfigDataStore) {
                         config = (ConfigDataStore) obj;
                     } else {
-                        ErrorHandler.getInstance().handleFatal(new Exception("Config not valid! Please delete you config and try again!"));
+                        ErrorHandler.getInstance().handleFatal(new Exception("Config not valid! Please delete your config and try again!"));
                     }
                 } catch (Exception e) {
                     ErrorHandler.getInstance().handleFatal(e);
