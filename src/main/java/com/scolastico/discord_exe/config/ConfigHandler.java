@@ -2,7 +2,6 @@ package com.scolastico.discord_exe.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.scolastico.discord_exe.etc.ErrorHandler;
 
 import java.io.*;
 
@@ -23,7 +22,7 @@ public class ConfigHandler {
             _configObject = _gson.fromJson(new FileReader(_file), configObject.getClass());
         } else {
             writeStringToFile(_gson.toJson(configObject));
-            if (throwErrorOnCreation) throw new Exception("Config created! Please edit it and then restart!");
+            if (throwErrorOnCreation) throw new ConfigCreatedException();
         }
 
     }
@@ -64,4 +63,11 @@ public class ConfigHandler {
     public String getFilename() {
         return _filename;
     }
+
+    public static class ConfigCreatedException extends Exception {
+        public ConfigCreatedException() {
+            super("Config created! Please edit it and then restart!");
+        }
+    }
+
 }
