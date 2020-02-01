@@ -135,4 +135,11 @@ public class Tools {
         return null;
     }
 
+    public int tryToParseInt(String integer) {
+        try {
+            return Integer.parseInt(integer);
+        } catch (Exception ignored) {}
+        return 0;
+    }
+
 }

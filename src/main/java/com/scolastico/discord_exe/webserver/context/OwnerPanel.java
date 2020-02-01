@@ -1,8 +1,11 @@
 package com.scolastico.discord_exe.webserver.context;
 
+import com.google.gson.Gson;
 import com.scolastico.discord_exe.Disc0rd;
+import com.scolastico.discord_exe.config.ConfigDataStore;
 import com.scolastico.discord_exe.config.ConfigHandler;
 import com.scolastico.discord_exe.etc.ErrorHandler;
+import com.scolastico.discord_exe.etc.OtpHelper;
 import com.scolastico.discord_exe.etc.Tools;
 import com.scolastico.discord_exe.webserver.WebHandler;
 import com.sun.net.httpserver.HttpExchange;
@@ -18,11 +21,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
-@WebHandler.WebHandlerRegistration(context = {"/api/v1/admin/saveSettings", "/api/v1/admin/getSettings", "/api/v1/admin/sendMessage", "/api/v1/admin/getUsername", "/api/v1/admin/getStatus", "/api/v1/admin/logout", "/api/v1/admin/login", "/api/v1/admin/isLoggedIn"})
+@WebHandler.WebHandlerRegistration(context = {"/api/v1/admin/saveConfig/*", "/api/v1/admin/getConfig/*", "/api/v1/admin/saveSettings", "/api/v1/admin/getSettings", "/api/v1/admin/sendMessage", "/api/v1/admin/getUsername", "/api/v1/admin/getStatus", "/api/v1/admin/logout", "/api/v1/admin/login", "/api/v1/admin/isLoggedIn"})
 public class OwnerPanel implements WebHandler {
 
     private static HashMap<String, Long> authKeys = new HashMap<>();
     private static HashMap<String, Long> authCookies = new HashMap<>();
+    private OtpHelper otpHelper = OtpHelper.getInstance();
 
     public static String getAuthCode() {
         clearHashMaps();
@@ -77,8 +81,62 @@ public class OwnerPanel implements WebHandler {
         } else if (httpExchange.getRequestURI().getPath().equals("/api/v1/admin/saveSettings")) {
             httpExchange.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8;");
             return saveSettings(httpExchange);
+        } else if (httpExchange.getRequestURI().getPath().startsWith("/api/v1/admin/getConfig/")) {
+            httpExchange.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8;");
+            return getConfig(httpExchange);
+        } else if (httpExchange.getRequestURI().getPath().startsWith("/api/v1/admin/saveConfig/")) {
+            httpExchange.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8;");
+            return saveConfig(httpExchange);
         }
         return null;
+    }
+
+    private String saveConfig(HttpExchange httpExchange) {
+        try {
+            if (isLoggedIn(httpExchange)) {
+                String key = httpExchange.getRequestURI().getPath().replaceFirst("/api/v1/admin/saveConfig/", "");
+                if (otpHelper.isValid(Tools.getInstance().tryToParseInt(key))) {
+                    if (httpExchange.getRequestMethod().equals("POST")) {
+                        HashMap<String, String> postValues = Tools.getInstance().getPostValuesFromHttpExchange(httpExchange);
+                        if (postValues.containsKey("config")) {
+                            Gson gson = new Gson();
+                            Disc0rd.setConfig(gson.fromJson(URLDecoder.decode(postValues.get("config"), StandardCharsets.UTF_8.toString()), ConfigDataStore.class));
+                            ConfigHandler configHandler = Disc0rd.getConfigHandler();
+                            configHandler.setConfigObject(Disc0rd.getConfig());
+                            configHandler.saveConfigObject();
+                            return "{\"status\":\"ok\"}";
+                        }
+                    }
+                    return "{\"status\":\"error\",\"error\":\"not supported\"}";
+                } else {
+                    return "{\"status\":\"error\",\"error\":\"no otp auth\"}";
+                }
+            } else {
+                return "{\"status\":\"error\",\"error\":\"no auth\"}";
+            }
+        } catch (Exception e) {
+            ErrorHandler.getInstance().handle(e);
+            return "{\"status\":\"error\",\"error\":\"internal error\"}";
+        }
+    }
+
+    private String getConfig(HttpExchange httpExchange) {
+        try {
+            if (isLoggedIn(httpExchange)) {
+                String key = httpExchange.getRequestURI().getPath().replaceFirst("/api/v1/admin/getConfig/", "");
+                if (otpHelper.isValid(Tools.getInstance().tryToParseInt(key))) {
+                    Gson gson = new Gson();
+                    return "{\"status\":\"ok\",\"config\":\"" + URLEncoder.encode(gson.toJson(Disc0rd.getConfig()), StandardCharsets.UTF_8.toString()) + "\"}";
+                } else {
+                    return "{\"status\":\"error\",\"error\":\"no otp auth\"}";
+                }
+            } else {
+                return "{\"status\":\"error\",\"error\":\"no auth\"}";
+            }
+        } catch (Exception e) {
+            ErrorHandler.getInstance().handle(e);
+            return "{\"status\":\"error\",\"error\":\"internal error\"}";
+        }
     }
 
     private String saveSettings(HttpExchange httpExchange) {
@@ -227,5 +285,4 @@ public class OwnerPanel implements WebHandler {
         } catch (Exception ignore) {}
         return false;
     }
-
 }
