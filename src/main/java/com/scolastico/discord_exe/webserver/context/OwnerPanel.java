@@ -7,8 +7,6 @@ import com.scolastico.discord_exe.config.ConfigHandler;
 import com.scolastico.discord_exe.etc.ErrorHandler;
 import com.scolastico.discord_exe.etc.OtpHelper;
 import com.scolastico.discord_exe.etc.Tools;
-import com.scolastico.discord_exe.event.EventRegister;
-import com.scolastico.discord_exe.event.handlers.EventHandler;
 import com.scolastico.discord_exe.webserver.WebHandler;
 import com.sun.net.httpserver.HttpExchange;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -88,7 +86,7 @@ public class OwnerPanel implements WebHandler {
             return getConfig(httpExchange);
         } else if (httpExchange.getRequestURI().getPath().startsWith("/api/v1/admin/saveConfig/")) {
             httpExchange.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8;");
-            return saveSettings(httpExchange);
+            return saveConfig(httpExchange);
         }
         return null;
     }
@@ -97,12 +95,12 @@ public class OwnerPanel implements WebHandler {
         try {
             if (isLoggedIn(httpExchange)) {
                 String key = httpExchange.getRequestURI().getPath().replaceFirst("/api/v1/admin/saveConfig/", "");
-                if (otpHelper.isValid(Integer.parseInt(key))) {
+                if (otpHelper.isValid(Tools.getInstance().tryToParseInt(key))) {
                     if (httpExchange.getRequestMethod().equals("POST")) {
                         HashMap<String, String> postValues = Tools.getInstance().getPostValuesFromHttpExchange(httpExchange);
                         if (postValues.containsKey("config")) {
                             Gson gson = new Gson();
-                            Disc0rd.setConfig(gson.fromJson(URLDecoder.decode(postValues.get("w2gDefaultPlayback"), StandardCharsets.UTF_8.toString()), ConfigDataStore.class));
+                            Disc0rd.setConfig(gson.fromJson(URLDecoder.decode(postValues.get("config"), StandardCharsets.UTF_8.toString()), ConfigDataStore.class));
                             ConfigHandler configHandler = Disc0rd.getConfigHandler();
                             configHandler.setConfigObject(Disc0rd.getConfig());
                             configHandler.saveConfigObject();
@@ -126,7 +124,7 @@ public class OwnerPanel implements WebHandler {
         try {
             if (isLoggedIn(httpExchange)) {
                 String key = httpExchange.getRequestURI().getPath().replaceFirst("/api/v1/admin/getConfig/", "");
-                if (otpHelper.isValid(Integer.parseInt(key))) {
+                if (otpHelper.isValid(Tools.getInstance().tryToParseInt(key))) {
                     Gson gson = new Gson();
                     return "{\"status\":\"ok\",\"config\":\"" + URLEncoder.encode(gson.toJson(Disc0rd.getConfig()), StandardCharsets.UTF_8.toString()) + "\"}";
                 } else {

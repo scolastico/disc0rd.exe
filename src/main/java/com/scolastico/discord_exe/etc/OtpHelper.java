@@ -5,19 +5,11 @@ import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 
-import javax.crypto.KeyGenerator;
-import javax.crypto.spec.SecretKeySpec;
-import java.security.Key;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Base64;
-
 public class OtpHelper {
 
     private GoogleAuthenticator gAuth = new GoogleAuthenticator();
     private OtpConfig otpConfig = new OtpConfig();
     private static OtpHelper instance = null;
-    private Key key;
     private int lastUsedPassword = 0;
 
     public static OtpHelper getInstance() {
