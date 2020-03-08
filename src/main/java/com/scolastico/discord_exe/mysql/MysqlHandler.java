@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class MysqlHandler {
 
@@ -22,6 +23,19 @@ public class MysqlHandler {
         connection = DriverManager.getConnection("jdbc:mysql://" + server + "/" + db + "?user=" + user + "&password=" + pass + "&serverTimezone=UTC&autoReconnect=true");
         connection.prepareStatement("CREATE TABLE IF NOT EXISTS `" + prefix + "serverSettings` (`id` BIGINT NOT NULL, `json` text NOT NULL, PRIMARY KEY( `id` ));").execute();
 
+    }
+
+    public ArrayList<ServerSettings> getAllServerSettings() {
+        ArrayList<ServerSettings> serverSettings = new ArrayList<>();
+        try {
+            ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM `" + prefix + "serverSettings`;");
+            while (rs.next()) {
+                serverSettings.add(gson.fromJson(rs.getString("json"), ServerSettings.class));
+            }
+        } catch (SQLException e) {
+            ErrorHandler.getInstance().handle(e);
+        }
+        return serverSettings;
     }
 
     public ServerSettings getServerSettings(long id) {

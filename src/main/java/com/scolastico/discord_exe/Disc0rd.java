@@ -7,6 +7,8 @@ import com.scolastico.discord_exe.etc.VersionController;
 import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.config.ConfigDataStore;
 import com.scolastico.discord_exe.config.ConfigHandler;
+import com.scolastico.discord_exe.event.extendedEventSystem.ExtendedEvent;
+import com.scolastico.discord_exe.event.extendedEventSystem.ExtendedEventManager;
 import com.scolastico.discord_exe.event.handlers.EventHandler;
 import com.scolastico.discord_exe.mysql.MysqlHandler;
 import com.scolastico.discord_exe.webserver.WebServerManager;
@@ -179,6 +181,17 @@ public class Disc0rd {
             public void run() {
                 try {
                     WebServerManager.getInstance();
+                } catch (Exception e) {
+                    ErrorHandler.getInstance().handleFatal(e);
+                }
+            }
+        });
+
+        System.out.print("Loading extended event system module ");
+        tools.asyncLoadingAnimationWhileWaitingResult(new Runnable() {
+            public void run() {
+                try {
+                    ExtendedEventManager.getInstance();
                 } catch (Exception e) {
                     ErrorHandler.getInstance().handleFatal(e);
                 }

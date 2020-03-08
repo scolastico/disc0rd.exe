@@ -9,6 +9,24 @@ public class ConfigDataStore {
     private String w2gToken = "token";
     private String w2gDefaultPlayback = "https://youtu.be/J5SRm9Wk-fM";
     private OwnerPanelData ownerPanel = new OwnerPanelData();
+    private AdminPanelData adminPanel = new AdminPanelData();
+    private DefaultLimits defaultLimits = new DefaultLimits();
+
+    public AdminPanelData getAdminPanel() {
+        return adminPanel;
+    }
+
+    public void setAdminPanel(AdminPanelData adminPanel) {
+        this.adminPanel = adminPanel;
+    }
+
+    public DefaultLimits getDefaultLimits() {
+        return defaultLimits;
+    }
+
+    public void setDefaultLimits(DefaultLimits defaultLimits) {
+        this.defaultLimits = defaultLimits;
+    }
 
     public OwnerPanelData getOwnerPanel() {
         return ownerPanel;
@@ -64,6 +82,36 @@ public class ConfigDataStore {
 
     public void setWebServer(WebServerData webServer) {
         this.webServer = webServer;
+    }
+
+    public static class DefaultLimits {
+        private int logLines = 3000;
+        private int events = 150;
+        private int actionsPerEvent = 10;
+
+        public int getLogLines() {
+            return logLines;
+        }
+
+        public void setLogLines(int logLines) {
+            this.logLines = logLines;
+        }
+
+        public int getEvents() {
+            return events;
+        }
+
+        public void setEvents(int events) {
+            this.events = events;
+        }
+
+        public int getActionsPerEvent() {
+            return actionsPerEvent;
+        }
+
+        public void setActionsPerEvent(int actionsPerEvent) {
+            this.actionsPerEvent = actionsPerEvent;
+        }
     }
 
     public static class WebServerData {
@@ -146,10 +194,10 @@ public class ConfigDataStore {
         }
 
         private MysqlData() {}
+
     }
 
     public static class OwnerPanelData {
-
         private long ownerId = 441419741316251670L;
         private Integer timeOut = 3600;
         private Integer keyValidTimeOut = 60;
@@ -177,6 +225,36 @@ public class ConfigDataStore {
 
         public void setOwnerId(long ownerId) {
             this.ownerId = ownerId;
+        }
+
+        public Integer getTimeOut() {
+            return timeOut;
+        }
+
+        public void setTimeOut(Integer timeOut) {
+            this.timeOut = timeOut;
+        }
+    }
+
+    public static class AdminPanelData {
+        private Integer timeOut = 3600;
+        private Integer keyValidTimeOut = 300;
+        private boolean secureCookie = true;
+
+        public boolean isSecureCookie() {
+            return secureCookie;
+        }
+
+        public void setSecureCookie(boolean secureCookie) {
+            this.secureCookie = secureCookie;
+        }
+
+        public Integer getKeyValidTimeOut() {
+            return keyValidTimeOut;
+        }
+
+        public void setKeyValidTimeOut(Integer keyValidTimeOut) {
+            this.keyValidTimeOut = keyValidTimeOut;
         }
 
         public Integer getTimeOut() {

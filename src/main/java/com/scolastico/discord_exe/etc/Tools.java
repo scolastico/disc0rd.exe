@@ -1,5 +1,9 @@
 package com.scolastico.discord_exe.etc;
 
+import com.scolastico.discord_exe.Disc0rd;
+import com.scolastico.discord_exe.config.ConfigDataStore;
+import com.scolastico.discord_exe.event.extendedEventSystem.ExtendedEventDataStore;
+import com.scolastico.discord_exe.mysql.ServerSettings;
 import com.sun.net.httpserver.HttpExchange;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
@@ -10,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -140,6 +145,38 @@ public class Tools {
             return Integer.parseInt(integer);
         } catch (Exception ignored) {}
         return 0;
+    }
+
+    public void writeGuildLogLine(long guildId, String logText) {
+        ServerSettings serverSettings = Disc0rd.getMysql().getServerSettings(guildId);
+        String log = serverSettings.getLog();
+        while (countLines(log) >= getLimitFromGuild(guildId).getLogLines()) {
+            log = log.substring(0, log.lastIndexOf("\n"));
+            if (log.equals("")) break;
+        }
+        log = "[" + new Date().toString() + "] " + logText + "\n" + log;
+        serverSettings.setLog(log);
+    }
+
+    public int countLines(String str){
+        String[] lines = str.split("\n");
+        return  lines.length;
+    }
+
+    public String getStringWithVarsFromDataStore(ExtendedEventDataStore dataStore, String string) {
+        for (String key:dataStore.getDataStore().keySet()) {
+            string = string.replace("{" + key + "}", dataStore.getDataStore().get(key));
+        }
+        return string;
+    }
+
+    public ServerSettings.ServerLimits getLimitFromGuild(long guildId) {
+        ServerSettings.ServerLimits serverLimits = Disc0rd.getMysql().getServerSettings(guildId).getServerLimits();
+        ConfigDataStore.DefaultLimits defaultLimits = Disc0rd.getConfig().getDefaultLimits();
+        if (serverLimits.getActionsPerEvent() == 0) serverLimits.setActionsPerEvent(defaultLimits.getActionsPerEvent());
+        if (serverLimits.getEvents() == 0) serverLimits.setEvents(defaultLimits.getEvents());
+        if (serverLimits.getLogLines() == 0) serverLimits.setLogLines(defaultLimits.getLogLines());
+        return serverLimits;
     }
 
 }
