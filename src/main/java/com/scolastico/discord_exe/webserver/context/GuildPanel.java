@@ -13,6 +13,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 @WebHandler.WebHandlerRegistration(context = {"/api/v1/guild/login", "/api/v1/guild/logout", "/api/v1/guild/info"})
 public class GuildPanel implements WebHandler {
@@ -101,15 +102,17 @@ public class GuildPanel implements WebHandler {
     }
 
     private String logout(HttpExchange httpExchange) {
-        for (String cookie : httpExchange.getRequestHeaders().get("Cookie")) {
-            if (cookie.contains("j_session_auth=")) {
-                String key = cookie.split("j_session_auth=")[1].substring(0, 32);
-                for (Authorization authorization:authorizations) {
-                    if (authorization.getToken().equals(key)) {
-                        authorizations.remove(authorization);
-                        authorizations.removeIf(auth -> auth.getGuildId().equals(authorization.getGuildId()));
-                        authTokens.removeIf(auth -> auth.getGuildId().equals(authorization.getGuildId()));
-                        return "{\"status\":\"ok\"}";
+        if (httpExchange.getRequestHeaders().get("Cookie") != null) {
+            for (String cookie : httpExchange.getRequestHeaders().get("Cookie")) {
+                if (cookie.contains("j_session_auth=")) {
+                    String key = cookie.split("j_session_auth=")[1].substring(0, 32);
+                    for (Authorization authorization:authorizations) {
+                        if (authorization.getToken().equals(key)) {
+                            authorizations.remove(authorization);
+                            authorizations.removeIf(auth -> auth.getGuildId().equals(authorization.getGuildId()));
+                            authTokens.removeIf(auth -> auth.getGuildId().equals(authorization.getGuildId()));
+                            return "{\"status\":\"ok\"}";
+                        }
                     }
                 }
             }
@@ -125,7 +128,7 @@ public class GuildPanel implements WebHandler {
                 if (guild == null) return "{\"status\":\"error\", \"error\":\"no auth\"}";
                 Gson gson = new Gson();
                 ServerSettings.ServerLimits limits = Tools.getInstance().getLimitFromGuild(id);
-                return "{\"status\":\"ok\", \"name\":\"" + URLEncoder.encode(guild.getName(), StandardCharsets.UTF_8.toString()) + "\", \"limits\": " + gson.toJson(limits) + "}";
+                return "{\"status\":\"ok\",\"image\":\"" + URLEncoder.encode(Objects.toString(guild.getIconUrl()), StandardCharsets.UTF_8.toString()) + "\",\"name\":\"" + URLEncoder.encode(guild.getName(), StandardCharsets.UTF_8.toString()) + "\", \"limits\": " + gson.toJson(limits) + "}";
             }
             return "{\"status\":\"error\", \"error\":\"no auth\"}";
         } catch (Exception e) {

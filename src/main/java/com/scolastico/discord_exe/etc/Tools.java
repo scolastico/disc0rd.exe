@@ -14,6 +14,8 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -87,9 +89,7 @@ public class Tools {
             for (String pair:stringBuilder.toString().split("&")) {
                 String[] keyValue = pair.split("=");
                 if (keyValue.length == 2) {
-                    hashMap.put(keyValue[0], keyValue[1]);
-                } else {
-                    ErrorHandler.getInstance().handle(new Exception("Error while parsing post values: '" + stringBuilder.toString() + "'"));
+                    hashMap.put(keyValue[0], URLDecoder.decode(keyValue[1], StandardCharsets.UTF_8.toString()));
                 }
             }
         } catch (Exception e) {

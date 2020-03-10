@@ -15,7 +15,7 @@ function fireErrorSWAL(text) {
 }
 
 function fireNotValidSWAL() {
-    fireErrorSWAL("The given key (url) is not valid...\nYou need to request a new url by the bot!\nExecute 'disc0rd/owner-panel' again!");
+    fireErrorSWAL("The given key (url) is not valid...\nYou need to request a new url by the bot!\nExecute 'disc0rd/admin' again!");
 }
 
 function fireGenericErrorSWAL() {
@@ -27,7 +27,7 @@ fireSWAL("Logging in...", "Please wait a few seconds!", "info");
 const hash = window.location.hash.substr(1);
 if (hash.length === 16) {
     const xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "POST", "../api/v1/admin/login", true );
+    xmlHttp.open( "POST", "../api/v1/guild/login", true );
     xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {

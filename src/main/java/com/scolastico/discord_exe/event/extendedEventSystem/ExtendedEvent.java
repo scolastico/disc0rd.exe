@@ -7,8 +7,8 @@ public class ExtendedEvent {
     private Long guild;
     private String name;
     private String event;
-    private HashMap<String, String> eventConfig;
-    private HashMap<Integer, Action> actions;
+    private HashMap<String, String> eventConfig = new HashMap<>();
+    private HashMap<Integer, Action> actions = new HashMap<>();
 
     public Long getGuild() {
         return guild;

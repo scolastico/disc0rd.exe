@@ -1,7 +1,7 @@
 function sendMessage() {
     if (document.getElementById("title").value === "" || document.getElementById("message").value === "") {
         swal.fire({
-           icon: "error",
+           type: "error",
            title: "Oops...",
            text: "Please enter a value in all fields!"
         });
@@ -19,14 +19,13 @@ function sendMessage() {
                     position: "top-end",
                     showConfirmButton: false,
                     timer: 3000,
-                    timerProgressBar: true,
                     onOpen: (toast) => {
                         toast.addEventListener("mouseenter", Swal.stopTimer);
                         toast.addEventListener("mouseleave", Swal.resumeTimer);
                     }
                 });
                 Toast.fire({
-                    icon: "success",
+                    type: "success",
                     title: "Message Send!"
                 });
             } else {
