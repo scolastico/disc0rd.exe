@@ -34,6 +34,7 @@ public class ExtendedEventManager {
             Set<Class<? extends Disc0rdEvent>> disc0rdEvents = reflections.getSubTypesOf(Disc0rdEvent.class);
             for (Class<? extends Disc0rdEvent> eventClass:disc0rdEvents) {
                 Disc0rdEvent event = eventClass.newInstance();
+                event.registerDisc0rdEvent();
                 events.put(event.getName(), event);
             }
         } catch (Exception e) {

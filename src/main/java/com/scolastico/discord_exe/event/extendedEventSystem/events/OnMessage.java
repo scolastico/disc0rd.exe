@@ -45,7 +45,7 @@ public class OnMessage implements Disc0rdEvent, EventHandler, MessageReceivedHan
     public HashMap<String, String> getConfig() {
         HashMap<String, String> config = new HashMap<>();
         config.put("REGEX", "Set a REGEX value here to only listen to certain messages or leave the field empty to listen to all messages.");
-        config.put("channel", "Set a channel id here or leave the field empty to listen to all channels.");
+        config.put("Channel", "Set a channel id here or leave the field empty to listen to all channels.");
         return config;
     }
 
@@ -67,8 +67,18 @@ public class OnMessage implements Disc0rdEvent, EventHandler, MessageReceivedHan
                             dataStore.setDataStore("event-sender-name", messageReceivedEvent.getAuthor().getName());
                             dataStore.setDataStore("event-sender-id", messageReceivedEvent.getAuthor().getId());
                             dataStore.setDataStore("event-channel", messageReceivedEvent.getChannel().getId());
-                            if (extendedEvent.getEventConfig().containsKey("channel")) {
-                                if (extendedEvent.getEventConfig().get("channel").equals(messageReceivedEvent.getChannel().getId())) {
+                            if (extendedEvent.getEventConfig().containsKey("Channel")) {
+                                if (!messageReceivedEvent.getChannel().getId().isEmpty()) {
+                                    if (extendedEvent.getEventConfig().get("Channel").equals(messageReceivedEvent.getChannel().getId())) {
+                                        if (extendedEvent.getEventConfig().containsKey("REGEX")) {
+                                            if (messageReceivedEvent.getMessage().getContentRaw().matches(extendedEvent.getEventConfig().get("REGEX"))) {
+                                                ExtendedEventManager.getInstance().executeAction(dataStore);
+                                            }
+                                        } else {
+                                            ExtendedEventManager.getInstance().executeAction(dataStore);
+                                        }
+                                    }
+                                } else {
                                     if (extendedEvent.getEventConfig().containsKey("REGEX")) {
                                         if (messageReceivedEvent.getMessage().getContentRaw().matches(extendedEvent.getEventConfig().get("REGEX"))) {
                                             ExtendedEventManager.getInstance().executeAction(dataStore);

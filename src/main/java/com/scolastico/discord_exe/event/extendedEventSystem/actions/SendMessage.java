@@ -23,7 +23,7 @@ public class SendMessage implements Disc0rdAction {
                 dataStore.setCancelled(true);
                 return dataStore;
             }
-            TextChannel textChannel = guild.getTextChannelById(config.getOrDefault("channel", "0"));
+            TextChannel textChannel = guild.getTextChannelById(Tools.getInstance().getStringWithVarsFromDataStore(dataStore, config.getOrDefault("Channel", "0")));
             if (textChannel == null) {
                 Tools.getInstance().writeGuildLogLine(dataStore.getExtendedEvent().getGuild(), "[Send Message] [" + idFromAction + "] Text Channel not found!");
                 dataStore.setCancelled(true);
@@ -34,7 +34,7 @@ public class SendMessage implements Disc0rdAction {
                 dataStore.setCancelled(true);
                 return dataStore;
             }
-            String message = Tools.getInstance().getStringWithVarsFromDataStore(dataStore, config.getOrDefault("message", ""));
+            String message = Tools.getInstance().getStringWithVarsFromDataStore(dataStore, config.getOrDefault("Message", ""));
             if (message.isEmpty()) {
                 Tools.getInstance().writeGuildLogLine(dataStore.getExtendedEvent().getGuild(), "[Send Message] [" + idFromAction + "] Message is empty!");
                 dataStore.setCancelled(true);
@@ -69,8 +69,8 @@ public class SendMessage implements Disc0rdAction {
     @Override
     public HashMap<String, String> getConfig() {
         HashMap<String, String> config = new HashMap<>();
-        config.put("message", "The message to be sent.");
-        config.put("channel", "The channel ID in which the message should be sent.");
+        config.put("Message", "The message to be sent.");
+        config.put("Channel", "The channel ID in which the message should be sent.");
         return config;
     }
 
