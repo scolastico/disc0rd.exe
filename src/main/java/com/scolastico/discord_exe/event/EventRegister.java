@@ -2,13 +2,14 @@ package com.scolastico.discord_exe.event;
 
 import com.scolastico.discord_exe.Disc0rd;
 import com.scolastico.discord_exe.etc.ErrorHandler;
-import com.scolastico.discord_exe.event.handlers.CommandHandler;
-import com.scolastico.discord_exe.event.handlers.MessageReceivedHandler;
-import com.scolastico.discord_exe.event.handlers.ScheduleHandler;
+import com.scolastico.discord_exe.event.handlers.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,6 +17,8 @@ public class EventRegister extends ListenerAdapter {
 
     private ArrayList<CommandHandler> commandHandlers = new ArrayList<CommandHandler>();
     private ArrayList<MessageReceivedHandler> messageReceivedHandlers = new ArrayList<MessageReceivedHandler>();
+    private ArrayList<MessageReactionAddHandler> messageReactionAddHandlers = new ArrayList<MessageReactionAddHandler>();
+    private ArrayList<MessageReactionRemoveHandler> messageReactionRemoveHandlers = new ArrayList<MessageReactionRemoveHandler>();
     private HashMap<ScheduleHandler, Integer> scheduleHandlers = new HashMap<ScheduleHandler, Integer>();
     private static EventRegister instance = null;
 
@@ -38,6 +41,14 @@ public class EventRegister extends ListenerAdapter {
 
     public void registerSchedule(ScheduleHandler handler) {
         if (!scheduleHandlers.containsKey(handler)) scheduleHandlers.put(handler, 0);
+    }
+
+    public void registerMessageReactionAddEvent(MessageReactionAddHandler handler) {
+        if (!messageReactionAddHandlers.contains(handler)) messageReactionAddHandlers.add(handler);
+    }
+
+    public void registerMessageReactionRemoveEvent(MessageReactionRemoveHandler handler) {
+        if (!messageReactionRemoveHandlers.contains(handler)) messageReactionRemoveHandlers.add(handler);
     }
 
     public void fireSchedule() {
@@ -118,4 +129,25 @@ public class EventRegister extends ListenerAdapter {
         }
     }
 
+    @Override
+    public void onMessageReactionAdd(@Nonnull MessageReactionAddEvent event) {
+        for (MessageReactionAddHandler handler:messageReactionAddHandlers) {
+            try {
+                handler.onMessageReactionAdd(event);
+            } catch (Exception e) {
+                ErrorHandler.getInstance().handle(e);
+            }
+        }
+    }
+
+    @Override
+    public void onMessageReactionRemove(@Nonnull MessageReactionRemoveEvent event) {
+        for (MessageReactionRemoveHandler handler:messageReactionRemoveHandlers) {
+            try {
+                handler.onMessageReactionRemove(event);
+            } catch (Exception e) {
+                ErrorHandler.getInstance().handle(e);
+            }
+        }
+    }
 }

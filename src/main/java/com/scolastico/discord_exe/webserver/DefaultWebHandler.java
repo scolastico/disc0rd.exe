@@ -62,8 +62,8 @@ public class DefaultWebHandler {
                 try {
                     while (0 < (buffer = inputStream.read(read))) outputStream.write(read, 0, buffer);
                     outputStream.close();
-                    inputStream.close();
                 } catch (IOException ignored) {}
+                inputStream.close();
                 return;
             }
             httpExchange.sendResponseHeaders(404, 0);

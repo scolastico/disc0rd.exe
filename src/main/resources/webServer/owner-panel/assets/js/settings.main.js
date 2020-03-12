@@ -3,7 +3,6 @@ function noOtpAuth() {
         toast: true,
         position: "top-end",
         showConfirmButton: false,
-        timer: 3000,
         timerProgressBar: true,
         onOpen: (toast) => {
             toast.addEventListener("mouseenter", Swal.stopTimer);
@@ -11,7 +10,7 @@ function noOtpAuth() {
         }
     });
     Toast.fire({
-        icon: "error",
+        type: "error",
         title: "OTP Not Valid!"
     });
 }
@@ -26,7 +25,7 @@ function beautifyJsonString(jsonString) {
 function saveConfig() {
     if (document.getElementById("config").value === "" || document.getElementById("otp").value === "") {
         swal.fire({
-            icon: "error",
+            type: "error",
             title: "Oops...",
             text: "Please enter a value in all fields!"
         });
@@ -44,14 +43,13 @@ function saveConfig() {
                     position: "top-end",
                     showConfirmButton: false,
                     timer: 3000,
-                    timerProgressBar: true,
                     onOpen: (toast) => {
                         toast.addEventListener("mouseenter", Swal.stopTimer);
                         toast.addEventListener("mouseleave", Swal.resumeTimer);
                     }
                 });
                 Toast.fire({
-                    icon: "success",
+                    type: "success",
                     title: "Saved!"
                 });
                 return;
@@ -70,7 +68,7 @@ function saveConfig() {
 function loadConfig() {
     if (document.getElementById("otp").value === "") {
         swal.fire({
-            icon: "error",
+            type: "error",
             title: "Oops...",
             text: "Please enter the Google Authenticator code!"
         });
@@ -89,14 +87,13 @@ function loadConfig() {
                     position: "top-end",
                     showConfirmButton: false,
                     timer: 3000,
-                    timerProgressBar: true,
                     onOpen: (toast) => {
                         toast.addEventListener("mouseenter", Swal.stopTimer);
                         toast.addEventListener("mouseleave", Swal.resumeTimer);
                     }
                 });
                 Toast.fire({
-                    icon: "success",
+                    type: "success",
                     title: "Loaded!"
                 });
                 return;
@@ -115,7 +112,7 @@ function loadConfig() {
 function sendSettings() {
     if (document.getElementById("w2gDefaultPlayback").value === "") {
         swal.fire({
-            icon: "error",
+            type: "error",
             title: "Oops...",
             text: "Please enter a value in all fields!"
         });
@@ -132,14 +129,13 @@ function sendSettings() {
                     position: "top-end",
                     showConfirmButton: false,
                     timer: 3000,
-                    timerProgressBar: true,
                     onOpen: (toast) => {
                         toast.addEventListener("mouseenter", Swal.stopTimer);
                         toast.addEventListener("mouseleave", Swal.resumeTimer);
                     }
                 });
                 Toast.fire({
-                    icon: "success",
+                    type: "success",
                     title: "Saved!"
                 });
             } else {

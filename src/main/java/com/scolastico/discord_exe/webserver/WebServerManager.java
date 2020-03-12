@@ -103,8 +103,8 @@ public class WebServerManager implements HttpHandler {
                 try {
                     outputStream.write(response.getBytes());
                     outputStream.close();
-                    httpExchange.close();
                 } catch (IOException ignored) {}
+                httpExchange.close();
             }
             httpExchange.close();
         } catch (Exception e) {

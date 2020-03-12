@@ -15,13 +15,13 @@ function fireErrorSWAL(text) {
 }
 
 function fireGenericErrorSWAL() {
-    fireErrorSWAL("An internal error occurred!\n\nYou can try to reload the page or\nexecute 'disc0rd/owner-panel' again!");
+    fireErrorSWAL("An internal error occurred!\n\nYou can try to reload the page or\nexecute 'disc0rd/admin' again!");
 }
 
 fireSWAL("Connection to API", "Please wait a few seconds!", "info");
 
 const xmlHttp = new XMLHttpRequest();
-xmlHttp.open( "GET", "../api/v1/admin/logout", true );
+xmlHttp.open( "GET", "../api/v1/guild/logout", true );
 xmlHttp.onreadystatechange = function() {
     if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
         if (JSON.parse(xmlHttp.responseText).status === "ok") {
