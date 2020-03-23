@@ -15,11 +15,12 @@ import org.json.simple.parser.JSONParser;
 import java.awt.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 
 public class CommandW2G implements EventHandler,CommandHandler {
     @Override
     public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
-        if (cmd.equalsIgnoreCase("disc0rd/w2g") || cmd.equalsIgnoreCase("disc0rd/watch2gether")) {
+        if (cmd.equalsIgnoreCase("w2g") || cmd.equalsIgnoreCase("watch2gether")) {
             try {
                 if (args.length == 0 || args.length == 1) {
                     event.getMessage().delete().queue();
@@ -56,6 +57,27 @@ public class CommandW2G implements EventHandler,CommandHandler {
             }
         }
         return false;
+    }
+
+    @Override
+    public HashMap<String, String> getHelpSite(HashMap<String, String> helpSite) {
+        helpSite.put("w2g", "Open a Watch2Gether room.");
+        return helpSite;
+    }
+
+    @Override
+    public HashMap<String, String> getHelpSiteDetails() {
+        HashMap<String, String> helpSite = new HashMap<>();
+        helpSite.put("w2g", "Open a Watch2Gether room.");
+        helpSite.put("watch2gether", "Open a Watch2Gether room.");
+        helpSite.put("w2g <youtube url>", "Open a Watch2Gether room with a video.");
+        helpSite.put("watch2gether <youtube url>", "Open a Watch2Gether room with a video.");
+        return helpSite;
+    }
+
+    @Override
+    public String getCommandName() {
+        return "w2g";
     }
 
     @Override

@@ -15,6 +15,15 @@ public class ServerSettings {
     private ServerLimits serverLimits = new ServerLimits();
     private String log = "[LOG BEGINNING]";
     private ArrayList<ExtendedEvent> extendedEvents = new ArrayList<>();
+    private String cmdPrefix = "$";
+
+    public String getCmdPrefix() {
+        return cmdPrefix;
+    }
+
+    public void setCmdPrefix(String cmdPrefix) {
+        this.cmdPrefix = cmdPrefix;
+    }
 
     public ArrayList<ExtendedEvent> getExtendedEvents() {
         return extendedEvents;

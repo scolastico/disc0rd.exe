@@ -9,12 +9,13 @@ import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.awt.*;
+import java.util.HashMap;
 
 public class CommandDebug implements EventHandler, CommandHandler {
 
     @Override
     public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
-        if (cmd.equalsIgnoreCase("disc0rd/debug")) {
+        if (cmd.equalsIgnoreCase("debug")) {
             event.getMessage().delete().queue();
             if (args.length == 0) {
                 debugMain(cmd, args, jda, event, senderId, serverId);
@@ -33,6 +34,25 @@ public class CommandDebug implements EventHandler, CommandHandler {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public HashMap<String, String> getHelpSite(HashMap<String, String> helpSite) {
+        helpSite.put("debug", "Debug utilities for the bot.");
+        return helpSite;
+    }
+
+    @Override
+    public HashMap<String, String> getHelpSiteDetails() {
+        HashMap<String, String> helpSite = new HashMap<>();
+        helpSite.put("debug", "Outputs guild information's for debug.");
+        helpSite.put("debug emoji", "Outputs the emoji id's from this guild.");
+        return helpSite;
+    }
+
+    @Override
+    public String getCommandName() {
+        return "debug";
     }
 
     @Override

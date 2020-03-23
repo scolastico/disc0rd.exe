@@ -11,13 +11,14 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.awt.*;
+import java.util.HashMap;
 
 public class CommandGuildPanel implements EventHandler, CommandHandler {
 
 
     @Override
     public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
-        if (cmd.equalsIgnoreCase("disc0rd/admin")) {
+        if (cmd.equalsIgnoreCase("admin")) {
             event.getMessage().delete().queue();
             EmbedBuilder embedBuilder = new EmbedBuilder();
             if (Tools.getInstance().isOwner(event.getMessage().getGuild(), event.getAuthor())) {
@@ -33,6 +34,24 @@ public class CommandGuildPanel implements EventHandler, CommandHandler {
             event.getChannel().sendMessage(embedBuilder.build()).queue();
         }
         return false;
+    }
+
+    @Override
+    public HashMap<String, String> getHelpSite(HashMap<String, String> helpSite) {
+        helpSite.put("admin", "Request an login link for the admin panel. Admin Command.");
+        return helpSite;
+    }
+
+    @Override
+    public HashMap<String, String> getHelpSiteDetails() {
+        HashMap<String, String> helpSite = new HashMap<>();
+        helpSite.put("admin", "Request an login link for the admin panel. Admin Command.");
+        return helpSite;
+    }
+
+    @Override
+    public String getCommandName() {
+        return "admin";
     }
 
     @Override
