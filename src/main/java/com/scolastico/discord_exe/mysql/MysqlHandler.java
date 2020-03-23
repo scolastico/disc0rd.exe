@@ -4,6 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.scolastico.discord_exe.etc.ErrorHandler;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -43,9 +47,9 @@ public class MysqlHandler {
         try {
             ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM `" + prefix + "serverSettings` WHERE `id`=" + id + ";");
             while (rs.next()) {
-                json = rs.getString("json");
+                json = URLDecoder.decode(rs.getString("json"), StandardCharsets.UTF_8.toString());
             }
-        } catch (SQLException e) {
+        } catch (SQLException | UnsupportedEncodingException e) {
             ErrorHandler.getInstance().handle(e);
         }
         return gson.fromJson(json, ServerSettings.class);
@@ -54,8 +58,8 @@ public class MysqlHandler {
     public void setServerSettings(long id, ServerSettings settings) {
         try {
             String json = gson.toJson(settings);
-            connection.prepareStatement("INSERT INTO `" + prefix + "serverSettings` (id, json) VALUES(" + id + ", '" + json + "') ON DUPLICATE KEY UPDATE json='" + json + "';").execute();
-        } catch (SQLException e) {
+            connection.prepareStatement("INSERT INTO `" + prefix + "serverSettings` (id, json) VALUES(" + id + ", '" + json + "') ON DUPLICATE KEY UPDATE json='" + URLEncoder.encode(json, StandardCharsets.UTF_8.toString()) + "';").execute();
+        } catch (SQLException | UnsupportedEncodingException e) {
             ErrorHandler.getInstance().handle(e);
         }
     }

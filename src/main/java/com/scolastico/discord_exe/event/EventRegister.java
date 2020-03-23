@@ -3,6 +3,7 @@ package com.scolastico.discord_exe.event;
 import com.scolastico.discord_exe.Disc0rd;
 import com.scolastico.discord_exe.etc.ErrorHandler;
 import com.scolastico.discord_exe.event.handlers.*;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
@@ -19,6 +20,7 @@ public class EventRegister extends ListenerAdapter {
     private ArrayList<MessageReceivedHandler> messageReceivedHandlers = new ArrayList<MessageReceivedHandler>();
     private ArrayList<MessageReactionAddHandler> messageReactionAddHandlers = new ArrayList<MessageReactionAddHandler>();
     private ArrayList<MessageReactionRemoveHandler> messageReactionRemoveHandlers = new ArrayList<MessageReactionRemoveHandler>();
+    private ArrayList<GuildMemberJoinHandler> guildMemberJoinHandlers = new ArrayList<>();
     private HashMap<ScheduleHandler, Integer> scheduleHandlers = new HashMap<ScheduleHandler, Integer>();
     private static EventRegister instance = null;
 
@@ -29,7 +31,6 @@ public class EventRegister extends ListenerAdapter {
         }
         return instance;
     }
-
 
     public void registerCommand(CommandHandler handler) {
         if (!commandHandlers.contains(handler)) commandHandlers.add(handler);
@@ -49,6 +50,10 @@ public class EventRegister extends ListenerAdapter {
 
     public void registerMessageReactionRemoveEvent(MessageReactionRemoveHandler handler) {
         if (!messageReactionRemoveHandlers.contains(handler)) messageReactionRemoveHandlers.add(handler);
+    }
+
+    public void registerGuildMemberJoinEvent(GuildMemberJoinHandler handler) {
+        if (!guildMemberJoinHandlers.contains(handler)) guildMemberJoinHandlers.add(handler);
     }
 
     public void fireSchedule() {
@@ -145,6 +150,17 @@ public class EventRegister extends ListenerAdapter {
         for (MessageReactionRemoveHandler handler:messageReactionRemoveHandlers) {
             try {
                 handler.onMessageReactionRemove(event);
+            } catch (Exception e) {
+                ErrorHandler.getInstance().handle(e);
+            }
+        }
+    }
+
+    @Override
+    public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
+        for (GuildMemberJoinHandler handler:guildMemberJoinHandlers) {
+            try {
+                handler.onGuildMemberJoin(event);
             } catch (Exception e) {
                 ErrorHandler.getInstance().handle(e);
             }
