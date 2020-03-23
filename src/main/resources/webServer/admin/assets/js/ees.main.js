@@ -63,7 +63,9 @@ try {
                         try {
                             const path = "event-" + element.name + "-config-" + ele.name;
                             const tmpObj = document.getElementById(path);
-                            if (tmpObj !== null) fields[path] = tmpObj.value;
+                            if (tmpObj !== null) {
+                                fields[path] = tmpObj.value;
+                            }
                         } catch (e) {}
                     });
                     Object.keys(element.actions).forEach(function (elem, ident) {
@@ -71,7 +73,9 @@ try {
                             try {
                                 const path = "event-" + element.name + "-action-" + elem + "-config-" + ele.name;
                                 const tmpObj = document.getElementById(path);
-                                if (tmpObj !== null) fields[path] = tmpObj.value;
+                                if (tmpObj !== null) {
+                                    fields[path] = tmpObj.value;
+                                }
                             } catch (e) {}
                         });
                     });
@@ -94,7 +98,9 @@ try {
         Object.keys(fields).forEach(function (element, identifier) {
             try {
                 const tmpObj = document.getElementById(element);
-                if (tmpObj !== null) tmpObj.value = fields[element];
+                if (tmpObj !== null) {
+                    tmpObj.value = fields[element];
+                }
             } catch (e) {}
         })
     }
@@ -166,9 +172,13 @@ try {
                 } else {
                     let tmp = false;
                     events.forEach(function (element, identifier) {
-                        if (element.name === value) tmp = true;
+                        if (element.name === value) {
+                            tmp = true;
+                        }
                     });
-                    if (tmp) return 'Name already exists!';
+                    if (tmp) {
+                        return 'Name already exists!';
+                    }
                 }
             }
         }).then((result) => {
@@ -252,7 +262,9 @@ try {
                     });
                     let eventInfo;
                     events.forEach(function (ele, ide) {
-                        if (ele.name === eventName) eventInfo = getInfo(eventInfos, ele.event);
+                        if (ele.name === eventName) {
+                            eventInfo = getInfo(eventInfos, ele.event);
+                        }
                     });
                     eventInfo.config.forEach(function (ele, ide) {
                         eventConfigJson["config"][ele.name] = document.getElementById("event-" + eventName + "-config-" + ele.name).value;
@@ -283,14 +295,16 @@ try {
             showCancelButton: true,
             allowOutsideClick: false
         }).then((result) => {
-            if (!result.value) return;
+            if (!result.value) {return;}
             document.getElementById('warning-' + eventName).style.display = 'block';
             events.forEach(function (element, identifier, obj) {
                 if (element.name === eventName) {
                     let nextNumber = 1;
                     Object.keys(element.actions).forEach(function (e, i) {
                         try {
-                            if (parseInt(e) >= nextNumber) nextNumber = parseInt(e) + 1;
+                            if (parseInt(e) >= nextNumber) {
+                                nextNumber = parseInt(e) + 1;
+                            }
                         } catch (e) {}
                     });
                     obj[identifier].actions[nextNumber] = {};
