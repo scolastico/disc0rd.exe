@@ -34,9 +34,9 @@ public class MysqlHandler {
         try {
             ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM `" + prefix + "serverSettings`;");
             while (rs.next()) {
-                serverSettings.add(gson.fromJson(rs.getString("json"), ServerSettings.class));
+                serverSettings.add(gson.fromJson(URLDecoder.decode(rs.getString("json"), StandardCharsets.UTF_8.toString()), ServerSettings.class));
             }
-        } catch (SQLException e) {
+        } catch (SQLException | UnsupportedEncodingException e) {
             ErrorHandler.getInstance().handle(e);
         }
         return serverSettings;
