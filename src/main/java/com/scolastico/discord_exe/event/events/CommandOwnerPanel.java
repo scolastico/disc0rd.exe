@@ -10,12 +10,13 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.awt.*;
+import java.util.HashMap;
 
 public class CommandOwnerPanel implements EventHandler, CommandHandler {
 
     @Override
     public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
-        if (cmd.equalsIgnoreCase("disc0rd/owner-panel") && args.length == 0) {
+        if (cmd.equalsIgnoreCase("owner-panel") && args.length == 0) {
             event.getMessage().delete().queue();
             if (event.getMessage().getAuthor().getIdLong() == Disc0rd.getConfig().getOwnerPanel().getOwnerId()) {
                 event.getAuthor().openPrivateChannel().complete().sendMessage("You can login here: <" + Disc0rd.getConfig().getWebServer().getDomain() + "owner-panel/login.html#" + OwnerPanel.getAuthCode() + ">").queue();
@@ -29,6 +30,21 @@ public class CommandOwnerPanel implements EventHandler, CommandHandler {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public HashMap<String, String> getHelpSite(HashMap<String, String> helpSite) {
+        return helpSite;
+    }
+
+    @Override
+    public HashMap<String, String> getHelpSiteDetails() {
+        return new HashMap<>();
+    }
+
+    @Override
+    public String getCommandName() {
+        return null;
     }
 
     @Override
