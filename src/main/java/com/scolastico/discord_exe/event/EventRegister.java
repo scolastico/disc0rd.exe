@@ -3,6 +3,8 @@ package com.scolastico.discord_exe.event;
 import com.scolastico.discord_exe.Disc0rd;
 import com.scolastico.discord_exe.etc.ErrorHandler;
 import com.scolastico.discord_exe.event.handlers.*;
+import com.scolastico.discord_exe.mysql.ServerSettings;
+import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
@@ -30,6 +32,9 @@ public class EventRegister extends ListenerAdapter {
         return instance;
     }
 
+    public ArrayList<CommandHandler> getCommandHandlers() {
+        return commandHandlers;
+    }
 
     public void registerCommand(CommandHandler handler) {
         if (!commandHandlers.contains(handler)) commandHandlers.add(handler);
@@ -99,31 +104,56 @@ public class EventRegister extends ListenerAdapter {
                 }
             }
 
-            String message = event.getMessage().getContentRaw();
-            if (message.length() >= 8 && message.substring(0,8).equalsIgnoreCase("disc0rd/")) {
-                String cmd = message.split(" ")[0];
-                String[] args = new ArrayList<String>().toArray(new String[0]);
-                if (message.replaceFirst(cmd, "").length() != 0) {
-                    args = message.replaceFirst(cmd + " ", "").split(" ");
-                }
+            if (event.getChannel().getType() == ChannelType.TEXT) {
+                String message = event.getMessage().getContentRaw();
+                ServerSettings settings = Disc0rd.getMysql().getServerSettings(event.getGuild().getIdLong());
 
-                for (CommandHandler handler:commandHandlers) {
+                boolean defaultPrefix = (message.length() >= 8 && message.substring(0,8).equalsIgnoreCase("disc0rd/"));
+                boolean customPrefix = (message.length() >= settings.getCmdPrefix().length() && message.substring(0, settings.getCmdPrefix().length()).equals(settings.getCmdPrefix()));
 
-                    try {
+                if (defaultPrefix || customPrefix) {
 
-                        if (handler.respondToCommand(cmd, args, event.getJDA(), event, event.getAuthor().getIdLong(), event.getChannel().getIdLong())) {
-                            Disc0rd.addExecutedCommand();
-                            break;
+                    String cmd = message.split(" ")[0];
+
+
+                    ArrayList<String> argsTmp = new ArrayList<>();
+                    boolean firstArg = true;
+
+                    for (String arg : message.split(" ")) {
+                        if (!firstArg) {
+                            argsTmp.add(arg);
+                        } else {
+                            firstArg = false;
                         }
-
-                    } catch (Exception e) {
-
-                        ErrorHandler.getInstance().handle(e);
-
                     }
 
+                    String[] args = argsTmp.toArray(new String[0]);
+
+                    if (defaultPrefix) {
+                        cmd = cmd.substring(0, 8);
+                    } else {
+                        cmd = cmd.substring(settings.getCmdPrefix().length());
+                    }
+
+                    for (CommandHandler handler:commandHandlers) {
+
+                        try {
+
+                            if (handler.respondToCommand(cmd, args, event.getJDA(), event, event.getAuthor().getIdLong(), event.getChannel().getIdLong())) {
+                                Disc0rd.addExecutedCommand();
+                                break;
+                            }
+
+                        } catch (Exception e) {
+
+                            ErrorHandler.getInstance().handle(e);
+
+                        }
+
+                    }
                 }
             }
+
         } catch (Exception e) {
             ErrorHandler.getInstance().handle(e);
         }

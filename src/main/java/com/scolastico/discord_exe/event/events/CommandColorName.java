@@ -35,7 +35,7 @@ public class CommandColorName implements EventHandler, CommandHandler, WebHandle
 
     @Override
     public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
-        if (cmd.equalsIgnoreCase("disc0rd/color")) {
+        if (cmd.equalsIgnoreCase("color")) {
             if (event.getChannel().getType().equals(ChannelType.TEXT)) {
                 event.getMessage().delete().queue();
                 EmbedBuilder embedBuilder = new EmbedBuilder();
@@ -192,6 +192,30 @@ public class CommandColorName implements EventHandler, CommandHandler, WebHandle
             }
         }
         return false;
+    }
+
+    @Override
+    public HashMap<String, String> getHelpSite(HashMap<String, String> helpSite) {
+        helpSite.put("color", "Lets users choose their color from their names.");
+        return helpSite;
+    }
+
+    @Override
+    public HashMap<String, String> getHelpSiteDetails() {
+        HashMap<String, String> helpSite = new HashMap<>();
+        helpSite.put("color", "Lets users choose their color from their names.");
+        helpSite.put("color listBlockedColors", "Lists the blocked colors.");
+        helpSite.put("color sensitivity <amount>", "Set the sensitivity for blocked colors. Admin command.");
+        helpSite.put("color unblock <hex>", "Unblock a blocked color. Admin command.");
+        helpSite.put("color block <hex>", "Block a color. Admin command.");
+        helpSite.put("color deactivate/off", "Deactivate the color function. Admin command.");
+        helpSite.put("color activate/on", "Activate the color function. Admin command.");
+        return helpSite;
+    }
+
+    @Override
+    public String getCommandName() {
+        return "color";
     }
 
     @Override
