@@ -110,6 +110,57 @@ public class Pr0grammAPI {
         httpClient.close();
     }
 
+    public Pr0grammUser getPr0grammUser(String name) throws Pr0grammApiError {
+        try {
+            String request = makeGetRequest("profile/info?name=" + name.replaceAll("/[^A-Za-z0-9]/", "") + "&flags=0");
+            if (request == null) {
+                throw new Pr0grammApiError("response is null");
+            }
+            JSONObject object = new JSONObject(request);
+            if (object.has("error")) {
+                if (object.get("error") instanceof String) {
+                    if (object.getString("error").equals("not found")) return null;
+                    throw new Pr0grammApiError(object.getString("error"));
+                }
+            }
+            ArrayList<Pr0grammUser.Badge> badges = new ArrayList<>();
+            JSONArray badgeArray = object.getJSONArray("badges");
+            for (int index = 0; index != badgeArray.length(); index++) {
+                JSONObject tmpJsonObject = badgeArray.getJSONObject(index);
+                badges.add(new Pr0grammUser.Badge(
+                        tmpJsonObject.getString("link"),
+                        tmpJsonObject.getString("image"),
+                        tmpJsonObject.getString("description"),
+                        tmpJsonObject.getLong("created")
+                ));
+            }
+            JSONObject userObject = object.getJSONObject("user");
+            return new Pr0grammUser(
+                    userObject.getLong("id"),
+                    userObject.getString("name"),
+                    userObject.getLong("registered"),
+                    userObject.getLong("score"),
+                    userObject.getInt("admin"),
+                    userObject.getLong("banned"),
+                    userObject.getLong("inactive"),
+                    userObject.getInt("commentDelete"),
+                    userObject.getInt("itemDelete"),
+                    object.getInt("commentCount"),
+                    object.getInt("commentLikesCount"),
+                    object.getInt("uploadCount"),
+                    object.getBoolean("likesArePublic"),
+                    object.getInt("likeCount"),
+                    object.getInt("tagCount"),
+                    badges.toArray(new Pr0grammUser.Badge[0]),
+                    userObject.getInt("mark")
+            );
+        } catch (Pr0grammApiError e) {
+            throw e;
+        } catch (Exception e) {
+            throw new Pr0grammApiError("Unknown Error: " + e.getMessage());
+        }
+    }
+
     public Pr0grammGetItemsRequestGenerator generateGetItemsRequestGenerator() {
         return new Pr0grammGetItemsRequestGenerator(this);
     }
@@ -354,10 +405,10 @@ public class Pr0grammAPI {
         private boolean likesArePublic;
         private long likesCount;
         private long tagCount;
-        private badge[] badges;
+        private Badge[] badges;
         private int mark;
 
-        public Pr0grammUser(long id, String name, long registered, long score, int admin, long banned, long inactive, long commentsDeleted, long itemsDeleted, long commentCount, long commentLikesCount, long uploadCount, boolean likesArePublic, long likesCount, long tagCount, badge[] badges, int mark) {
+        public Pr0grammUser(long id, String name, long registered, long score, int admin, long banned, long inactive, long commentsDeleted, long itemsDeleted, long commentCount, long commentLikesCount, long uploadCount, boolean likesArePublic, long likesCount, long tagCount, Badge[] badges, int mark) {
             this.id = id;
             this.name = name;
             this.registered = registered;
@@ -437,7 +488,7 @@ public class Pr0grammAPI {
             return tagCount;
         }
 
-        public badge[] getBadges() {
+        public Badge[] getBadges() {
             return badges;
         }
 
@@ -445,13 +496,13 @@ public class Pr0grammAPI {
             return mark;
         }
 
-        public static class badge {
+        public static class Badge {
             private String link;
             private String image;
             private String description;
             private long created;
 
-            private badge(String link, String image, String description, long created) {
+            private Badge(String link, String image, String description, long created) {
                 this.link = link;
                 this.image = image;
                 this.description = description;
