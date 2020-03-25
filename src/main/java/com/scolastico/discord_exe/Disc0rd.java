@@ -1,9 +1,6 @@
 package com.scolastico.discord_exe;
 
-import com.scolastico.discord_exe.etc.ErrorHandler;
-import com.scolastico.discord_exe.etc.ScheduleTask;
-import com.scolastico.discord_exe.etc.Tools;
-import com.scolastico.discord_exe.etc.VersionController;
+import com.scolastico.discord_exe.etc.*;
 import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.config.ConfigDataStore;
 import com.scolastico.discord_exe.config.ConfigHandler;
@@ -192,6 +189,17 @@ public class Disc0rd {
             public void run() {
                 try {
                     ExtendedEventManager.getInstance();
+                } catch (Exception e) {
+                    ErrorHandler.getInstance().handleFatal(e);
+                }
+            }
+        });
+
+        System.out.print("Loading pr0gramm module ");
+        tools.asyncLoadingAnimationWhileWaitingResult(new Runnable() {
+            public void run() {
+                try {
+                    Pr0grammManager.getInstance();
                 } catch (Exception e) {
                     ErrorHandler.getInstance().handleFatal(e);
                 }
