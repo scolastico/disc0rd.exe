@@ -16,6 +16,15 @@ public class ServerSettings {
     private String log = "[LOG BEGINNING]";
     private ArrayList<ExtendedEvent> extendedEvents = new ArrayList<>();
     private String cmdPrefix = "$";
+    private Pr0grammServerConfig pr0grammServerConfig = new Pr0grammServerConfig();
+
+    public Pr0grammServerConfig getPr0grammServerConfig() {
+        return pr0grammServerConfig;
+    }
+
+    public void setPr0grammServerConfig(Pr0grammServerConfig pr0grammServerConfig) {
+        this.pr0grammServerConfig = pr0grammServerConfig;
+    }
 
     public String getCmdPrefix() {
         return cmdPrefix;
@@ -71,6 +80,102 @@ public class ServerSettings {
 
     public void setShortCuts(HashMap<String, String> shortCuts) {
         this.shortCuts = shortCuts;
+    }
+
+    public static class Pr0grammServerConfig {
+
+        private String linkedAccount = null;
+        private long linkedMember = 0;
+        private ArrayList<Pr0grammSubscription> subscriptions = new ArrayList<>();
+
+        public long getLinkedMember() {
+            return linkedMember;
+        }
+
+        public void setLinkedMember(long linkedMember) {
+            this.linkedMember = linkedMember;
+        }
+
+        public String getLinkedAccount() {
+            return linkedAccount;
+        }
+
+        public void setLinkedAccount(String linkedAccount) {
+            this.linkedAccount = linkedAccount;
+        }
+
+        public ArrayList<Pr0grammSubscription> getSubscriptions() {
+            return subscriptions;
+        }
+
+        public void setSubscriptions(ArrayList<Pr0grammSubscription> subscriptions) {
+            this.subscriptions = subscriptions;
+        }
+
+        public void addSubscription(Pr0grammSubscription subscription) {
+            if (!subscriptions.contains(subscription)) subscriptions.add(subscription);
+        }
+
+        public void removeSubscription(Pr0grammSubscription subscription) {
+            subscriptions.remove(subscription);
+        }
+
+        public static class Pr0grammSubscription {
+            private String username;
+            private boolean sfw;
+            private boolean nsfw;
+            private boolean nsfl;
+            private long channel;
+
+            public Pr0grammSubscription(String username, boolean sfw, boolean nsfw, boolean nsfl, long channel) {
+                this.username = username;
+                this.sfw = sfw;
+                this.nsfw = nsfw;
+                this.nsfl = nsfl;
+                this.channel = channel;
+            }
+
+            public long getChannel() {
+                return channel;
+            }
+
+            public void setChannel(long channel) {
+                this.channel = channel;
+            }
+
+            public String getUsername() {
+                return username;
+            }
+
+            public void setUsername(String username) {
+                this.username = username;
+            }
+
+            public boolean isSfw() {
+                return sfw;
+            }
+
+            public void setSfw(boolean sfw) {
+                this.sfw = sfw;
+            }
+
+            public boolean isNsfw() {
+                return nsfw;
+            }
+
+            public void setNsfw(boolean nsfw) {
+                this.nsfw = nsfw;
+            }
+
+            public boolean isNsfl() {
+                return nsfl;
+            }
+
+            public void setNsfl(boolean nsfl) {
+                this.nsfl = nsfl;
+            }
+        }
+
     }
 
     public static class ColorNameConfig {

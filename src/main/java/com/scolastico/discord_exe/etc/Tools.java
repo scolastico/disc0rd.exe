@@ -98,6 +98,25 @@ public class Tools {
         return hashMap;
     }
 
+    public HashMap<String, String> getGetValuesFromHttpExchange(HttpExchange httpExchange) {
+        HashMap<String, String> result = new HashMap<>();
+        try {
+            String query = httpExchange.getRequestURI().getQuery();
+            if (query == null) return result;
+            for (String param : query.split("&")) {
+                String[] entry = param.split("=");
+                if (entry.length > 1) {
+                    result.put(entry[0], entry[1]);
+                }else{
+                    result.put(entry[0], "");
+                }
+            }
+        } catch (Exception e) {
+            ErrorHandler.getInstance().handle(e);
+        }
+        return result;
+    }
+
     public Color hex2Rgb(String colorStr) {
         return new Color(
                 Integer.valueOf( colorStr.substring( 1, 3 ), 16 ),
@@ -138,6 +157,29 @@ public class Tools {
             ErrorHandler.getInstance().handle(e);
         }
         return null;
+    }
+
+    public HashMap<Integer, HashMap<String, String>> splitToSites(HashMap<String, String> map) {
+        return splitToSites(map, 25);
+    }
+
+    public HashMap<Integer, HashMap<String, String>> splitToSites(HashMap<String, String> map, Integer maxSiteValues) {
+        HashMap<Integer, HashMap<String, String>> ret = new HashMap<>();
+        HashMap<String, String> nextEntry = new HashMap<>();
+        int site = 1;
+        int tmp = 1;
+        for (String key:map.keySet()) {
+            nextEntry.put(key, map.get(key));
+            if (tmp == maxSiteValues) {
+                ret.put(site, nextEntry);
+                site++;
+                nextEntry = new HashMap<>();
+                tmp = 0;
+            }
+            tmp++;
+        }
+        ret.put(site, nextEntry);
+        return ret;
     }
 
     public int tryToParseInt(String integer) {
