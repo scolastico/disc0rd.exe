@@ -4,16 +4,19 @@ import com.scolastico.discord_exe.etc.*;
 import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.config.ConfigDataStore;
 import com.scolastico.discord_exe.config.ConfigHandler;
-import com.scolastico.discord_exe.event.extendedEventSystem.ExtendedEvent;
 import com.scolastico.discord_exe.event.extendedEventSystem.ExtendedEventManager;
 import com.scolastico.discord_exe.event.handlers.EventHandler;
 import com.scolastico.discord_exe.mysql.MysqlHandler;
 import com.scolastico.discord_exe.webserver.WebServerManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.reflections.Reflections;
 
 import javax.security.auth.login.LoginException;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -30,6 +33,28 @@ public class Disc0rd {
     private static EventRegister eventRegister;
     private static Long executedCommands = 0L;
     private static long startTime = System.currentTimeMillis();
+    private static final CloseableHttpClient httpClient = HttpClients.createDefault();
+    private static ArrayList<Runnable> onExitRuns = new ArrayList<>();
+
+    private static final Thread onExit = new Thread(){
+        public void run() {
+            for (Runnable runnable:onExitRuns) {
+                try {
+                    runnable.run();
+                } catch (Exception e) {
+                    ErrorHandler.getInstance().handle(e);
+                }
+            }
+        }
+    };
+
+    public static void addOnExitRunnable(Runnable runnable) {
+        onExitRuns.add(runnable);
+    }
+
+    public static CloseableHttpClient getHttpClient() {
+        return httpClient;
+    }
 
     public static long getStartTime() {
         return startTime;
@@ -91,6 +116,8 @@ public class Disc0rd {
         System.out.println("Disc0rd.exe | by scolastico | Version: " + version);
 
         tools.generateNewSpacesInConsole(1);
+
+        Runtime.getRuntime().addShutdownHook(onExit);
 
         System.out.print("Loading configuration module ");
         tools.asyncLoadingAnimationWhileWaitingResult(new Runnable() {
@@ -202,6 +229,17 @@ public class Disc0rd {
                     Pr0grammManager.getInstance();
                 } catch (Exception e) {
                     ErrorHandler.getInstance().handleFatal(e);
+                }
+            }
+        });
+
+        addOnExitRunnable(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    httpClient.close();
+                } catch (IOException e) {
+                    ErrorHandler.getInstance().handle(e);
                 }
             }
         });

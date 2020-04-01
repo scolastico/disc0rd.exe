@@ -107,62 +107,66 @@ public class EventRegister extends ListenerAdapter {
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         try {
 
-            for (MessageReceivedHandler handler:messageReceivedHandlers) {
-                try {
-                    handler.handleMessageReceived(event);
-                } catch (Exception e) {
-                    ErrorHandler.getInstance().handle(e);
+            if (Disc0rd.isReady()) {
+
+                for (MessageReceivedHandler handler:messageReceivedHandlers) {
+                    try {
+                        handler.handleMessageReceived(event);
+                    } catch (Exception e) {
+                        ErrorHandler.getInstance().handle(e);
+                    }
                 }
-            }
 
-            if (event.getChannel().getType() == ChannelType.TEXT) {
-                String message = event.getMessage().getContentRaw();
-                ServerSettings settings = Disc0rd.getMysql().getServerSettings(event.getGuild().getIdLong());
+                if (event.getChannel().getType() == ChannelType.TEXT) {
+                    String message = event.getMessage().getContentRaw();
+                    ServerSettings settings = Disc0rd.getMysql().getServerSettings(event.getGuild().getIdLong());
 
-                boolean defaultPrefix = (message.length() >= 8 && message.substring(0,8).equalsIgnoreCase("disc0rd/"));
-                boolean customPrefix = (message.length() >= settings.getCmdPrefix().length() && message.substring(0, settings.getCmdPrefix().length()).equals(settings.getCmdPrefix()));
+                    boolean defaultPrefix = (message.length() >= 8 && message.substring(0,8).equalsIgnoreCase("disc0rd/"));
+                    boolean customPrefix = (message.length() >= settings.getCmdPrefix().length() && message.substring(0, settings.getCmdPrefix().length()).equals(settings.getCmdPrefix()));
 
-                if (defaultPrefix || customPrefix) {
+                    if (defaultPrefix || customPrefix) {
 
-                    String cmd = message.split(" ")[0];
+                        String cmd = message.split(" ")[0];
 
 
-                    ArrayList<String> argsTmp = new ArrayList<>();
-                    boolean firstArg = true;
+                        ArrayList<String> argsTmp = new ArrayList<>();
+                        boolean firstArg = true;
 
-                    for (String arg : message.split(" ")) {
-                        if (!firstArg) {
-                            argsTmp.add(arg);
-                        } else {
-                            firstArg = false;
+                        for (String arg : message.split(" ")) {
+                            if (!firstArg) {
+                                argsTmp.add(arg);
+                            } else {
+                                firstArg = false;
+                            }
                         }
-                    }
 
-                    String[] args = argsTmp.toArray(new String[0]);
+                        String[] args = argsTmp.toArray(new String[0]);
 
-                    if (defaultPrefix) {
-                        cmd = cmd.substring(0, 8);
-                    } else {
-                        cmd = cmd.substring(settings.getCmdPrefix().length());
-                    }
+                        if (defaultPrefix) {
+                            cmd = cmd.substring(0, 8);
+                        } else {
+                            cmd = cmd.substring(settings.getCmdPrefix().length());
+                        }
 
-                    for (CommandHandler handler:commandHandlers) {
+                        for (CommandHandler handler:commandHandlers) {
 
-                        try {
+                            try {
 
-                            if (handler.respondToCommand(cmd, args, event.getJDA(), event, event.getAuthor().getIdLong(), event.getChannel().getIdLong())) {
-                                Disc0rd.addExecutedCommand();
-                                break;
+                                if (handler.respondToCommand(cmd, args, event.getJDA(), event, event.getAuthor().getIdLong(), event.getChannel().getIdLong())) {
+                                    Disc0rd.addExecutedCommand();
+                                    break;
+                                }
+
+                            } catch (Exception e) {
+
+                                ErrorHandler.getInstance().handle(e);
+
                             }
 
-                        } catch (Exception e) {
-
-                            ErrorHandler.getInstance().handle(e);
-
                         }
-
                     }
                 }
+
             }
 
         } catch (Exception e) {

@@ -119,7 +119,7 @@ public class Pr0grammAPI {
             JSONObject object = new JSONObject(request);
             if (object.has("error")) {
                 if (object.get("error") instanceof String) {
-                    if (object.getString("error").equals("not found")) return null;
+                    if (object.getString("error").equalsIgnoreCase("not found") || object.getString("error").equalsIgnoreCase("notFound")) return null;
                     throw new Pr0grammApiError(object.getString("error"));
                 }
             }

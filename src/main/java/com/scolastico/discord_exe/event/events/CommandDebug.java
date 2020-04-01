@@ -1,5 +1,7 @@
 package com.scolastico.discord_exe.event.events;
 
+import com.scolastico.discord_exe.Disc0rd;
+import com.scolastico.discord_exe.etc.Tools;
 import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.event.handlers.CommandHandler;
 import com.scolastico.discord_exe.event.handlers.EventHandler;
@@ -16,11 +18,15 @@ public class CommandDebug implements EventHandler, CommandHandler {
     @Override
     public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
         if (cmd.equalsIgnoreCase("debug")) {
-            event.getMessage().delete().queue();
             if (args.length == 0) {
                 debugMain(cmd, args, jda, event, senderId, serverId);
                 return true;
             } else if (args.length == 1) {
+                if (args[0].equalsIgnoreCase("emoji")) {
+                    debugEmoji(cmd, args, jda, event, senderId, serverId);
+                    return true;
+                }
+            } else if (args.length == 2) {
                 if (args[0].equalsIgnoreCase("emoji")) {
                     debugEmoji(cmd, args, jda, event, senderId, serverId);
                     return true;
@@ -61,15 +67,42 @@ public class CommandDebug implements EventHandler, CommandHandler {
     }
 
     private void debugMain(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
-
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setColor(Color.YELLOW);
+        builder.setTitle("Debug: General Information");
+        builder.setDescription("" +
+                        "**Version: **`" + Disc0rd.getVersion() + "`\n" +
+                        "**Guild Id: **`" + event.getGuild().getId() + "`"
+        );
+        event.getChannel().sendMessage(builder.build()).queue();
     }
 
     private void debugEmoji(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setColor(Color.yellow);
-        embedBuilder.setTitle("Debug: Emoji");
+        int site = 1;
+        if (args.length == 2) {
+            try {
+                site = Integer.parseInt(args[1]);
+            } catch (Exception ignored) {
+                site = 0;
+            }
+        }
+        HashMap<String, String> pagesRaw = new HashMap<>();
         for (Emote emote:event.getGuild().getEmotes()) {
-            embedBuilder.addField("<:" + emote.getName() + ":" + emote.getId() + "> ***" + emote.getName() + "***", emote.getId(), true);
+            pagesRaw.put("<:" + emote.getName() + ":" + emote.getId() + ">", "Emote Name: `" + emote.getName() + "`\nEmote ID: `" + emote.getId() + "`");
+        }
+        HashMap<Integer, HashMap<String, String>> pages = Tools.getInstance().splitToSites(pagesRaw);
+        embedBuilder.setTitle("Debug: Emoji | Page `" + site + "` from `" + pages.size() + "`");
+        if (pages.containsKey(site)) {
+            for (String key:pages.get(site).keySet()) {
+                embedBuilder.addField(key, pages.get(site).get(key), true);
+            }
+            embedBuilder.setFooter("To see other pages enter 'disc0rd/debug emoji <site>'!");
+        } else {
+            embedBuilder.setTitle("Sorry,");
+            embedBuilder.setDescription("i cant find this page!");
+            embedBuilder.setColor(Color.red);
         }
         event.getChannel().sendMessage(embedBuilder.build()).queue();
     }

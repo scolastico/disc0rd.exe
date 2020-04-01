@@ -13,6 +13,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MysqlHandler {
 
@@ -35,6 +36,19 @@ public class MysqlHandler {
             ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM `" + prefix + "serverSettings`;");
             while (rs.next()) {
                 serverSettings.add(gson.fromJson(URLDecoder.decode(rs.getString("json"), StandardCharsets.UTF_8.toString()), ServerSettings.class));
+            }
+        } catch (SQLException | UnsupportedEncodingException e) {
+            ErrorHandler.getInstance().handle(e);
+        }
+        return serverSettings;
+    }
+
+    public HashMap<Long, ServerSettings> getAllServerSettingsWithId() {
+        HashMap<Long, ServerSettings> serverSettings = new HashMap<>();
+        try {
+            ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM `" + prefix + "serverSettings`;");
+            while (rs.next()) {
+                serverSettings.put(rs.getLong("id"), gson.fromJson(URLDecoder.decode(rs.getString("json"), StandardCharsets.UTF_8.toString()), ServerSettings.class));
             }
         } catch (SQLException | UnsupportedEncodingException e) {
             ErrorHandler.getInstance().handle(e);
