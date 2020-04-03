@@ -143,7 +143,7 @@ public class EventRegister extends ListenerAdapter {
                         String[] args = argsTmp.toArray(new String[0]);
 
                         if (defaultPrefix) {
-                            cmd = cmd.substring(0, 8);
+                            cmd = cmd.substring(8);
                         } else {
                             cmd = cmd.substring(settings.getCmdPrefix().length());
                         }
