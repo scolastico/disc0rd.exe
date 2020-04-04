@@ -1,6 +1,7 @@
 package com.scolastico.discord_exe.event.events;
 
 import com.scolastico.discord_exe.Disc0rd;
+import com.scolastico.discord_exe.etc.ErrorHandler;
 import com.scolastico.discord_exe.etc.Pr0grammAPI;
 import com.scolastico.discord_exe.etc.Pr0grammManager;
 import com.scolastico.discord_exe.event.EventRegister;
@@ -29,11 +30,10 @@ public class OnChatPr0gramm implements EventHandler, MessageReceivedHandler {
                     ServerSettings settings = Disc0rd.getMysql().getServerSettings(messageReceivedEvent.getGuild().getIdLong());
                     if (settings.getPr0grammServerConfig().isAutoDetectLinks()) {
                         String message = messageReceivedEvent.getMessage().getContentRaw();
-                        Pattern pattern = Pattern.compile("(https://pr0gramm.com/(new|top)/[0-9]+)", Pattern.CASE_INSENSITIVE);
+                        Pattern pattern = Pattern.compile("(?:(?:http(?:s?):\\/\\/pr0gramm\\.com)?\\/(?:top|new|user\\/\\w+\\/(?:uploads|likes)|stalk)(?:(?:\\/\\w+)?)\\/)([1-9]\\d*)(?:(?::comment(?:\\d+))?)?", Pattern.CASE_INSENSITIVE);
                         Matcher matcher = pattern.matcher(message);
                         if (matcher.find()) {
-                            String url = matcher.group(1);
-                            long id = Long.parseLong(url.substring(25));
+                            long id = Long.parseLong(matcher.group(1));
                             Pr0grammAPI.Pr0grammGetItemsRequestGenerator generator = Pr0grammManager.getInstance().getPr0grammAPI().generateGetItemsRequestGenerator();
                             Pr0grammAPI.Pr0grammFlagCalculator calculator = new Pr0grammAPI.Pr0grammFlagCalculator();
                             calculator.setSfw(true);
@@ -58,6 +58,8 @@ public class OnChatPr0gramm implements EventHandler, MessageReceivedHandler {
                     }
                 }
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+            ErrorHandler.getInstance().handle(ignored);
+        }
     }
 }
