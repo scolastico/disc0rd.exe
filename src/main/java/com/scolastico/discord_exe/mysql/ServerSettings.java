@@ -162,6 +162,15 @@ public class ServerSettings {
         private String linkedAccount = null;
         private long linkedMember = 0;
         private ArrayList<Pr0grammSubscription> subscriptions = new ArrayList<>();
+        private boolean autoDetectLinks = true;
+
+        public boolean isAutoDetectLinks() {
+            return autoDetectLinks;
+        }
+
+        public void setAutoDetectLinks(boolean autoDetectLinks) {
+            this.autoDetectLinks = autoDetectLinks;
+        }
 
         public long getLinkedMember() {
             return linkedMember;

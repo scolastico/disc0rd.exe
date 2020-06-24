@@ -354,8 +354,17 @@ public class Pr0grammAPI {
 
     public static class Pr0grammFlagCalculator {
         boolean sfw = true;
+        boolean nsfp = false;
         boolean nsfw = false;
         boolean nsfl = false;
+
+        public boolean isNsfp() {
+            return nsfp;
+        }
+
+        public void setNsfp(boolean nsfp) {
+            this.nsfp = nsfp;
+        }
 
         public boolean isSfw() {
             return sfw;
@@ -382,11 +391,11 @@ public class Pr0grammAPI {
         }
 
         public int calculate() {
-            int ret = 0;
-            if (sfw) ret += 9;
+            int ret = 1;
+            if (sfw) ret += 1;
             if (nsfw) ret += 2;
             if (nsfl) ret += 4;
-            if (ret == 0) ret = 9;
+            if (nsfp) ret += 8;
             return ret;
         }
     }

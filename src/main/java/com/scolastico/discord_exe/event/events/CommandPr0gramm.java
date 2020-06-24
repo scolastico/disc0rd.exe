@@ -1,5 +1,6 @@
 package com.scolastico.discord_exe.event.events;
 
+import com.scolastico.discord_exe.Disc0rd;
 import com.scolastico.discord_exe.etc.ErrorHandler;
 import com.scolastico.discord_exe.etc.Pr0grammAPI;
 import com.scolastico.discord_exe.etc.Pr0grammManager;
@@ -66,38 +67,61 @@ public class CommandPr0gramm implements EventHandler, CommandHandler {
                 }
             } else if (args.length == 2) {
                 if (args[0].equalsIgnoreCase("follow")) {
-                    if (Pr0grammManager.getInstance().isAuthorizedGuild(event.getGuild().getIdLong())) {
-                        try {
-                            Pr0grammAPI.Pr0grammUser user = Pr0grammManager.getInstance().getPr0grammAPI().getPr0grammUser(args[1]);
-                            if (user != null) {
-                                if (Pr0grammManager.getInstance().subscribeUser(event.getGuild().getIdLong(), event.getMessage().getChannel().getIdLong(), user.getName())) {
-                                    builder.setTitle("Success,");
-                                    builder.setDescription("this user is subscribed to this channel!");
-                                    builder.setColor(Color.green);
+                    if (Tools.getInstance().isOwner(event.getGuild(), event.getAuthor())) {
+                        if (Pr0grammManager.getInstance().isAuthorizedGuild(event.getGuild().getIdLong())) {
+                            try {
+                                Pr0grammAPI.Pr0grammUser user = Pr0grammManager.getInstance().getPr0grammAPI().getPr0grammUser(args[1]);
+                                if (user != null) {
+                                    if (Pr0grammManager.getInstance().subscribeUser(event.getGuild().getIdLong(), event.getMessage().getChannel().getIdLong(), user.getName())) {
+                                        builder.setTitle("Success,");
+                                        builder.setDescription("this user is subscribed to this channel!");
+                                        builder.setColor(Color.green);
+                                    } else {
+                                        builder.setDescription("this subscription exists already!");
+                                    }
                                 } else {
-                                    builder.setDescription("this subscription exists already!");
+                                    builder.setDescription("but i cant find this user on Pr0gramm.com.");
                                 }
-                            } else {
-                                builder.setDescription("but i cant find this user on Pr0gramm.com.");
+                            } catch (Pr0grammAPI.Pr0grammApiError e) {
+                                ErrorHandler.getInstance().handle(e);
+                                builder.setDescription("an unknown error occurred pls try it later again.");
                             }
-                        } catch (Pr0grammAPI.Pr0grammApiError e) {
-                            ErrorHandler.getInstance().handle(e);
-                            builder.setDescription("an unknown error occurred pls try it later again.");
+                        } else {
+                            builder.setDescription("this guild isn't authorized! Use `disc0rd/pr0gramm auth` for authorization.");
                         }
                     } else {
-                        builder.setDescription("this guild isn't authorized! Use `disc0rd/pr0gramm auth` for authorization.");
+                        builder.setDescription("but only the guild owner has the permission to execute the command!");
                     }
                 } else if (args[0].equalsIgnoreCase("unfollow")) {
-                    if (Pr0grammManager.getInstance().isAuthorizedGuild(event.getGuild().getIdLong())) {
-                        if (Pr0grammManager.getInstance().unSubscribeUser(event.getGuild().getIdLong(), event.getMessage().getChannel().getIdLong(), args[1])) {
-                            builder.setTitle("Success,");
-                            builder.setDescription("this user is un- subscribed from this channel!");
-                            builder.setColor(Color.green);
+                    if (Tools.getInstance().isOwner(event.getGuild(), event.getAuthor())) {
+                        if (Pr0grammManager.getInstance().isAuthorizedGuild(event.getGuild().getIdLong())) {
+                            if (Pr0grammManager.getInstance().unSubscribeUser(event.getGuild().getIdLong(), event.getMessage().getChannel().getIdLong(), args[1])) {
+                                builder.setTitle("Success,");
+                                builder.setDescription("this user is un- subscribed from this channel!");
+                                builder.setColor(Color.green);
+                            } else {
+                                builder.setDescription("but i cant see this subscription!");
+                            }
                         } else {
-                            builder.setDescription("but i cant see this subscription!");
+                            builder.setDescription("this guild isn't authorized! Use `disc0rd/pr0gramm auth` for authorization.");
                         }
                     } else {
-                        builder.setDescription("this guild isn't authorized! Use `disc0rd/pr0gramm auth` for authorization.");
+                        builder.setDescription("but only the guild owner has the permission to execute the command!");
+                    }
+                } else if (args[0].equalsIgnoreCase("toggle") && args[1].equalsIgnoreCase("autoDetectLinks")) {
+                    if (Tools.getInstance().isOwner(event.getGuild(), event.getAuthor())) {
+                        if (Pr0grammManager.getInstance().isAuthorizedGuild(event.getGuild().getIdLong())) {
+                            ServerSettings settings = Disc0rd.getMysql().getServerSettings(event.getGuild().getIdLong());
+                            settings.getPr0grammServerConfig().setAutoDetectLinks(!settings.getPr0grammServerConfig().isAutoDetectLinks());
+                            Disc0rd.getMysql().setServerSettings(event.getGuild().getIdLong(), settings);
+                            builder.setTitle("Success,");
+                            builder.setDescription(settings.getPr0grammServerConfig().isAutoDetectLinks() ? "i will now auto detect urls!" : "i will no longer automatically recognize URLs!");
+                            builder.setColor(Color.green);
+                        } else {
+                            builder.setDescription("this guild isn't authorized! Use `disc0rd/pr0gramm auth` for authorization.");
+                        }
+                    } else {
+                        builder.setDescription("but only the guild owner has the permission to execute the command!");
                     }
                 }
             } else if (args.length == 3) {
@@ -106,30 +130,34 @@ public class CommandPr0gramm implements EventHandler, CommandHandler {
                     boolean nsfw = args[1].equalsIgnoreCase("nsfw");
                     boolean nsfl = args[1].equalsIgnoreCase("nsfl");
                     if (sfw || nsfw || nsfl) {
-                        builder.setDescription("but i cant see this subscription!");
-                        String username = null;
-                        boolean subSfw = false;
-                        boolean subNsfw = false;
-                        boolean subNsfl = false;
-                        for (ServerSettings.Pr0grammServerConfig.Pr0grammSubscription subscription:Pr0grammManager.getInstance().getSubsFromGuild(event.getGuild().getIdLong())) {
-                            if (subscription.getChannel() == event.getChannel().getIdLong() && subscription.getUsername().equalsIgnoreCase(args[2])) {
-                                username = subscription.getUsername();
-                                subSfw = subscription.isSfw();
-                                subNsfw = subscription.isNsfw();
-                                subNsfl = subscription.isNsfl();
+                        if (Tools.getInstance().isOwner(event.getGuild(), event.getAuthor())) {
+                            builder.setDescription("but i cant see this subscription!");
+                            String username = null;
+                            boolean subSfw = false;
+                            boolean subNsfw = false;
+                            boolean subNsfl = false;
+                            for (ServerSettings.Pr0grammServerConfig.Pr0grammSubscription subscription:Pr0grammManager.getInstance().getSubsFromGuild(event.getGuild().getIdLong())) {
+                                if (subscription.getChannel() == event.getChannel().getIdLong() && subscription.getUsername().equalsIgnoreCase(args[2])) {
+                                    username = subscription.getUsername();
+                                    subSfw = subscription.isSfw();
+                                    subNsfw = subscription.isNsfw();
+                                    subNsfl = subscription.isNsfl();
+                                }
                             }
-                        }
-                        if (username != null) {
-                            if (sfw) {
-                                Pr0grammManager.getInstance().setFollowedChannels(event.getGuild().getIdLong(), event.getChannel().getIdLong(), username, !subSfw, subNsfw, subNsfl);
-                            } else if (nsfw) {
-                                Pr0grammManager.getInstance().setFollowedChannels(event.getGuild().getIdLong(), event.getChannel().getIdLong(), username, subSfw, !subNsfw, subNsfl);
-                            } else {
-                                Pr0grammManager.getInstance().setFollowedChannels(event.getGuild().getIdLong(), event.getChannel().getIdLong(), username, subSfw, subNsfw, !subNsfl);
+                            if (username != null) {
+                                if (sfw) {
+                                    Pr0grammManager.getInstance().setFollowedChannels(event.getGuild().getIdLong(), event.getChannel().getIdLong(), username, !subSfw, subNsfw, subNsfl);
+                                } else if (nsfw) {
+                                    Pr0grammManager.getInstance().setFollowedChannels(event.getGuild().getIdLong(), event.getChannel().getIdLong(), username, subSfw, !subNsfw, subNsfl);
+                                } else {
+                                    Pr0grammManager.getInstance().setFollowedChannels(event.getGuild().getIdLong(), event.getChannel().getIdLong(), username, subSfw, subNsfw, !subNsfl);
+                                }
+                                builder.setTitle("Success,");
+                                builder.setDescription("the followed channel was toggled!");
+                                builder.setColor(Color.green);
                             }
-                            builder.setTitle("Success,");
-                            builder.setDescription("the followed channel was toggled!");
-                            builder.setColor(Color.green);
+                        } else {
+                            builder.setDescription("but only the guild owner has the permission to execute the command!");
                         }
                     }
                 }
@@ -152,6 +180,7 @@ public class CommandPr0gramm implements EventHandler, CommandHandler {
         details.put("pr0gramm follow <user>", "Follow a user in this channel. Admin Command!");
         details.put("pr0gramm unfollow <user>", "Un- Follow a user in this channel. Admin Command!");
         details.put("pr0gramm toggle <sfw/nsfw/nsfl> <user>", "Set the followed channels from a user! Admin Command!");
+        details.put("pr0gramm toggle autoDetectLinks", "Sets whether urls should be recognized automatically! Admin Command!");
         details.put("pr0gramm", "Lists all follows!");
         return details;
     }

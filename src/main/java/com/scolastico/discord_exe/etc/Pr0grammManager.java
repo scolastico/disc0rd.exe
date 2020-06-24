@@ -91,6 +91,7 @@ public class Pr0grammManager {
             Pr0grammAPI.Pr0grammGetItemsRequestGenerator generator = pr0grammAPI.generateGetItemsRequestGenerator();
             Pr0grammAPI.Pr0grammFlagCalculator calculator = new Pr0grammAPI.Pr0grammFlagCalculator();
             calculator.setSfw(true);
+            calculator.setNsfp(true);
             calculator.setNsfw(false);
             calculator.setNsfl(false);
             generator.setFlagCalculator(calculator);
@@ -100,6 +101,7 @@ public class Pr0grammManager {
             }
             Pr0grammAPI.Pr0grammPost[] postsSFW = pr0grammAPI.getPr0grammPosts(generator);
             calculator.setSfw(false);
+            calculator.setNsfp(false);
             calculator.setNsfw(true);
             generator.setFlagCalculator(calculator);
             Pr0grammAPI.Pr0grammPost[] postsNSFW = pr0grammAPI.getPr0grammPosts(generator);
