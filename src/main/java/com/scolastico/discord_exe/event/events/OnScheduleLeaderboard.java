@@ -31,7 +31,8 @@ public class OnScheduleLeaderboard implements EventHandler, ScheduleHandler {
                                             !voiceState.isMuted() &&
                                             !voiceState.isGuildMuted() &&
                                             !voiceState.isDeafened() &&
-                                            !voiceState.isGuildDeafened()
+                                            !voiceState.isGuildDeafened() &&
+                                            channel.getMembers().size() > 1
                             ) {
                                 settings.getLeaderboard().addUserXP(member.getIdLong());
                             }
