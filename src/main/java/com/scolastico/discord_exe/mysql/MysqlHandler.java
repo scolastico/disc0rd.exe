@@ -30,12 +30,12 @@ public class MysqlHandler {
 
     }
 
-    public ArrayList<ServerSettings> getAllServerSettings() {
-        ArrayList<ServerSettings> serverSettings = new ArrayList<>();
+    public HashMap<Long, ServerSettings> getAllServerSettings() {
+        HashMap<Long, ServerSettings> serverSettings = new HashMap<>();
         try {
             ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM `" + prefix + "serverSettings`;");
             while (rs.next()) {
-                serverSettings.add(gson.fromJson(URLDecoder.decode(rs.getString("json"), StandardCharsets.UTF_8.toString()), ServerSettings.class));
+                serverSettings.put(rs.getLong("id") ,gson.fromJson(URLDecoder.decode(rs.getString("json"), StandardCharsets.UTF_8.toString()), ServerSettings.class));
             }
         } catch (SQLException | UnsupportedEncodingException e) {
             ErrorHandler.getInstance().handle(e);
