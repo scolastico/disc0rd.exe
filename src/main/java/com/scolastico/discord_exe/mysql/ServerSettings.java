@@ -2,10 +2,7 @@ package com.scolastico.discord_exe.mysql;
 
 import com.scolastico.discord_exe.event.extendedEventSystem.ExtendedEvent;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class ServerSettings {
 
@@ -17,6 +14,15 @@ public class ServerSettings {
     private ArrayList<ExtendedEvent> extendedEvents = new ArrayList<>();
     private String cmdPrefix = "$";
     private Pr0grammServerConfig pr0grammServerConfig = new Pr0grammServerConfig();
+    private Leaderboard leaderboard = new Leaderboard();
+
+    public Leaderboard getLeaderboard() {
+        return leaderboard;
+    }
+
+    public void setLeaderboard(Leaderboard leaderboard) {
+        this.leaderboard = leaderboard;
+    }
 
     public Pr0grammServerConfig getPr0grammServerConfig() {
         return pr0grammServerConfig;
@@ -80,6 +86,75 @@ public class ServerSettings {
 
     public void setShortCuts(HashMap<String, String> shortCuts) {
         this.shortCuts = shortCuts;
+    }
+
+    public static class Leaderboard {
+
+        private int xpPerMessageMin = 15;
+        private int xpPerMessageMax = 25;
+        private HashMap<Long, Long> users = new HashMap<>();
+        private boolean enabled = true;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public int getXpPerMessageMin() {
+            return xpPerMessageMin;
+        }
+
+        public void setXpPerMessageMin(int xpPerMessageMin) {
+            this.xpPerMessageMin = xpPerMessageMin;
+        }
+
+        public int getXpPerMessageMax() {
+            return xpPerMessageMax;
+        }
+
+        public void setXpPerMessageMax(int xpPerMessageMax) {
+            this.xpPerMessageMax = xpPerMessageMax;
+        }
+
+        public HashMap<Long, Long> getUsers() {
+            return users;
+        }
+
+        public void setUsers(HashMap<Long, Long> users) {
+            this.users = users;
+        }
+
+        public long addUserXP(long id, int xp) {
+            long xpAll = xp;
+            if (users.containsKey(id)) {
+                xpAll += users.get(id);
+                users.remove(id);
+            }
+            users.put(id, xpAll);
+            return xpAll;
+        }
+
+        public long addUserXP(long id) {
+            Random random = new Random();
+            long xpAll = random.nextInt(xpPerMessageMax - xpPerMessageMin) + xpPerMessageMin;
+            if (users.containsKey(id)) {
+                xpAll += users.get(id);
+                users.remove(id);
+            }
+            users.put(id, xpAll);
+            return xpAll;
+        }
+
+        public long getUserXP(long id) {
+            if (users.containsKey(id)) {
+                return users.get(id);
+            }
+            return 0L;
+        }
+
     }
 
     public static class Pr0grammServerConfig {

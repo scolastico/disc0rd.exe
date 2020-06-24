@@ -135,3 +135,4 @@ config.json
 otpConfig.json
 .idea/discord.xml
 pr0gramm.json
+tmp/

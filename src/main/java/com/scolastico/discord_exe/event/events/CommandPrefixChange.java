@@ -50,7 +50,7 @@ public class CommandPrefixChange implements EventHandler, CommandHandler {
     @Override
     public HashMap<String, String> getHelpSiteDetails() {
         HashMap<String, String> helpSite = new HashMap<>();
-        helpSite.put("prefixChange <prefix>", "Change the command prefix.");
+        helpSite.put("prefixChange <prefix>", "Change the command prefix. Admin Command!");
         return helpSite;
     }
 

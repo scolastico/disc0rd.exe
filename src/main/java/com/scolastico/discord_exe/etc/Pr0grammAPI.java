@@ -101,12 +101,14 @@ public class Pr0grammAPI {
             request.addHeader(HttpHeaders.ACCEPT, "application/json");
             request.addHeader("Cookie", token);
             CloseableHttpResponse response = httpClient.execute(request);
-            return EntityUtils.toString(response.getEntity());
+            String ret = EntityUtils.toString(response.getEntity());
+            response.close();
+            return ret;
         } catch (Exception ignored) {}
         return null;
     }
 
-    private void close() throws IOException {
+    public void close() throws IOException {
         httpClient.close();
     }
 

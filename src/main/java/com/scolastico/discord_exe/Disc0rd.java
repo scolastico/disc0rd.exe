@@ -15,15 +15,13 @@ import org.apache.http.impl.client.HttpClients;
 import org.reflections.Reflections;
 
 import javax.security.auth.login.LoginException;
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 public class Disc0rd {
 
-    private static Tools tools = Tools.getInstance();
+    private static Tools tools;
     private static ConfigHandler configHandler;
     private static ConfigDataStore config;
     private static MysqlHandler mysql;
@@ -114,10 +112,11 @@ public class Disc0rd {
         System.out.println(" |_____/|_|___/\\___|\\___/|_|  \\__,_(_)___/_/\\_\\___|");
         System.out.println(" --------------------------------------------------");
         System.out.println("Disc0rd.exe | by scolastico | Version: " + version);
-
-        tools.generateNewSpacesInConsole(1);
+        System.out.println();
 
         Runtime.getRuntime().addShutdownHook(onExit);
+
+        tools = Tools.getInstance();
 
         System.out.print("Loading configuration module ");
         tools.asyncLoadingAnimationWhileWaitingResult(new Runnable() {
@@ -227,6 +226,28 @@ public class Disc0rd {
             public void run() {
                 try {
                     Pr0grammManager.getInstance();
+                } catch (Exception e) {
+                    ErrorHandler.getInstance().handleFatal(e);
+                }
+            }
+        });
+
+        System.out.print("Loading extra functions ");
+        tools.asyncLoadingAnimationWhileWaitingResult(new Runnable() {
+            public void run() {
+                try {
+                    File tmpFolder = new File(config.getTmpDir());
+                    if (!tmpFolder.exists()) tmpFolder.mkdirs();
+                    if (tmpFolder.isDirectory()) {
+                        for (String entry:tmpFolder.list()) {
+                            File file = new File(tmpFolder.getPath(), entry);
+                            if (!file.delete()) {
+                                throw new Exception("cant delete file '" + file.getPath() + "' in tmp dir");
+                            }
+                        }
+                    } else {
+                        throw new Exception("tmp dir is not a dir");
+                    }
                 } catch (Exception e) {
                     ErrorHandler.getInstance().handleFatal(e);
                 }

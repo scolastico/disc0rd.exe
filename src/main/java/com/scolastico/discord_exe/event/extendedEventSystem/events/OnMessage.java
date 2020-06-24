@@ -1,5 +1,6 @@
 package com.scolastico.discord_exe.event.extendedEventSystem.events;
 
+import com.scolastico.discord_exe.Disc0rd;
 import com.scolastico.discord_exe.etc.ErrorHandler;
 import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.event.extendedEventSystem.ExtendedEvent;
@@ -58,18 +59,28 @@ public class OnMessage implements Disc0rdEvent, EventHandler, MessageReceivedHan
     public void handleMessageReceived(MessageReceivedEvent messageReceivedEvent) {
         try {
             if (messageReceivedEvent.getChannel().getType() == ChannelType.TEXT) {
-                for (ExtendedEvent extendedEvent:ExtendedEventManager.getInstance().getExtendedEvents()) {
-                    if (extendedEvent.getEvent().equals(getName())) {
-                        if (extendedEvent.getGuild() == messageReceivedEvent.getGuild().getIdLong()) {
-                            ExtendedEventDataStore dataStore = new ExtendedEventDataStore(extendedEvent);
-                            dataStore.setDataStore("event-message", messageReceivedEvent.getMessage().getContentRaw());
-                            dataStore.setDataStore("event-message-id", messageReceivedEvent.getMessage().getId());
-                            dataStore.setDataStore("event-sender-name", messageReceivedEvent.getAuthor().getName());
-                            dataStore.setDataStore("event-sender-id", messageReceivedEvent.getAuthor().getId());
-                            dataStore.setDataStore("event-channel", messageReceivedEvent.getChannel().getId());
-                            if (extendedEvent.getEventConfig().containsKey("Channel")) {
-                                if (!messageReceivedEvent.getChannel().getId().isEmpty()) {
-                                    if (extendedEvent.getEventConfig().get("Channel").equals(messageReceivedEvent.getChannel().getId())) {
+                if (Disc0rd.getJda().getSelfUser().getIdLong() != messageReceivedEvent.getAuthor().getIdLong()) {
+                    for (ExtendedEvent extendedEvent:ExtendedEventManager.getInstance().getExtendedEvents()) {
+                        if (extendedEvent.getEvent().equals(getName())) {
+                            if (extendedEvent.getGuild() == messageReceivedEvent.getGuild().getIdLong()) {
+                                ExtendedEventDataStore dataStore = new ExtendedEventDataStore(extendedEvent);
+                                dataStore.setDataStore("event-message", messageReceivedEvent.getMessage().getContentRaw());
+                                dataStore.setDataStore("event-message-id", messageReceivedEvent.getMessage().getId());
+                                dataStore.setDataStore("event-sender-name", messageReceivedEvent.getAuthor().getName());
+                                dataStore.setDataStore("event-sender-id", messageReceivedEvent.getAuthor().getId());
+                                dataStore.setDataStore("event-channel", messageReceivedEvent.getChannel().getId());
+                                if (extendedEvent.getEventConfig().containsKey("Channel")) {
+                                    if (!messageReceivedEvent.getChannel().getId().isEmpty()) {
+                                        if (extendedEvent.getEventConfig().get("Channel").equals(messageReceivedEvent.getChannel().getId())) {
+                                            if (extendedEvent.getEventConfig().containsKey("REGEX")) {
+                                                if (messageReceivedEvent.getMessage().getContentRaw().matches(extendedEvent.getEventConfig().get("REGEX"))) {
+                                                    ExtendedEventManager.getInstance().executeAction(dataStore);
+                                                }
+                                            } else {
+                                                ExtendedEventManager.getInstance().executeAction(dataStore);
+                                            }
+                                        }
+                                    } else {
                                         if (extendedEvent.getEventConfig().containsKey("REGEX")) {
                                             if (messageReceivedEvent.getMessage().getContentRaw().matches(extendedEvent.getEventConfig().get("REGEX"))) {
                                                 ExtendedEventManager.getInstance().executeAction(dataStore);
@@ -86,14 +97,6 @@ public class OnMessage implements Disc0rdEvent, EventHandler, MessageReceivedHan
                                     } else {
                                         ExtendedEventManager.getInstance().executeAction(dataStore);
                                     }
-                                }
-                            } else {
-                                if (extendedEvent.getEventConfig().containsKey("REGEX")) {
-                                    if (messageReceivedEvent.getMessage().getContentRaw().matches(extendedEvent.getEventConfig().get("REGEX"))) {
-                                        ExtendedEventManager.getInstance().executeAction(dataStore);
-                                    }
-                                } else {
-                                    ExtendedEventManager.getInstance().executeAction(dataStore);
                                 }
                             }
                         }

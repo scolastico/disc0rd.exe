@@ -6,7 +6,17 @@ import com.scolastico.discord_exe.event.extendedEventSystem.ExtendedEventDataSto
 import com.scolastico.discord_exe.mysql.ServerSettings;
 import com.sun.net.httpserver.HttpExchange;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.awt.*;
@@ -16,6 +26,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -24,8 +35,20 @@ public class Tools {
 
     private Boolean _isShowingLoadingAnimation = false;
     private static Tools instance = null;
+    private final CloseableHttpClient httpClient = HttpClients.createDefault();
 
-    private Tools() {}
+    private Tools() {
+        Disc0rd.addOnExitRunnable(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    httpClient.close();
+                } catch (Exception e) {
+                    ErrorHandler.getInstance().handle(e);
+                }
+            }
+        });
+    }
     public static Tools getInstance() {
         if (instance == null) {
             instance = new Tools();
@@ -219,6 +242,92 @@ public class Tools {
         if (serverLimits.getEvents() == 0) serverLimits.setEvents(defaultLimits.getEvents());
         if (serverLimits.getLogLines() == 0) serverLimits.setLogLines(defaultLimits.getLogLines());
         return serverLimits;
+    }
+
+    public String getStringFromFileInternally(String path) {
+        String ret = "";
+        try {
+            InputStream stream = getClass().getResourceAsStream("/stringDataStore/" + path);
+            ret = IOUtils.toString(stream, StandardCharsets.UTF_8.name());
+        } catch (Exception e) {
+            ErrorHandler.getInstance().handle(e);
+        }
+        return ret;
+    }
+
+    public int getLeaderboardLevel(long xp) {
+        long currentXp = 100;
+        int ret = 0;
+        while (currentXp <= xp) {
+            currentXp = (currentXp*250L)/100L;
+            ret++;
+        }
+        return ret;
+    }
+
+    public long getLeaderboardNextLevelXP(long xp) {
+        return getLeaderboardLevelXP(getLeaderboardLevel(xp)+1);
+    }
+
+    public long getLeaderboardLevelXP(int level) {
+        long ret = 0;
+        for (int index = 0; index != level; index++) {
+            if (ret == 0) {
+                ret = 100;
+            } else {
+                ret = (ret*250L)/100L;
+            }
+        }
+        return ret;
+    }
+
+    public int getLeaderboardPlace(Guild guild, Member member) {
+        return getLeaderboardPlace(guild.getIdLong(), member.getIdLong());
+    }
+
+    public int getLeaderboardPlace(long guildId, long userId) {
+        HashMap<Long, Long> leaderboard = Disc0rd.getMysql().getServerSettings(guildId).getLeaderboard().getUsers();
+        if (!leaderboard.containsKey(userId)) return 0;
+        long xp = leaderboard.get(userId);
+        int place = 1;
+        for (long id:leaderboard.keySet()) {
+            if (id != userId) {
+                if (leaderboard.get(id) > xp) place++;
+            }
+        }
+        return place;
+    }
+
+    public String getLeaderboardBannerSVG(Guild guild, Member member) {
+        String base64image = "";
+        try {
+            String avatarUrl = member.getUser().getAvatarUrl();
+            if (avatarUrl != null) {
+                HttpGet request = new HttpGet(avatarUrl);
+                request.addHeader(HttpHeaders.USER_AGENT, "Java Discord Bot - Disc0rd.exe");
+                CloseableHttpResponse response = httpClient.execute(request);
+                HttpEntity entity = response.getEntity();
+                byte[] fileContent = EntityUtils.toByteArray(entity);
+                base64image = "data:image/png;base64," + Base64.getEncoder().encodeToString(fileContent);
+            }
+        } catch (Exception ignored) {}
+        ServerSettings settings = Disc0rd.getMysql().getServerSettings(guild.getIdLong());
+        ServerSettings.Leaderboard leaderboard = settings.getLeaderboard();
+        long xp = leaderboard.getUserXP(member.getIdLong());
+        int currentLevel = Tools.getInstance().getLeaderboardLevel(xp);
+        long currentLevelXp = Tools.getInstance().getLeaderboardLevelXP(currentLevel);
+        long nextLevelXp = Tools.getInstance().getLeaderboardLevelXP(currentLevel+1);
+        long levelDifference = nextLevelXp-currentLevelXp;
+        long currentXpFromLevel = xp-currentLevelXp;
+        String banner = Tools.getInstance().getStringFromFileInternally("leaderboard/banner.svg");
+        if (!base64image.equals("")) banner = banner.replaceAll("%image%", "<image x=\"21\" y=\"31\" width=\"80\" height=\"80\" clip-path=\"url(#clipCircle)\" xlink:href=\"" + base64image + "\"></image>");
+        banner = banner.replaceAll("%username%", member.getUser().getName());
+        banner = banner.replaceAll("%tag%", member.getUser().getAsTag().split("#")[1]);
+        banner = banner.replaceAll("%currentXP%", Long.toString(xp-currentLevelXp));
+        banner = banner.replaceAll("%nextLevelXP%", Long.toString(nextLevelXp-currentLevelXp));
+        banner = banner.replaceAll("%level%", Integer.toString(currentLevel));
+        banner = banner.replaceAll("%percentage%", Double.toString(((((double)currentXpFromLevel/(double)levelDifference)*100)*315)/100));
+        return banner;
     }
 
 }
