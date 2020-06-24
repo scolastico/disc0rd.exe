@@ -62,8 +62,8 @@ public class ExtendedEventManager {
     public void reloadExtendedEvents() {
         isReloading = true;
         extendedEvents = new ArrayList<>();
-        ArrayList<ServerSettings> serverSettings = Disc0rd.getMysql().getAllServerSettings();
-        for (ServerSettings serverSetting:serverSettings) {
+        HashMap<Long, ServerSettings> serverSettings = Disc0rd.getMysql().getAllServerSettings();
+        for (ServerSettings serverSetting:serverSettings.values()) {
             extendedEvents.addAll(serverSetting.getExtendedEvents());
         }
         isReloading = false;
