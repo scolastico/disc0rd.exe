@@ -66,6 +66,14 @@ public class Pr0grammManager {
                     }
                 }
             }, config.getCheckSchedule()*20, 2, true);
+            Disc0rd.addOnExitRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        pr0grammAPI.close();
+                    } catch (IOException ignored) {}
+                }
+            });
         } catch (Exception e) {
             ErrorHandler.getInstance().handleFatal(e);
         }

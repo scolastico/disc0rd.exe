@@ -3,6 +3,7 @@ package com.scolastico.discord_exe.event;
 import com.scolastico.discord_exe.Disc0rd;
 import com.scolastico.discord_exe.etc.ErrorHandler;
 import com.scolastico.discord_exe.event.handlers.*;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberLeaveEvent;
 import com.scolastico.discord_exe.mysql.ServerSettings;
@@ -68,11 +69,11 @@ public class EventRegister extends ListenerAdapter {
     }
 
     public void fireSchedule() {
+        HashMap<ScheduleHandler, Integer> toRefresh = new HashMap<>();
         if (Disc0rd.isReady()) {
             for (ScheduleHandler scheduleHandler:scheduleHandlers.keySet()) {
                 try {
                     Integer lastTick = scheduleHandlers.get(scheduleHandler);
-                    scheduleHandlers.remove(scheduleHandler);
                     lastTick++;
                     ScheduleHandler.ScheduleTime annotation = scheduleHandler.getClass().getDeclaredAnnotation(ScheduleHandler.ScheduleTime.class);
                     int everyTick = 1;
@@ -95,11 +96,15 @@ public class EventRegister extends ListenerAdapter {
                             scheduleHandler.scheduledTask();
                         }
                     }
-                    scheduleHandlers.put(scheduleHandler, lastTick);
+                    toRefresh.put(scheduleHandler, lastTick);
                 } catch (Exception e) {
                     ErrorHandler.getInstance().handle(e);
                 }
             }
+        }
+        for (ScheduleHandler handler:toRefresh.keySet()) {
+            scheduleHandlers.remove(handler);
+            scheduleHandlers.put(handler, toRefresh.get(handler));
         }
     }
 
@@ -118,53 +123,61 @@ public class EventRegister extends ListenerAdapter {
                 }
 
                 if (event.getChannel().getType() == ChannelType.TEXT) {
-                    String message = event.getMessage().getContentRaw();
-                    ServerSettings settings = Disc0rd.getMysql().getServerSettings(event.getGuild().getIdLong());
 
-                    boolean defaultPrefix = (message.length() >= 8 && message.substring(0,8).equalsIgnoreCase("disc0rd/"));
-                    boolean customPrefix = (message.length() >= settings.getCmdPrefix().length() && message.substring(0, settings.getCmdPrefix().length()).equals(settings.getCmdPrefix()));
+                    Member member = event.getGuild().getMember(event.getAuthor());
 
-                    if (defaultPrefix || customPrefix) {
+                    if (member != null) if (!member.isFake()) if (!event.getAuthor().isBot()) {
 
-                        String cmd = message.split(" ")[0];
+                        String message = event.getMessage().getContentRaw();
+                        ServerSettings settings = Disc0rd.getMysql().getServerSettings(event.getGuild().getIdLong());
+
+                        boolean defaultPrefix = (message.length() >= 8 && message.substring(0,8).equalsIgnoreCase("disc0rd/"));
+                        boolean customPrefix = (message.length() >= settings.getCmdPrefix().length() && message.substring(0, settings.getCmdPrefix().length()).equals(settings.getCmdPrefix()));
+
+                        if (defaultPrefix || customPrefix) {
+
+                            String cmd = message.split(" ")[0];
 
 
-                        ArrayList<String> argsTmp = new ArrayList<>();
-                        boolean firstArg = true;
+                            ArrayList<String> argsTmp = new ArrayList<>();
+                            boolean firstArg = true;
 
-                        for (String arg : message.split(" ")) {
-                            if (!firstArg) {
-                                argsTmp.add(arg);
-                            } else {
-                                firstArg = false;
+                            for (String arg : message.split(" ")) {
+                                if (!firstArg) {
+                                    argsTmp.add(arg);
+                                } else {
+                                    firstArg = false;
+                                }
                             }
-                        }
 
-                        String[] args = argsTmp.toArray(new String[0]);
+                            String[] args = argsTmp.toArray(new String[0]);
 
-                        if (defaultPrefix) {
-                            cmd = cmd.substring(8);
-                        } else {
-                            cmd = cmd.substring(settings.getCmdPrefix().length());
-                        }
+                            if (defaultPrefix) {
+                                cmd = cmd.substring(8);
+                            } else {
+                                cmd = cmd.substring(settings.getCmdPrefix().length());
+                            }
+                          
+                            for (CommandHandler handler:commandHandlers) {
 
-                        for (CommandHandler handler:commandHandlers) {
+                                try {
 
-                            try {
+                                    if (handler.respondToCommand(cmd, args, event.getJDA(), event, event.getAuthor().getIdLong(), event.getChannel().getIdLong())) {
+                                        Disc0rd.addExecutedCommand();
+                                        break;
+                                    }
 
-                                if (handler.respondToCommand(cmd, args, event.getJDA(), event, event.getAuthor().getIdLong(), event.getChannel().getIdLong())) {
-                                    Disc0rd.addExecutedCommand();
-                                    break;
+                                } catch (Exception e) {
+
+                                    ErrorHandler.getInstance().handle(e);
+
                                 }
 
-                            } catch (Exception e) {
-
-                                ErrorHandler.getInstance().handle(e);
-
                             }
-
                         }
+
                     }
+
                 }
 
             }

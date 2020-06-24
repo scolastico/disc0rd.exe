@@ -11,6 +11,24 @@ public class ConfigDataStore {
     private OwnerPanelData ownerPanel = new OwnerPanelData();
     private AdminPanelData adminPanel = new AdminPanelData();
     private DefaultLimits defaultLimits = new DefaultLimits();
+    private String tmpDir = "tmp/";
+    private String email = "support@disc0rd.me";
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getTmpDir() {
+        return tmpDir;
+    }
+
+    public void setTmpDir(String tmpDir) {
+        this.tmpDir = tmpDir;
+    }
 
     public AdminPanelData getAdminPanel() {
         return adminPanel;
