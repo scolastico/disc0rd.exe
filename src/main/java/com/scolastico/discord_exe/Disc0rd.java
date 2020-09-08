@@ -1,6 +1,7 @@
 package com.scolastico.discord_exe;
 
 import com.scolastico.discord_exe.etc.*;
+import com.scolastico.discord_exe.etc.musicplayer.SpotifyToYoutube;
 import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.config.ConfigDataStore;
 import com.scolastico.discord_exe.config.ConfigHandler;
@@ -232,6 +233,17 @@ public class Disc0rd {
             }
         });
 
+        System.out.print("Loading spotify to youtube module ");
+        tools.asyncLoadingAnimationWhileWaitingResult(new Runnable() {
+            public void run() {
+                try {
+                    SpotifyToYoutube.getInstance();
+                } catch (Exception e) {
+                    ErrorHandler.getInstance().handleFatal(e);
+                }
+            }
+        });
+
         System.out.print("Loading extra functions ");
         tools.asyncLoadingAnimationWhileWaitingResult(new Runnable() {
             public void run() {
@@ -248,6 +260,26 @@ public class Disc0rd {
                     } else {
                         throw new Exception("tmp dir is not a dir");
                     }
+                } catch (Exception e) {
+                    ErrorHandler.getInstance().handleFatal(e);
+                }
+            }
+        });
+
+        System.out.print("Starting garbage collector scheduler ");
+        tools.asyncLoadingAnimationWhileWaitingResult(new Runnable() {
+            public void run() {
+                try {
+                    ScheduleTask.getInstance().runScheduledTaskRepeat(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                System.gc();
+                            } catch (Exception e) {
+                                ErrorHandler.getInstance().handle(e);
+                            }
+                        }
+                    }, config.getGarbageCollectorTime(), 1, true);
                 } catch (Exception e) {
                     ErrorHandler.getInstance().handleFatal(e);
                 }
