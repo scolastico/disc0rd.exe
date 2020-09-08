@@ -167,6 +167,58 @@ public class Pr0grammAPI {
         return new Pr0grammGetItemsRequestGenerator(this);
     }
 
+    public Pr0grammPost getPr0grammPost(Long id) throws Pr0grammApiError {
+        try {
+            String request = makeGetRequest("items/get?flags=15&older=" + Long.toString(id+5));
+            if (request == null) {
+                throw new Pr0grammApiError("response is null");
+            }
+            JSONObject object = new JSONObject(request);
+            if (object.has("error")) {
+                if (object.get("error") instanceof String) {
+                    throw new Pr0grammApiError(object.getString("error"));
+                }
+            }
+            if (!object.has("items")) throw new Pr0grammApiError("response not valid");
+            JSONArray array = object.getJSONArray("items");
+            for (int index = 0; index != array.length(); index++) {
+                JSONObject entry = array.getJSONObject(index);
+                long tmpId = entry.getLong("id");
+                if (tmpId == id) {
+                    return new Pr0grammPost(
+                            entry.getLong("id"),
+                            entry.getInt("promoted") != 0,
+                            entry.getLong("userId"),
+                            entry.getInt("up"),
+                            entry.getInt("down"),
+                            entry.getLong("created"),
+                            entry.getString("image").toUpperCase().endsWith(".PNG") ||
+                                    entry.getString("image").toUpperCase().endsWith(".JPEG") ||
+                                    entry.getString("image").toUpperCase().endsWith(".JPG") ||
+                                    entry.getString("image").toUpperCase().endsWith(".GIF") ?
+                                    "https://img.pr0gramm.com/" + entry.getString("image") :
+                                    "https://vid.pr0gramm.com/" + entry.getString("image"),
+                            "https://thumb.pr0gramm.com/" + entry.getString("thumb"),
+                            entry.getString("fullsize").isEmpty() ? null : "https://full.pr0gramm.com/" + entry.getString("fullsize"),
+                            entry.getInt("width"),
+                            entry.getInt("height"),
+                            entry.getBoolean("audio"),
+                            entry.getString("source"),
+                            entry.getInt("flags"),
+                            entry.getString("user"),
+                            entry.getInt("mark"),
+                            entry.getInt("gift")
+                    );
+                }
+            }
+        } catch (Pr0grammApiError e) {
+            throw e;
+        } catch (Exception e) {
+            throw new Pr0grammApiError("Unknown Error: " + e.getMessage());
+        }
+        return null;
+    }
+
     public Pr0grammPost[] getPr0grammPosts(Pr0grammGetItemsRequestGenerator generator) throws Pr0grammApiError {
         try {
             ArrayList<Pr0grammPost> ret = new ArrayList<>();
@@ -391,7 +443,7 @@ public class Pr0grammAPI {
         }
 
         public int calculate() {
-            int ret = 1;
+            int ret = 0;
             if (sfw) ret += 1;
             if (nsfw) ret += 2;
             if (nsfl) ret += 4;

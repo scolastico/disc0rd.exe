@@ -13,6 +13,42 @@ public class ConfigDataStore {
     private DefaultLimits defaultLimits = new DefaultLimits();
     private String tmpDir = "tmp/";
     private String email = "support@disc0rd.me";
+    private Integer musicPlayerTimout = 300;
+    private Integer garbageCollectorTime = 900;
+    private Spotify spotify = new Spotify();
+    private String discordInvite = "https://discord.gg/BCQmpCy";
+
+    public String getDiscordInvite() {
+        return discordInvite;
+    }
+
+    public void setDiscordInvite(String discordInvite) {
+        this.discordInvite = discordInvite;
+    }
+
+    public Spotify getSpotify() {
+        return spotify;
+    }
+
+    public void setSpotify(Spotify spotify) {
+        this.spotify = spotify;
+    }
+
+    public Integer getGarbageCollectorTime() {
+        return garbageCollectorTime;
+    }
+
+    public void setGarbageCollectorTime(Integer garbageCollectorTime) {
+        this.garbageCollectorTime = garbageCollectorTime;
+    }
+
+    public Integer getMusicPlayerTimout() {
+        return musicPlayerTimout;
+    }
+
+    public void setMusicPlayerTimout(Integer musicPlayerTimout) {
+        this.musicPlayerTimout = musicPlayerTimout;
+    }
 
     public String getEmail() {
         return email;
@@ -102,9 +138,30 @@ public class ConfigDataStore {
         this.webServer = webServer;
     }
 
+    public static class Spotify {
+        private String clientId = "your id here";
+        private String clientSecret = "your secret here";
+
+        public String getClientId() {
+            return clientId;
+        }
+
+        public void setClientId(String clientId) {
+            this.clientId = clientId;
+        }
+
+        public String getClientSecret() {
+            return clientSecret;
+        }
+
+        public void setClientSecret(String clientSecret) {
+            this.clientSecret = clientSecret;
+        }
+    }
+
     public static class DefaultLimits {
-        private int logLines = 3000;
-        private int events = 150;
+        private int logLines = 50;
+        private int events = 25;
         private int actionsPerEvent = 10;
 
         public int getLogLines() {

@@ -9,24 +9,40 @@ import com.scolastico.discord_exe.etc.OtpHelper;
 import com.scolastico.discord_exe.etc.Tools;
 import com.scolastico.discord_exe.webserver.WebHandler;
 import com.sun.net.httpserver.HttpExchange;
+import com.wrapper.spotify.SpotifyApi;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 
 import java.awt.*;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
-@WebHandler.WebHandlerRegistration(context = {"/api/v1/admin/saveConfig/*", "/api/v1/admin/getConfig/*", "/api/v1/admin/saveSettings", "/api/v1/admin/getSettings", "/api/v1/admin/sendMessage", "/api/v1/admin/getUsername", "/api/v1/admin/getStatus", "/api/v1/admin/logout", "/api/v1/admin/login", "/api/v1/admin/isLoggedIn"})
+@WebHandler.WebHandlerRegistration(context = {
+        "/api/v1/admin/saveConfig/*",
+        "/api/v1/admin/getConfig/*",
+        "/api/v1/admin/saveSettings",
+        "/api/v1/admin/getSettings",
+        "/api/v1/admin/sendMessage",
+        "/api/v1/admin/getUsername",
+        "/api/v1/admin/getStatus",
+        "/api/v1/admin/logout",
+        "/api/v1/admin/login",
+        "/api/v1/admin/isLoggedIn",
+        "/api/v1/admin/spotify",
+        "api/v1/admin/spotifyLogin"
+})
 public class OwnerPanel implements WebHandler {
 
     private static HashMap<String, Long> authKeys = new HashMap<>();
     private static HashMap<String, Long> authCookies = new HashMap<>();
     private OtpHelper otpHelper = OtpHelper.getInstance();
+    private static final String success_page = "<!doctype html><title>Success!</title><style>body{text-align: center; padding: 150px;}h1{font-size: 50px;}body{font: 20px Helvetica, sans-serif; color: #333;}article{display: block; text-align: left; width: 650px; margin: 0 auto;}a{color: #dc8100; text-decoration: none;}a:hover{color: #333; text-decoration: none;}</style><article> <h1>Success!</h1> <div> <p>You have been successfully logged in via Spotify! You can now safely leave this page and concentrate on Discord again!</p></div></article>";
 
     public static String getAuthCode() {
         clearHashMaps();
@@ -87,8 +103,40 @@ public class OwnerPanel implements WebHandler {
         } else if (httpExchange.getRequestURI().getPath().startsWith("/api/v1/admin/saveConfig/")) {
             httpExchange.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8;");
             return saveConfig(httpExchange);
+        } else if (httpExchange.getRequestURI().getPath().equals("/api/v1/admin/spotify")) {
+            httpExchange.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8;");
+            return spotify(httpExchange);
+        } else if (httpExchange.getRequestURI().getPath().equals("/api/v1/admin/spotifyLogin")) {
+            return spotifyLogin(httpExchange);
         }
         return null;
+    }
+
+    private String spotify(HttpExchange httpExchange) {
+        try {
+            if (isLoggedIn(httpExchange)) {
+
+                return "{\"status\":\"ok\",\"url\":\"\"}";
+            }
+        } catch (Exception e) {
+            ErrorHandler.getInstance().handle(e);
+            return "{\"status\":\"error\",\"error\":\"internal error\"}";
+        }
+        return "{\"status\":\"error\",\"error\":\"no auth\"}";
+    }
+
+    private String spotifyLogin(HttpExchange httpExchange) {
+        try {
+            if (isLoggedIn(httpExchange)) {
+
+            }
+        } catch (Exception e) {
+            ErrorHandler.getInstance().handle(e);
+            httpExchange.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8;");
+            return "{\"status\":\"error\",\"error\":\"internal error\"}";
+        }
+        httpExchange.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8;");
+        return "{\"status\":\"error\",\"error\":\"no auth\"}";
     }
 
     private String saveConfig(HttpExchange httpExchange) {
