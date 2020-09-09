@@ -19,6 +19,7 @@ public class SpotifyToYoutube {
     private ClientCredentialsRequest clientCredentialsRequest;
     private ClientCredentials clientCredentials;
     private static SpotifyToYoutube instance = null;
+    private long expires = 0;
 
     public static SpotifyToYoutube getInstance() {
         if (instance == null) {
@@ -37,6 +38,7 @@ public class SpotifyToYoutube {
             clientCredentialsRequest = spotifyApi.clientCredentials().build();
             clientCredentials = clientCredentialsRequest.execute();
             spotifyApi.setAccessToken(clientCredentials.getAccessToken());
+            expires = clientCredentials.getExpiresIn() + getUnixTimeStamp();
         } catch (Exception e) {
             ErrorHandler.getInstance().handleFatal(e);
         }
@@ -56,7 +58,7 @@ public class SpotifyToYoutube {
                                 artist.append(artists.getName()).append(", ");
                             }
                             String a = artist.toString();
-                            if (a.endsWith(", ")) a = a.substring(0, a.length()-3);
+                            if (a.endsWith(", ")) a = a.substring(0, a.length()-2);
                             ret.add("ytsearch:" + tmp.getName() + " - " + artist.toString());
                         }
                     }
@@ -90,15 +92,20 @@ public class SpotifyToYoutube {
 
     private boolean checkToken() {
         try {
-            if (clientCredentials.getExpiresIn() <= 30) {
+            if (expires - getUnixTimeStamp() <= 30) {
                 clientCredentials = clientCredentialsRequest.execute();
                 spotifyApi.setAccessToken(clientCredentials.getAccessToken());
+                expires = clientCredentials.getExpiresIn() + getUnixTimeStamp();
             }
             return true;
         } catch (Exception e) {
             ErrorHandler.getInstance().handle(e);
         }
         return false;
+    }
+
+    private Long getUnixTimeStamp() {
+        return System.currentTimeMillis() / 1000L;
     }
 
 }

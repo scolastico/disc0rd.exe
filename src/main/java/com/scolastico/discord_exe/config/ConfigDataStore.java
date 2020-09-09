@@ -17,6 +17,15 @@ public class ConfigDataStore {
     private Integer garbageCollectorTime = 900;
     private Spotify spotify = new Spotify();
     private String discordInvite = "https://discord.gg/BCQmpCy";
+    private String documentation = "http://go.scolasti.co/disc0rddocumentation";
+
+    public String getDocumentation() {
+        return documentation;
+    }
+
+    public void setDocumentation(String documentation) {
+        this.documentation = documentation;
+    }
 
     public String getDiscordInvite() {
         return discordInvite;

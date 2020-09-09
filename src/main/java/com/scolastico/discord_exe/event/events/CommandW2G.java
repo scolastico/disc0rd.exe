@@ -27,9 +27,15 @@ public class CommandW2G implements EventHandler,CommandHandler {
                     EmbedBuilder embedBuilder = new EmbedBuilder();
                     String jsonResponse;
                     if (args.length == 0) {
-                        jsonResponse = Tools.getInstance().sendPostRequest("https://www.watch2gether.com/rooms/create.json?share=" + URLEncoder.encode(Disc0rd.getConfig().getW2gDefaultPlayback(), StandardCharsets.UTF_8.toString()) + "&api_key=" + Disc0rd.getConfig().getW2gToken());
+                        jsonResponse = Tools.getInstance().sendPostRequest(
+                                "https://www.watch2gether.com/rooms/create.json",
+                                "{\"share\":\"" + Disc0rd.getConfig().getW2gDefaultPlayback().replaceAll("(\\\\|\")", "") + "\",\"api_key\":\"" + Disc0rd.getConfig().getW2gToken() + "\",\"bg_color\":\"#23272A\",\"bg_opacity\":\"100\"}"
+                        );
                     } else {
-                        jsonResponse = Tools.getInstance().sendPostRequest("https://www.watch2gether.com/rooms/create.json?share=" + URLEncoder.encode(args[0], StandardCharsets.UTF_8.toString()) + "&api_key=" + Disc0rd.getConfig().getW2gToken());
+                        jsonResponse = Tools.getInstance().sendPostRequest(
+                                "https://www.watch2gether.com/rooms/create.json",
+                                "{\"share\":\"" + args[0].replaceAll("(\\\\|\")", "") + "\",\"api_key\":\"" + Disc0rd.getConfig().getW2gToken() + "\",\"bg_color\":\"#23272A\",\"bg_opacity\":\"100\"}"
+                        );
                     }
                     if (jsonResponse != null) {
                         Object obj = new JSONParser().parse(jsonResponse);
