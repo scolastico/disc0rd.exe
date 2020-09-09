@@ -34,7 +34,7 @@ public class CommandSkip implements EventHandler, CommandHandler {
                                     player.nextQueueSong();
                                     builder.setColor(Color.YELLOW);
                                     builder.setTitle("Music Player");
-                                    builder.setDescription("Song skipped.");
+                                    builder.setDescription("Track skipped.");
                                 } else {
                                     builder.setDescription("but you need to be in the same channel as the bot.");
                                 }
@@ -55,14 +55,14 @@ public class CommandSkip implements EventHandler, CommandHandler {
 
     @Override
     public HashMap<String, String> getHelpSite(HashMap<String, String> helpSite) {
-        helpSite.put("skip", "Skip the currently played song.");
+        helpSite.put("skip", "Skip the currently played track.");
         return helpSite;
     }
 
     @Override
     public HashMap<String, String> getHelpSiteDetails() {
         HashMap<String, String> ret = new HashMap<>();
-        ret.put("skip", "Skip the currently played song.");
+        ret.put("skip", "Skip the currently played track.");
         return ret;
     }
 

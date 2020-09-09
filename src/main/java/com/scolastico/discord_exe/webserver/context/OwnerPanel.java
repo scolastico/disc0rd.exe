@@ -33,9 +33,7 @@ import java.util.concurrent.TimeUnit;
         "/api/v1/admin/getStatus",
         "/api/v1/admin/logout",
         "/api/v1/admin/login",
-        "/api/v1/admin/isLoggedIn",
-        "/api/v1/admin/spotify",
-        "api/v1/admin/spotifyLogin"
+        "/api/v1/admin/isLoggedIn"
 })
 public class OwnerPanel implements WebHandler {
 
@@ -103,40 +101,8 @@ public class OwnerPanel implements WebHandler {
         } else if (httpExchange.getRequestURI().getPath().startsWith("/api/v1/admin/saveConfig/")) {
             httpExchange.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8;");
             return saveConfig(httpExchange);
-        } else if (httpExchange.getRequestURI().getPath().equals("/api/v1/admin/spotify")) {
-            httpExchange.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8;");
-            return spotify(httpExchange);
-        } else if (httpExchange.getRequestURI().getPath().equals("/api/v1/admin/spotifyLogin")) {
-            return spotifyLogin(httpExchange);
         }
         return null;
-    }
-
-    private String spotify(HttpExchange httpExchange) {
-        try {
-            if (isLoggedIn(httpExchange)) {
-
-                return "{\"status\":\"ok\",\"url\":\"\"}";
-            }
-        } catch (Exception e) {
-            ErrorHandler.getInstance().handle(e);
-            return "{\"status\":\"error\",\"error\":\"internal error\"}";
-        }
-        return "{\"status\":\"error\",\"error\":\"no auth\"}";
-    }
-
-    private String spotifyLogin(HttpExchange httpExchange) {
-        try {
-            if (isLoggedIn(httpExchange)) {
-
-            }
-        } catch (Exception e) {
-            ErrorHandler.getInstance().handle(e);
-            httpExchange.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8;");
-            return "{\"status\":\"error\",\"error\":\"internal error\"}";
-        }
-        httpExchange.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8;");
-        return "{\"status\":\"error\",\"error\":\"no auth\"}";
     }
 
     private String saveConfig(HttpExchange httpExchange) {

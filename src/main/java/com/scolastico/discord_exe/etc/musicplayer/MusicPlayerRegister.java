@@ -80,4 +80,11 @@ public class MusicPlayerRegister {
         return playerManager;
     }
 
+    public void killPlayer(long id) {
+        if (players.containsKey(id)) {
+            players.get(id).kill();
+            players.remove(id);
+        }
+    }
+
 }

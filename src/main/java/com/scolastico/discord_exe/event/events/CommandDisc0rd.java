@@ -26,6 +26,7 @@ public class CommandDisc0rd implements CommandHandler, EventHandler {
                                 "Currently Version: " + Disc0rd.getVersion() + "\n" +
                                 "Developer: <@" + Disc0rd.getConfig().getOwnerPanel().getOwnerId() + ">\n" +
                                 "Website: <" + Disc0rd.getConfig().getWebServer().getDomain() + ">\n" +
+                                "Documentation: <" + Disc0rd.getConfig().getDocumentation() + ">\n" +
                                 "\n" +
                                 "You can get support via...\n" +
                                 " ... email: " + Disc0rd.getConfig().getEmail() + "\n" +

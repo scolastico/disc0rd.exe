@@ -65,7 +65,7 @@ public class CommandPlay implements CommandHandler, EventHandler {
                                 for (String tmp:args) {
                                     arg.append(tmp).append(" ");
                                 }
-                                player.addToQueue(arg.substring(0, arg.length()-2));
+                                player.addToQueue(arg.substring(0, arg.length()-1));
                                 return true;
                             }
                             builder.setDescription("but you need to be in the same channel as the bot.");

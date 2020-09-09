@@ -62,6 +62,8 @@ public class MusicPlayer {
             AudioTrack track = queue.get(0);
             queue.remove(0);
             playInstantly(track);
+        } else {
+            player.stopTrack();
         }
     }
 
@@ -225,7 +227,7 @@ public class MusicPlayer {
     }
 
     public boolean getStatus() {
-        return false;
+        return status;
     }
 
     public void kill() {
