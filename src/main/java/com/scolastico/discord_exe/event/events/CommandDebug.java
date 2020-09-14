@@ -2,12 +2,14 @@ package com.scolastico.discord_exe.event.events;
 
 import com.scolastico.discord_exe.Disc0rd;
 import com.scolastico.discord_exe.etc.Tools;
+import com.scolastico.discord_exe.etc.permissions.PermissionsManager;
 import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.event.handlers.CommandHandler;
 import com.scolastico.discord_exe.event.handlers.EventHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Emote;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.awt.*;
@@ -18,26 +20,37 @@ public class CommandDebug implements EventHandler, CommandHandler {
     @Override
     public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
         if (cmd.equalsIgnoreCase("debug")) {
-            if (args.length == 0) {
-                debugMain(cmd, args, jda, event, senderId, serverId);
-                return true;
-            } else if (args.length == 1) {
-                if (args[0].equalsIgnoreCase("emoji")) {
-                    debugEmoji(cmd, args, jda, event, senderId, serverId);
+            Member member = event.getGuild().getMember(event.getAuthor());
+            if (member != null) {
+                if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "debug")) {
+                    if (args.length == 0) {
+                        debugMain(cmd, args, jda, event, senderId, serverId);
+                        return true;
+                    } else if (args.length == 1) {
+                        if (args[0].equalsIgnoreCase("emoji")) {
+                            debugEmoji(cmd, args, jda, event, senderId, serverId);
+                            return true;
+                        }
+                    } else if (args.length == 2) {
+                        if (args[0].equalsIgnoreCase("emoji")) {
+                            debugEmoji(cmd, args, jda, event, senderId, serverId);
+                            return true;
+                        }
+                    }
+                    EmbedBuilder embedBuilder = new EmbedBuilder();
+                    embedBuilder.setColor(Color.red);
+                    embedBuilder.setTitle("Sorry,");
+                    embedBuilder.setDescription("but i cant see this debug option!");
+                    event.getChannel().sendMessage(embedBuilder.build()).queue();
                     return true;
-                }
-            } else if (args.length == 2) {
-                if (args[0].equalsIgnoreCase("emoji")) {
-                    debugEmoji(cmd, args, jda, event, senderId, serverId);
-                    return true;
+                } else {
+                    EmbedBuilder embedBuilder = new EmbedBuilder();
+                    embedBuilder.setColor(Color.red);
+                    embedBuilder.setTitle("Sorry,");
+                    embedBuilder.setDescription("but you dont have the permission to use this command!");
+                    event.getChannel().sendMessage(embedBuilder.build()).queue();
                 }
             }
-            EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setColor(Color.red);
-            embedBuilder.setTitle("Sorry,");
-            embedBuilder.setDescription("but i cant see this debug option!");
-            event.getChannel().sendMessage(embedBuilder.build()).queue();
-            return true;
         }
         return false;
     }
@@ -64,6 +77,7 @@ public class CommandDebug implements EventHandler, CommandHandler {
     @Override
     public void registerEvents(EventRegister eventRegister) {
         eventRegister.registerCommand(this);
+        PermissionsManager.getInstance().registerPermission("debug", "Allow a user to use the debug command.", false);
     }
 
     private void debugMain(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {

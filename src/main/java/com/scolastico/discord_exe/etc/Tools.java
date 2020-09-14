@@ -17,6 +17,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.awt.*;
@@ -139,6 +141,38 @@ public class Tools {
             ErrorHandler.getInstance().handle(e);
         }
         return result;
+    }
+
+    public JSONObject getJsonFromHttpExchange(HttpExchange httpExchange) {
+        JSONObject jsonObject = null;
+        try {
+            if (httpExchange.getRequestHeaders().containsKey("content-type")) {
+                if (httpExchange.getRequestHeaders().getFirst("content-type").equalsIgnoreCase("application/json")) {
+                    String query = httpExchange.getRequestURI().getQuery();
+                    jsonObject = new JSONObject(query);
+                }
+            }
+        } catch (JSONException ignored) {
+        } catch (Exception e) {
+            ErrorHandler.getInstance().handle(e);
+        }
+        return jsonObject;
+    }
+
+    public String getJsonStringFromHttpExchange(HttpExchange httpExchange) {
+        try {
+            if (httpExchange.getRequestHeaders().containsKey("content-type")) {
+                if (httpExchange.getRequestHeaders().getFirst("content-type").equalsIgnoreCase("application/json")) {
+                    String query = httpExchange.getRequestURI().getQuery();
+                    new JSONObject(query);
+                    return query;
+                }
+            }
+        } catch (JSONException ignored) {
+        } catch (Exception e) {
+            ErrorHandler.getInstance().handle(e);
+        }
+        return null;
     }
 
     public Color hex2Rgb(String colorStr) {
@@ -268,6 +302,7 @@ public class Tools {
         if (serverLimits.getActionsPerEvent() == 0) serverLimits.setActionsPerEvent(defaultLimits.getActionsPerEvent());
         if (serverLimits.getEvents() == 0) serverLimits.setEvents(defaultLimits.getEvents());
         if (serverLimits.getLogLines() == 0) serverLimits.setLogLines(defaultLimits.getLogLines());
+        if (serverLimits.getPermissions() == 0) serverLimits.setPermissions(defaultLimits.getPermissions());
         return serverLimits;
     }
 

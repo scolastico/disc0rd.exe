@@ -4,6 +4,7 @@ import com.scolastico.discord_exe.Disc0rd;
 import com.scolastico.discord_exe.etc.ErrorHandler;
 import com.scolastico.discord_exe.etc.MEE6Api;
 import com.scolastico.discord_exe.etc.Tools;
+import com.scolastico.discord_exe.etc.permissions.PermissionsManager;
 import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.event.handlers.CommandHandler;
 import com.scolastico.discord_exe.event.handlers.EventHandler;
@@ -32,14 +33,20 @@ public class CommandLeaderBoard implements EventHandler, CommandHandler {
     @Override
     public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
         if (cmd.equalsIgnoreCase("leaderboard")) {
+            Member member = event.getGuild().getMember(event.getAuthor());
+            if (member == null) return true;
             EmbedBuilder builder = new EmbedBuilder();
             builder.setColor(Color.red);
             builder.setTitle("Sorry,");
             builder.setDescription("but i think your command is not correct.");
             if (args.length == 0) {
-                builder.setColor(Color.green);
-                builder.setTitle("You can access the leader board from here:");
-                builder.setDescription(Disc0rd.getConfig().getWebServer().getDomain() + "leaderboard/#" + event.getGuild().getId());
+                if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "leaderboard")) {
+                    builder.setColor(Color.green);
+                    builder.setTitle("You can access the leader board from here:");
+                    builder.setDescription(Disc0rd.getConfig().getWebServer().getDomain() + "leaderboard/#" + event.getGuild().getId());
+                } else {
+                    builder.setDescription("but you dont have the permission to use this command!");
+                }
             } else if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("enable")) {
                     if (Tools.getInstance().isOwner(event.getGuild(), event.getAuthor())) {
@@ -87,28 +94,32 @@ public class CommandLeaderBoard implements EventHandler, CommandHandler {
                         builder.setDescription("but only the guild owner has the permission to use this command!");
                     }
                 } else if (args[0].equalsIgnoreCase("banner")) {
-                    Member member = event.getMember();
-                    if (member != null) {
+                    if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "rank-self")) {
                         return sendBanner(event, member);
-                    } else return false;
+                    } else {
+                        builder.setDescription("but you dont have the permission to use this command!");
+                    }
                 }
             } else if (args.length == 2) {
                 if (args[0].equalsIgnoreCase("banner")) {
-                    try {
-                        Pattern pattern = Pattern.compile("(?:<@!)([0-9]+)(?:>)");
-                        Matcher matcher = pattern.matcher(args[1]);
-                        if (matcher.find()) {
-                            String id = matcher.group(1);
-                            if (args[1].equalsIgnoreCase("<@!" + id + ">")) {
-                                Member member = event.getGuild().getMemberById(id);
-                                if (member != null) if (!member.isFake()) if (!member.getUser().isBot()) {
-                                    return sendBanner(event, member);
+                    if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "rank-other")) {
+                        try {
+                            Pattern pattern = Pattern.compile("(?:<@!)([0-9]+)(?:>)");
+                            Matcher matcher = pattern.matcher(args[1]);
+                            if (matcher.find()) {
+                                String id = matcher.group(1);
+                                if (args[1].equalsIgnoreCase("<@!" + id + ">")) {
+                                    if (!member.getUser().isBot()) {
+                                        return sendBanner(event, member);
+                                    }
+                                    builder.setDescription("but this user isn't a real user. I only take care of real users!");
                                 }
-                                builder.setDescription("but this user isn't a real user. I only take care of real users!");
                             }
+                        } catch (Exception e) {
+                            ErrorHandler.getInstance().handle(e);
                         }
-                    } catch (Exception e) {
-                        ErrorHandler.getInstance().handle(e);
+                    } else {
+                        builder.setDescription("but you dont have the permission to use this command!");
                     }
                 } else if (args[0].equalsIgnoreCase("reset")) {
                     if (Tools.getInstance().isOwner(event.getGuild(), event.getAuthor())) {
@@ -118,8 +129,7 @@ public class CommandLeaderBoard implements EventHandler, CommandHandler {
                             if (matcher.find()) {
                                 String id = matcher.group(1);
                                 if (args[1].equalsIgnoreCase("<@!" + id + ">")) {
-                                    Member member = event.getGuild().getMemberById(id);
-                                    if (member != null) if (!member.isFake()) if (!member.getUser().isBot()) {
+                                    if (!member.getUser().isBot()) {
                                         clearConfirmData();
                                         for (Long timestamp:confirmHashMap.keySet()) {
                                             ConfirmData data = confirmHashMap.get(timestamp);
@@ -178,31 +188,37 @@ public class CommandLeaderBoard implements EventHandler, CommandHandler {
             event.getChannel().sendMessage(builder.build()).queue();
             return true;
         } else if (cmd.equalsIgnoreCase("rank")) {
+            Member member = event.getMember();
+            if (member == null) return false;
             EmbedBuilder builder = new EmbedBuilder();
             builder.setColor(Color.red);
             builder.setTitle("Sorry,");
             builder.setDescription("but i think your command is not correct.");
             if (args.length == 0) {
-                Member member = event.getMember();
-                if (member != null) {
+                if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "rank-self")) {
                     return sendBanner(event, member);
-                } else return false;
+                } else {
+                    builder.setDescription("but you dont have the permission to use this command!");
+                }
             } else if (args.length == 1) {
-                try {
-                    Pattern pattern = Pattern.compile("(?:<@!)([0-9]+)(?:>)");
-                    Matcher matcher = pattern.matcher(args[0]);
-                    if (matcher.find()) {
-                        String id = matcher.group(1);
-                        if (args[0].equalsIgnoreCase("<@!" + id + ">")) {
-                            Member member = event.getGuild().getMemberById(id);
-                            if (member != null) if (!member.isFake()) if (!member.getUser().isBot()) {
-                                return sendBanner(event, member);
+                if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "rank-other")) {
+                    try {
+                        Pattern pattern = Pattern.compile("(?:<@!)([0-9]+)(?:>)");
+                        Matcher matcher = pattern.matcher(args[0]);
+                        if (matcher.find()) {
+                            String id = matcher.group(1);
+                            if (args[0].equalsIgnoreCase("<@!" + id + ">")) {
+                                if (!member.getUser().isBot()) {
+                                    return sendBanner(event, member);
+                                }
+                                builder.setDescription("but this user isn't a real user. I only take care of real users!");
                             }
-                            builder.setDescription("but this user isn't a real user. I only take care of real users!");
                         }
+                    } catch (Exception e) {
+                        ErrorHandler.getInstance().handle(e);
                     }
-                } catch (Exception e) {
-                    ErrorHandler.getInstance().handle(e);
+                } else {
+                    builder.setDescription("but you dont have the permission to use this command!");
                 }
             }
             event.getChannel().sendMessage(builder.build()).queue();
@@ -227,7 +243,7 @@ public class CommandLeaderBoard implements EventHandler, CommandHandler {
         }
         confirmHashMap.put((System.currentTimeMillis() / 1000L) + 15, new ConfirmData("banner-" +  member.getId(), event.getGuild().getIdLong()));
         try {
-            if (member.isFake()) return true;
+            if (member.getUser().isBot()) return true;
             String svg = Tools.getInstance().getLeaderboardBannerSVG(event.getGuild(), member);
             File file = new File(Disc0rd.getConfig().getTmpDir() + event.getGuild().getId() + "-" + member.getId() + ".png");
             PNGTranscoder coder = new PNGTranscoder();
@@ -288,6 +304,9 @@ public class CommandLeaderBoard implements EventHandler, CommandHandler {
     @Override
     public void registerEvents(EventRegister eventRegister) {
         eventRegister.registerCommand(this);
+        PermissionsManager.getInstance().registerPermission("leaderboard", "Allow a user to query the leaderboard url.", true);
+        PermissionsManager.getInstance().registerPermission("rank-self", "Allow a user to query their own rank.", true);
+        PermissionsManager.getInstance().registerPermission("rank-other", "Allow a user to query the rank of another user.", true);
     }
 
     private void clearConfirmData() {

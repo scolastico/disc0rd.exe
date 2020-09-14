@@ -2,13 +2,13 @@ package com.scolastico.discord_exe.event.events;
 
 import com.scolastico.discord_exe.etc.musicplayer.MusicPlayer;
 import com.scolastico.discord_exe.etc.musicplayer.MusicPlayerRegister;
+import com.scolastico.discord_exe.etc.permissions.PermissionsManager;
 import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.event.handlers.CommandHandler;
 import com.scolastico.discord_exe.event.handlers.EventHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.awt.*;
@@ -65,5 +65,6 @@ public class CommandDisconnect implements CommandHandler, EventHandler {
     @Override
     public void registerEvents(EventRegister eventRegister) {
         eventRegister.registerCommand(this);
+        PermissionsManager.getInstance().registerPermission("disconnect", "Allow a user to use the disconnect command from the music player.", true);
     }
 }

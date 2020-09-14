@@ -172,6 +172,15 @@ public class ConfigDataStore {
         private int logLines = 50;
         private int events = 25;
         private int actionsPerEvent = 10;
+        private int permissions = 20;
+
+        public int getPermissions() {
+            return permissions;
+        }
+
+        public void setPermissions(int permissions) {
+            this.permissions = permissions;
+        }
 
         public int getLogLines() {
             return logLines;

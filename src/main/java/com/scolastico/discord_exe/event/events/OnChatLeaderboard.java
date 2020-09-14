@@ -1,11 +1,13 @@
 package com.scolastico.discord_exe.event.events;
 
 import com.scolastico.discord_exe.Disc0rd;
+import com.scolastico.discord_exe.etc.permissions.PermissionsManager;
 import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.event.handlers.EventHandler;
 import com.scolastico.discord_exe.event.handlers.MessageReceivedHandler;
 import com.scolastico.discord_exe.mysql.ServerSettings;
 import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -19,13 +21,16 @@ public class OnChatLeaderboard implements EventHandler, MessageReceivedHandler {
     @Override
     public void registerEvents(EventRegister eventRegister) {
         eventRegister.registerMessageReceivedEvent(this);
+        PermissionsManager.getInstance().registerPermission("leaderboard-collect-text", "Allow a user to collect points on the leaderboard via text chat.", true);
     }
 
     @Override
     public void handleMessageReceived(MessageReceivedEvent messageReceivedEvent) {
         if (messageReceivedEvent.getChannel().getType() == ChannelType.TEXT) {
             User user = messageReceivedEvent.getAuthor();
-            if (!user.isFake()) if (!user.isBot()) {
+            Member member = messageReceivedEvent.getGuild().getMember(user);
+            if (member == null) return;
+            if (!user.isBot()) if (PermissionsManager.getInstance().checkPermission(messageReceivedEvent.getGuild(), member, "leaderboard-collect-text")){
                 clearTimeOut();
                 if (!timeOut.containsKey(user.getIdLong())) {
                     timeOut.put(user.getIdLong(), getUnixTimeStamp() + 60);

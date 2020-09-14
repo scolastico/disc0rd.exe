@@ -3,6 +3,8 @@ package com.scolastico.discord_exe.event;
 import com.scolastico.discord_exe.Disc0rd;
 import com.scolastico.discord_exe.etc.ErrorHandler;
 import com.scolastico.discord_exe.event.handlers.*;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberLeaveEvent;
@@ -15,6 +17,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -126,7 +129,17 @@ public class EventRegister extends ListenerAdapter {
 
                     Member member = event.getGuild().getMember(event.getAuthor());
 
-                    if (member != null) if (!member.isFake()) if (!event.getAuthor().isBot()) {
+                    if (member != null) if (!event.getAuthor().isBot()) {
+
+                        if (!event.getGuild().getSelfMember().hasPermission(Permission.ADMINISTRATOR)) {
+                            try {
+                                EmbedBuilder builder = new EmbedBuilder();
+                                builder.setColor(Color.RED);
+                                builder.setTitle("Sorry,");
+                                builder.setDescription("but my permissions are not properly set. Please inform the administrators that i need more permissions on this guild! Learn more here: <" + Disc0rd.getConfig().getDocumentation() + ">");
+                                event.getChannel().sendMessage(builder.build()).queue();
+                            } catch (Exception ignored) {}
+                        }
 
                         String message = event.getMessage().getContentRaw();
                         ServerSettings settings = Disc0rd.getMysql().getServerSettings(event.getGuild().getIdLong());

@@ -1,6 +1,7 @@
 package com.scolastico.discord_exe.event.events;
 
 import com.scolastico.discord_exe.Disc0rd;
+import com.scolastico.discord_exe.etc.permissions.PermissionsManager;
 import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.event.handlers.EventHandler;
 import com.scolastico.discord_exe.event.handlers.ScheduleHandler;
@@ -15,6 +16,7 @@ public class OnScheduleLeaderboard implements EventHandler, ScheduleHandler {
     @Override
     public void registerEvents(EventRegister eventRegister) {
         eventRegister.registerSchedule(this);
+        PermissionsManager.getInstance().registerPermission("leaderboard-collect-voice", "Allow a user to collect points on the leaderboard via voice chat.", true);
     }
 
     @Override
@@ -23,7 +25,7 @@ public class OnScheduleLeaderboard implements EventHandler, ScheduleHandler {
             ServerSettings settings = Disc0rd.getMysql().getServerSettings(guild.getIdLong());
             for (VoiceChannel channel:guild.getVoiceChannels()) {
                 for (Member member:channel.getMembers()) {
-                    if (!member.isFake()) if (!member.getUser().isBot()) {
+                    if (!member.getUser().isBot()) if (PermissionsManager.getInstance().checkPermission(guild, member, "leaderboard-collect-voice")) {
                         GuildVoiceState voiceState = member.getVoiceState();
                         if (voiceState != null) {
                             if (

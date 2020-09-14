@@ -2,6 +2,7 @@ package com.scolastico.discord_exe.event.events;
 
 import com.scolastico.discord_exe.etc.musicplayer.MusicPlayer;
 import com.scolastico.discord_exe.etc.musicplayer.MusicPlayerRegister;
+import com.scolastico.discord_exe.etc.permissions.PermissionsManager;
 import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.event.handlers.CommandHandler;
 import com.scolastico.discord_exe.event.handlers.EventHandler;
@@ -25,25 +26,29 @@ public class CommandClearQueue implements EventHandler, CommandHandler {
             if (args.length == 0) {
                 Member member = event.getGuild().getMember(event.getAuthor());
                 if (member != null) {
-                    if (member.getVoiceState() != null) {
-                        VoiceChannel channel = member.getVoiceState().getChannel();
-                        if (channel != null) {
-                            MusicPlayer player = MusicPlayerRegister.getInstance().getPlayer(event.getGuild().getIdLong());
-                            if (player != null) {
-                                if (player.getChannel() == channel) {
-                                    player.clearQueue();
-                                    builder.setColor(Color.GREEN);
-                                    builder.setTitle("Music Player");
-                                    builder.setDescription("Cleared the queue.");
+                    if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "clear-queue")) {
+                        if (member.getVoiceState() != null) {
+                            VoiceChannel channel = member.getVoiceState().getChannel();
+                            if (channel != null) {
+                                MusicPlayer player = MusicPlayerRegister.getInstance().getPlayer(event.getGuild().getIdLong());
+                                if (player != null) {
+                                    if (player.getChannel() == channel) {
+                                        player.clearQueue();
+                                        builder.setColor(Color.GREEN);
+                                        builder.setTitle("Music Player");
+                                        builder.setDescription("Cleared the queue.");
+                                    } else {
+                                        builder.setDescription("but you need to be in the same channel as the bot.");
+                                    }
                                 } else {
-                                    builder.setDescription("but you need to be in the same channel as the bot.");
+                                    builder.setDescription("There is no player currently. You can start the music player with `disc0rd/play <url>`.");
                                 }
                             } else {
-                                builder.setDescription("There is no player currently. You can start the music player with `disc0rd/play <url>`.");
+                                builder.setDescription("but you need to be in the an voice channel to do that.");
                             }
-                        } else {
-                            builder.setDescription("but you need to be in the an voice channel to do that.");
                         }
+                    } else {
+                        builder.setDescription("but you dont have the permission to use this command!");
                     }
                 }
             }
@@ -74,5 +79,6 @@ public class CommandClearQueue implements EventHandler, CommandHandler {
     @Override
     public void registerEvents(EventRegister eventRegister) {
         eventRegister.registerCommand(this);
+        PermissionsManager.getInstance().registerPermission("clear-queue", "Allow a user to use the clearQueue command from the music player.", true);
     }
 }

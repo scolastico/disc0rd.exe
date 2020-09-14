@@ -1,5 +1,6 @@
 package com.scolastico.discord_exe.mysql;
 
+import com.scolastico.discord_exe.etc.permissions.PermissionsData;
 import com.scolastico.discord_exe.event.extendedEventSystem.ExtendedEvent;
 
 import java.util.*;
@@ -15,6 +16,15 @@ public class ServerSettings {
     private String cmdPrefix = "$";
     private Pr0grammServerConfig pr0grammServerConfig = new Pr0grammServerConfig();
     private Leaderboard leaderboard = new Leaderboard();
+    private HashMap<UUID, PermissionsData> permissionsData = new HashMap<>();
+
+    public HashMap<UUID, PermissionsData> getPermissionsData() {
+        return permissionsData;
+    }
+
+    public void setPermissionsData(HashMap<UUID, PermissionsData> permissionsData) {
+        this.permissionsData = permissionsData;
+    }
 
     public Leaderboard getLeaderboard() {
         return leaderboard;
@@ -307,6 +317,15 @@ public class ServerSettings {
         private int logLines = 0;
         private int events = 0;
         private int actionsPerEvent = 0;
+        private int permissions = 0;
+
+        public int getPermissions() {
+            return permissions;
+        }
+
+        public void setPermissions(int permissions) {
+            this.permissions = permissions;
+        }
 
         public int getLogLines() {
             return logLines;
