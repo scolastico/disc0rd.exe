@@ -14,6 +14,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.awt.*;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CommandDebug implements EventHandler, CommandHandler {
 
@@ -30,10 +32,16 @@ public class CommandDebug implements EventHandler, CommandHandler {
                         if (args[0].equalsIgnoreCase("emoji")) {
                             debugEmoji(cmd, args, jda, event, senderId, serverId);
                             return true;
+                        } else if (args[0].equalsIgnoreCase("id")) {
+                            debugId(cmd, args, jda, event, senderId, serverId);
+                            return true;
                         }
                     } else if (args.length == 2) {
                         if (args[0].equalsIgnoreCase("emoji")) {
                             debugEmoji(cmd, args, jda, event, senderId, serverId);
+                            return true;
+                        } else if (args[0].equalsIgnoreCase("id")) {
+                            debugId(cmd, args, jda, event, senderId, serverId);
                             return true;
                         }
                     }
@@ -66,6 +74,7 @@ public class CommandDebug implements EventHandler, CommandHandler {
         HashMap<String, String> helpSite = new HashMap<>();
         helpSite.put("debug", "Outputs guild information's for debug.");
         helpSite.put("debug emoji", "Outputs the emoji id's from this guild.");
+        helpSite.put("debug id", "Starts the id getter.");
         return helpSite;
     }
 
@@ -78,6 +87,26 @@ public class CommandDebug implements EventHandler, CommandHandler {
     public void registerEvents(EventRegister eventRegister) {
         eventRegister.registerCommand(this);
         PermissionsManager.getInstance().registerPermission("debug", "Allow a user to use the debug command.", false);
+    }
+
+    private void debugId(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setColor(Color.GREEN);
+        if (args.length == 1) {
+            builder.setDescription("Please use the command as following: `disc0rd/debug id <anything>`\n\nReplace '<anything>' with a mark from a user or a group or send me a emoji to get they're id.");
+        } else {
+            Pattern pattern = Pattern.compile("[0-9]{18}");
+            Matcher matcher = pattern.matcher(args[1]);
+            if (matcher.find()) {
+                builder.setTitle("The ID is:");
+                builder.setDescription("`" + matcher.group(0) + "`");
+            } else {
+                builder.setColor(Color.RED);
+                builder.setTitle("Sorry,");
+                builder.setDescription("but i cant see the id from this.");
+            }
+        }
+        event.getChannel().sendMessage(builder.build()).queue();
     }
 
     private void debugMain(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
