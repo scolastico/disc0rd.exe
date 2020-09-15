@@ -2,7 +2,6 @@ package com.scolastico.discord_exe.webserver.context;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.stream.MalformedJsonException;
 import com.scolastico.discord_exe.Disc0rd;
 import com.scolastico.discord_exe.etc.ErrorHandler;
 import com.scolastico.discord_exe.etc.Tools;
@@ -73,7 +72,7 @@ public class GuildPermissions implements WebHandler {
 
     private String delete(HttpExchange httpExchange) {
         try {
-            String key = httpExchange.getRequestURI().getPath().replaceFirst("/api/v1/guild/permissions/set/", "");
+            String key = httpExchange.getRequestURI().getPath().replaceFirst("/api/v1/guild/permissions/delete/", "");
             if (key.equals("")) return "{\"status\":\"error\", \"error\":\"request invalid\"}";
             Long guildId = GuildPanel.getIdFromAuthorization(httpExchange);
             if (guildId != null) {
@@ -108,6 +107,7 @@ public class GuildPermissions implements WebHandler {
                         PermissionsData data = gson.fromJson(json, PermissionsData.class);
                         if (data != null) {
                             HashMap<UUID, PermissionsData> serverPermissionsData = settings.getPermissionsData();
+                            UUID tmpUUID = null;
                             if (key.equalsIgnoreCase("create")) {
                                 if (settings.getPermissionsData().size() < Tools.getInstance().getLimitFromGuild(guildId).getPermissions()) {
                                     UUID uuid;
@@ -115,6 +115,7 @@ public class GuildPermissions implements WebHandler {
                                         uuid = UUID.randomUUID();
                                     } while (serverPermissionsData.containsKey(uuid));
                                     serverPermissionsData.put(uuid, data);
+                                    tmpUUID = uuid;
                                 } else {
                                     return "{\"status\":\"error\", \"error\":\"limit reached\"}";
                                 }
@@ -123,13 +124,14 @@ public class GuildPermissions implements WebHandler {
                                 if (serverPermissionsData.containsKey(uuid)) {
                                     serverPermissionsData.remove(uuid);
                                     serverPermissionsData.put(uuid, data);
+                                    tmpUUID = uuid;
                                 } else {
                                     return "{\"status\":\"error\", \"error\":\"uuid not found\"}";
                                 }
                             }
                             settings.setPermissionsData(serverPermissionsData);
                             Disc0rd.getMysql().setServerSettings(guildId, settings);
-                            return "{\"status\":\"ok\"}";
+                            return "{\"status\":\"ok\",\"uuid\":\"" + tmpUUID.toString() + "\"}";
                         }
                     } catch (JsonSyntaxException ignored) {}
                 }
