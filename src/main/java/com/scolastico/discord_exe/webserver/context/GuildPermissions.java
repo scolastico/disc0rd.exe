@@ -54,7 +54,15 @@ public class GuildPermissions implements WebHandler {
             if (guildId != null) {
                 HashMap<UUID, PermissionsData> permissions = Disc0rd.getMysql().getServerSettings(guildId).getPermissionsData();
                 Gson gson = new Gson();
-                return "\"status\":\"ok\",\"get\":" + gson.toJson(permissions) + "}";
+                if (permissions.size() != 0) {
+                    return "{\"status\":\"ok\",\"get\":" + gson.toJson(permissions) + "}";
+                } else {
+                    HashMap<String, PermissionsData> tmp = new HashMap<>();
+                    PermissionsData defaultData = new PermissionsData(0);
+                    defaultData.setPermissions(PermissionsManager.getInstance().getDefaultValues());
+                    tmp.put("create", defaultData);
+                    return "{\"status\":\"ok\",\"get\":" + gson.toJson(tmp) + "}";
+                }
             }
             return "{\"status\":\"error\", \"error\":\"no auth\"}";
         } catch (Exception e) {
@@ -77,7 +85,7 @@ public class GuildPermissions implements WebHandler {
                 } else {
                     return "{\"status\":\"error\", \"error\":\"uuid not found\"}";
                 }
-                return "\"status\":\"ok\"}";
+                return "{\"status\":\"ok\"}";
             }
             return "{\"status\":\"error\", \"error\":\"no auth\"}";
         } catch (Exception e) {
@@ -121,7 +129,7 @@ public class GuildPermissions implements WebHandler {
                             }
                             settings.setPermissionsData(serverPermissionsData);
                             Disc0rd.getMysql().setServerSettings(guildId, settings);
-                            return "\"status\":\"ok\"}";
+                            return "{\"status\":\"ok\"}";
                         }
                     } catch (JsonSyntaxException ignored) {}
                 }

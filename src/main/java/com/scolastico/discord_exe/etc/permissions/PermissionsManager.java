@@ -34,12 +34,12 @@ public class PermissionsManager {
             PermissionsData data = permissionsData.get(uuid);
             if (data.getPermission(permission)) {
                 if (data.isUser()) {
-                    if (data.getId() == member.getIdLong()) {
+                    if (data.getId() == member.getIdLong() || data.getId() == 0) {
                         return true;
                     }
                 } else {
                     for (Role role:member.getRoles()) {
-                        if (data.getId() == role.getIdLong()) {
+                        if (data.getId() == role.getIdLong() || data.getId() == 0) {
                             return true;
                         }
                     }

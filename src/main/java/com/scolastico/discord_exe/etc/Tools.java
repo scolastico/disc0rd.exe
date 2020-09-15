@@ -148,8 +148,15 @@ public class Tools {
         try {
             if (httpExchange.getRequestHeaders().containsKey("content-type")) {
                 if (httpExchange.getRequestHeaders().getFirst("content-type").equalsIgnoreCase("application/json")) {
-                    String query = httpExchange.getRequestURI().getQuery();
-                    jsonObject = new JSONObject(query);
+                    BufferedReader httpInput = new BufferedReader(new InputStreamReader(httpExchange.getRequestBody(), StandardCharsets.UTF_8));
+                    StringBuilder in = new StringBuilder();
+                    String input;
+                    while ((input = httpInput.readLine()) != null) {
+                        in.append(input).append(" ");
+                    }
+                    httpInput.close();
+                    input = in.toString();
+                    jsonObject = new JSONObject(input);
                 }
             }
         } catch (JSONException ignored) {
@@ -163,9 +170,16 @@ public class Tools {
         try {
             if (httpExchange.getRequestHeaders().containsKey("content-type")) {
                 if (httpExchange.getRequestHeaders().getFirst("content-type").equalsIgnoreCase("application/json")) {
-                    String query = httpExchange.getRequestURI().getQuery();
-                    new JSONObject(query);
-                    return query;
+                    BufferedReader httpInput = new BufferedReader(new InputStreamReader(httpExchange.getRequestBody(), StandardCharsets.UTF_8));
+                    StringBuilder in = new StringBuilder();
+                    String input;
+                    while ((input = httpInput.readLine()) != null) {
+                        in.append(input).append(" ");
+                    }
+                    httpInput.close();
+                    input = in.toString();
+                    new JSONObject(input);
+                    return input;
                 }
             }
         } catch (JSONException ignored) {
