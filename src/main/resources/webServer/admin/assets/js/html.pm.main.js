@@ -17,7 +17,7 @@ function getHtmlPermissionsCard(uuid, permissions, availablePermissions, id, isU
         '                                            </div>\n' +
         '                                        </div>\n' +
         '                                        <div class="form-row">\n' +
-        '                                            <div class="col align-self-center"><input onclick="clickOnAnything(\'' + uuid + '\');" id="' + uuid + '-id" class="form-control d-inline" type="text" name="id" style="width: 50%;"></div>\n' +
+        '                                            <div class="col align-self-center"><input onclick="clickOnAnything(\'' + uuid + '\');" id="' + uuid + '-id" class="form-control d-inline" type="text" name="id" style="width: 50%;" value="' + id + '"></div>\n' +
         '                                        </div>\n' +
         '                                    </div>\n'
 
