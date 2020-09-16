@@ -11,6 +11,7 @@ import com.scolastico.discord_exe.mysql.ServerSettings;
 import com.scolastico.discord_exe.webserver.WebHandler;
 import com.sun.net.httpserver.HttpExchange;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -106,6 +107,17 @@ public class GuildPermissions implements WebHandler {
                         Gson gson = new Gson();
                         PermissionsData data = gson.fromJson(json, PermissionsData.class);
                         if (data != null) {
+                            HashMap<String, Boolean> permissions = data.getPermissions();
+                            ArrayList<String> toDelete = new ArrayList<>();
+                            for (String permission:permissions.keySet()) {
+                                if (!PermissionsManager.getInstance().getPermissions().containsKey(permission)) {
+                                    toDelete.add(permission);
+                                }
+                            }
+                            for (String permission:toDelete) {
+                                permissions.remove(permission);
+                            }
+                            data.setPermissions(permissions);
                             HashMap<UUID, PermissionsData> serverPermissionsData = settings.getPermissionsData();
                             UUID tmpUUID = null;
                             if (key.equalsIgnoreCase("create")) {
