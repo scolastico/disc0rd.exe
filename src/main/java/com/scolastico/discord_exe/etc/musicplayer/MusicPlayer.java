@@ -80,7 +80,7 @@ public class MusicPlayer {
             if (!(trackUrl.startsWith("http") || trackUrl.startsWith("ytsearch:") || trackUrl.startsWith("scsearch:"))) {
                 trackUrl = "ytsearch:" + trackUrl;
             }
-            Pattern pattern = Pattern.compile("^https?:\\/\\/open\\.spotify\\.com\\/(track|playlist)\\/([0-9a-z]+)\\?", Pattern.CASE_INSENSITIVE);
+            Pattern pattern = Pattern.compile("^https?:\\/\\/open\\.spotify\\.com\\/(track|playlist|album)\\/([0-9a-z]+)\\?", Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(trackUrl);
             if (matcher.find()) {
                 String id = matcher.group(2);
@@ -104,6 +104,16 @@ public class MusicPlayer {
                         textChannel.sendMessage(builder.build()).queue();
                         return;
                     }
+                } else if (matcher.group(1).equalsIgnoreCase("album")) {
+                    String[] urls = SpotifyToYoutube.getInstance().spotifyPlaylistToString(id);
+                    if (urls.length == 0) {
+                        textChannel.sendMessage(builder.build()).queue();
+                    } else {
+                        for (String url:urls) {
+                            addToQueue(url);
+                        }
+                    }
+                    return;
                 }
             }
             idleTime = 0;

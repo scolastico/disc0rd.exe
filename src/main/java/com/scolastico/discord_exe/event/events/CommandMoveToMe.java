@@ -1,5 +1,6 @@
 package com.scolastico.discord_exe.event.events;
 
+import com.scolastico.discord_exe.etc.permissions.PermissionsManager;
 import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.event.handlers.CommandHandler;
 import com.scolastico.discord_exe.event.handlers.EventHandler;
@@ -26,7 +27,7 @@ public class CommandMoveToMe implements CommandHandler, EventHandler {
             builder.setDescription("but you misspelled the command. Try `disc0rd/help moveToMe`");
             if (member != null) {
                 if (args.length == 0) {
-                    if (member.hasPermission(Permission.VOICE_MOVE_OTHERS)) {
+                    if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "")) {
                         GuildVoiceState state = member.getVoiceState();
                         if (state != null) {
                             VoiceChannel toMove = state.getChannel();
@@ -74,5 +75,6 @@ public class CommandMoveToMe implements CommandHandler, EventHandler {
     @Override
     public void registerEvents(EventRegister eventRegister) {
         eventRegister.registerCommand(this);
+        PermissionsManager.getInstance().registerPermission("move-to-me", "Allow a user to use the moveToMe command.", false);
     }
 }

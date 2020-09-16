@@ -2,6 +2,7 @@ package com.scolastico.discord_exe.event.events;
 
 import com.scolastico.discord_exe.etc.musicplayer.MusicPlayer;
 import com.scolastico.discord_exe.etc.musicplayer.MusicPlayerRegister;
+import com.scolastico.discord_exe.etc.permissions.PermissionsManager;
 import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.event.handlers.CommandHandler;
 import com.scolastico.discord_exe.event.handlers.EventHandler;
@@ -23,30 +24,37 @@ public class CommandQueue implements CommandHandler, EventHandler {
             builder.setColor(Color.RED);
             builder.setTitle("Sorry,");
             builder.setDescription("but the command isn't correct. Please check the arguments or try `disc0rd/help queue`.");
+            Member member = event.getGuild().getMember(event.getAuthor());
             if (args.length == 0) {
-                Member member = event.getGuild().getMember(event.getAuthor());
                 if (member != null) {
-                    if (member.getVoiceState() != null) {
-                        MusicPlayer player = MusicPlayerRegister.getInstance().getPlayer(event.getGuild().getIdLong());
-                        if (player != null) {
-                            builder = loadSite(player, 1);
-                        } else {
-                            builder.setDescription("There is no player currently. You can start the music player with `disc0rd/play <url>`.");
+                    if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "queue")) {
+                        if (member.getVoiceState() != null) {
+                            MusicPlayer player = MusicPlayerRegister.getInstance().getPlayer(event.getGuild().getIdLong());
+                            if (player != null) {
+                                builder = loadSite(player, 1);
+                            } else {
+                                builder.setDescription("There is no player currently. You can start the music player with `disc0rd/play <url>`.");
+                            }
                         }
+                    } else {
+                        builder.setDescription("but you dont have the permission to use this command!");
                     }
                 }
             } else if (args.length == 1) {
-                Member member = event.getGuild().getMember(event.getAuthor());
                 if (member != null) {
-                    if (member.getVoiceState() != null) {
-                        MusicPlayer player = MusicPlayerRegister.getInstance().getPlayer(event.getGuild().getIdLong());
-                        if (player != null) {
-                            try {
-                                builder = loadSite(player, Integer.parseInt(args[0]));
-                            } catch (NumberFormatException ignored) {}
-                        } else {
-                            builder.setDescription("There is no player currently. You can start the music player with `disc0rd/play <url>`.");
+                    if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "queue")) {
+                        if (member.getVoiceState() != null) {
+                            MusicPlayer player = MusicPlayerRegister.getInstance().getPlayer(event.getGuild().getIdLong());
+                            if (player != null) {
+                                try {
+                                    builder = loadSite(player, Integer.parseInt(args[0]));
+                                } catch (NumberFormatException ignored) {}
+                            } else {
+                                builder.setDescription("There is no player currently. You can start the music player with `disc0rd/play <url>`.");
+                            }
                         }
+                    } else {
+                        builder.setDescription("but you dont have the permission to use this command!");
                     }
                 }
             }
@@ -114,5 +122,6 @@ public class CommandQueue implements CommandHandler, EventHandler {
     @Override
     public void registerEvents(EventRegister eventRegister) {
         eventRegister.registerCommand(this);
+        PermissionsManager.getInstance().registerPermission("queue", "Allow a user to use the queue command from the music player.", true);
     }
 }

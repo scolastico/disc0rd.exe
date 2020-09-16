@@ -2,6 +2,7 @@ package com.scolastico.discord_exe.event.events;
 
 import com.scolastico.discord_exe.etc.musicplayer.MusicPlayer;
 import com.scolastico.discord_exe.etc.musicplayer.MusicPlayerRegister;
+import com.scolastico.discord_exe.etc.permissions.PermissionsManager;
 import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.event.handlers.CommandHandler;
 import com.scolastico.discord_exe.event.handlers.EventHandler;
@@ -22,56 +23,63 @@ public class CommandPlay implements CommandHandler, EventHandler {
             builder.setColor(Color.RED);
             builder.setTitle("Sorry,");
             builder.setDescription("but i cant find this command. Check your arguments or try `disc0rd/help play`.");
+            Member member = event.getGuild().getMember(event.getAuthor());
             if (args.length == 0) {
-                Member member = event.getGuild().getMember(event.getAuthor());
                 if (member != null) {
-                    if (member.getVoiceState() != null) {
-                        VoiceChannel channel = member.getVoiceState().getChannel();
-                        if (channel != null) {
-                            MusicPlayer player = MusicPlayerRegister.getInstance().getPlayer(event.getGuild().getIdLong());
-                            if (player != null) {
-                                if (player.getChannel() == channel) {
-                                    if (!player.getStatus()) {
-                                        player.play();
-                                        builder.setColor(Color.GREEN);
-                                        builder.setTitle("Music Player");
-                                        builder.setDescription("un- paused.");
+                    if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "play")) {
+                        if (member.getVoiceState() != null) {
+                            VoiceChannel channel = member.getVoiceState().getChannel();
+                            if (channel != null) {
+                                MusicPlayer player = MusicPlayerRegister.getInstance().getPlayer(event.getGuild().getIdLong());
+                                if (player != null) {
+                                    if (player.getChannel() == channel) {
+                                        if (!player.getStatus()) {
+                                            player.play();
+                                            builder.setColor(Color.GREEN);
+                                            builder.setTitle("Music Player");
+                                            builder.setDescription("un- paused.");
+                                        } else {
+                                            builder.setDescription("the player is not paused.");
+                                        }
                                     } else {
-                                        builder.setDescription("the player is not paused.");
+                                        builder.setDescription("but you need to be in the same channel as the bot.");
                                     }
                                 } else {
-                                    builder.setDescription("but you need to be in the same channel as the bot.");
+                                    builder.setDescription("There is no player currently. You can start the music player with `disc0rd/play <url>`.");
                                 }
                             } else {
-                                builder.setDescription("There is no player currently. You can start the music player with `disc0rd/play <url>`.");
+                                builder.setDescription("but you need to be in the an voice channel to do that.");
                             }
-                        } else {
-                            builder.setDescription("but you need to be in the an voice channel to do that.");
                         }
+                    } else {
+                        builder.setDescription("but you dont have the permission to use this command!");
                     }
                 }
             } else {
-                Member member = event.getGuild().getMember(event.getAuthor());
                 if (member != null) {
-                    if (member.getVoiceState() != null) {
-                        VoiceChannel channel = member.getVoiceState().getChannel();
-                        if (channel != null) {
-                            MusicPlayer player = MusicPlayerRegister.getInstance().getPlayer(event.getGuild().getIdLong());
-                            if (player == null) {
-                                player = new MusicPlayer(channel, event.getTextChannel());
-                            }
-                            if (player.getChannel() == channel) {
-                                StringBuilder arg = new StringBuilder();
-                                for (String tmp:args) {
-                                    arg.append(tmp).append(" ");
+                    if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "play")) {
+                        if (member.getVoiceState() != null) {
+                            VoiceChannel channel = member.getVoiceState().getChannel();
+                            if (channel != null) {
+                                MusicPlayer player = MusicPlayerRegister.getInstance().getPlayer(event.getGuild().getIdLong());
+                                if (player == null) {
+                                    player = new MusicPlayer(channel, event.getTextChannel());
                                 }
-                                player.addToQueue(arg.substring(0, arg.length()-1));
-                                return true;
+                                if (player.getChannel() == channel) {
+                                    StringBuilder arg = new StringBuilder();
+                                    for (String tmp:args) {
+                                        arg.append(tmp).append(" ");
+                                    }
+                                    player.addToQueue(arg.substring(0, arg.length()-1));
+                                    return true;
+                                }
+                                builder.setDescription("but you need to be in the same channel as the bot.");
+                            } else {
+                                builder.setDescription("but you need to be in the an voice channel to do that.");
                             }
-                            builder.setDescription("but you need to be in the same channel as the bot.");
-                        } else {
-                            builder.setDescription("but you need to be in the an voice channel to do that.");
                         }
+                    } else {
+                        builder.setDescription("but you dont have the permission to use this command!");
                     }
                 }
             }
@@ -104,5 +112,6 @@ public class CommandPlay implements CommandHandler, EventHandler {
     @Override
     public void registerEvents(EventRegister eventRegister) {
         eventRegister.registerCommand(this);
+        PermissionsManager.getInstance().registerPermission("play", "Allow a user to use the play command from the music player.", true);
     }
 }

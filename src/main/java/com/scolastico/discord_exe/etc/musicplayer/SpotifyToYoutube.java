@@ -4,10 +4,7 @@ import com.scolastico.discord_exe.Disc0rd;
 import com.scolastico.discord_exe.etc.ErrorHandler;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
-import com.wrapper.spotify.model_objects.specification.ArtistSimplified;
-import com.wrapper.spotify.model_objects.specification.Playlist;
-import com.wrapper.spotify.model_objects.specification.PlaylistTrack;
-import com.wrapper.spotify.model_objects.specification.Track;
+import com.wrapper.spotify.model_objects.specification.*;
 import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 
 import java.net.URI;
@@ -42,6 +39,27 @@ public class SpotifyToYoutube {
         } catch (Exception e) {
             ErrorHandler.getInstance().handleFatal(e);
         }
+    }
+
+    public String[] spotifyAlbumToString(String id) {
+        ArrayList<String> ret = new ArrayList<>();
+        try {
+            if (checkToken()) {
+                Album album = spotifyApi.getAlbum(id).build().execute();
+                for (TrackSimplified track:album.getTracks().getItems()) {
+                    StringBuilder artist = new StringBuilder();
+                    for (ArtistSimplified artists:track.getArtists()) {
+                        artist.append(artists.getName()).append(", ");
+                    }
+                    String a = artist.toString();
+                    if (a.endsWith(", ")) a = a.substring(0, a.length()-2);
+                    ret.add("ytsearch:" + track.getName() + " - " + artist.toString());
+                }
+            }
+        } catch (Exception e) {
+            ErrorHandler.getInstance().handle(e);
+        }
+        return ret.toArray(new String[0]);
     }
 
     public String[] spotifyPlaylistToString(String id) {

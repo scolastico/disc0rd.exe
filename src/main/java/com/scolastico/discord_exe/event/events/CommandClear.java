@@ -1,6 +1,7 @@
 package com.scolastico.discord_exe.event.events;
 
 import com.scolastico.discord_exe.etc.ErrorHandler;
+import com.scolastico.discord_exe.etc.permissions.PermissionsManager;
 import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.event.handlers.CommandHandler;
 import com.scolastico.discord_exe.event.handlers.EventHandler;
@@ -29,8 +30,8 @@ public class CommandClear implements EventHandler, CommandHandler {
                 try {
                     Member member = event.getGuild().getMember(event.getAuthor());
                     if (member != null) {
-                        if (member.hasPermission(Permission.MESSAGE_MANAGE)) {
-                            Integer number = 1;
+                        if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "clear")) {
+                            int number = 1;
                             try {
                                 number = Integer.parseInt(args[0]);
                             } catch (Exception ignored) {
@@ -64,7 +65,7 @@ public class CommandClear implements EventHandler, CommandHandler {
                         }
                     } else {
                         builder.setTitle("Sorry,");
-                        builder.setDescription("but you dont have the permission to manage messages!");
+                        builder.setDescription("but you dont have the permission to use this command!");
                         builder.setColor(Color.red);
                     }
                 } catch (Exception e) {
@@ -105,5 +106,6 @@ public class CommandClear implements EventHandler, CommandHandler {
     @Override
     public void registerEvents(EventRegister eventRegister) {
         eventRegister.registerCommand(this);
+        PermissionsManager.getInstance().registerPermission("clear", "Allow a user to use the clear command.", false);
     }
 }

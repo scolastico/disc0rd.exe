@@ -17,6 +17,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.awt.*;
@@ -139,6 +141,52 @@ public class Tools {
             ErrorHandler.getInstance().handle(e);
         }
         return result;
+    }
+
+    public JSONObject getJsonFromHttpExchange(HttpExchange httpExchange) {
+        JSONObject jsonObject = null;
+        try {
+            if (httpExchange.getRequestHeaders().containsKey("content-type")) {
+                if (httpExchange.getRequestHeaders().getFirst("content-type").equalsIgnoreCase("application/json")) {
+                    BufferedReader httpInput = new BufferedReader(new InputStreamReader(httpExchange.getRequestBody(), StandardCharsets.UTF_8));
+                    StringBuilder in = new StringBuilder();
+                    String input;
+                    while ((input = httpInput.readLine()) != null) {
+                        in.append(input).append(" ");
+                    }
+                    httpInput.close();
+                    input = in.toString();
+                    jsonObject = new JSONObject(input);
+                }
+            }
+        } catch (JSONException ignored) {
+        } catch (Exception e) {
+            ErrorHandler.getInstance().handle(e);
+        }
+        return jsonObject;
+    }
+
+    public String getJsonStringFromHttpExchange(HttpExchange httpExchange) {
+        try {
+            if (httpExchange.getRequestHeaders().containsKey("content-type")) {
+                if (httpExchange.getRequestHeaders().getFirst("content-type").equalsIgnoreCase("application/json")) {
+                    BufferedReader httpInput = new BufferedReader(new InputStreamReader(httpExchange.getRequestBody(), StandardCharsets.UTF_8));
+                    StringBuilder in = new StringBuilder();
+                    String input;
+                    while ((input = httpInput.readLine()) != null) {
+                        in.append(input).append(" ");
+                    }
+                    httpInput.close();
+                    input = in.toString();
+                    new JSONObject(input);
+                    return input;
+                }
+            }
+        } catch (JSONException ignored) {
+        } catch (Exception e) {
+            ErrorHandler.getInstance().handle(e);
+        }
+        return null;
     }
 
     public Color hex2Rgb(String colorStr) {
@@ -268,6 +316,7 @@ public class Tools {
         if (serverLimits.getActionsPerEvent() == 0) serverLimits.setActionsPerEvent(defaultLimits.getActionsPerEvent());
         if (serverLimits.getEvents() == 0) serverLimits.setEvents(defaultLimits.getEvents());
         if (serverLimits.getLogLines() == 0) serverLimits.setLogLines(defaultLimits.getLogLines());
+        if (serverLimits.getPermissions() == 0) serverLimits.setPermissions(defaultLimits.getPermissions());
         return serverLimits;
     }
 

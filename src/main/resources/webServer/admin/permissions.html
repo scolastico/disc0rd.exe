@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Extended Events - Disc0rd.exe</title>
+    <title>Permissions Manager - Disc0rd.exe</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i">
     <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
@@ -18,13 +18,13 @@
         <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
             <div class="container-fluid d-flex flex-column p-0">
                 <a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#">
-                    <div><img class="flash animated" src="assets/img/bot-logo-circle-200px.png" width="100%" style="width: 75%;"></div>
+                    <div><img class="flash animated" src="assets/img/bot-logo-circle-200px.png" style="width: 75%;"></div>
                     <div class="sidebar-brand-text mx-3"><span>DISC0RD.EXE</span></div>
                 </a>
                 <hr class="sidebar-divider my-0">
                 <ul class="nav navbar-nav text-light" id="accordionSidebar">
-                    <li class="nav-item" role="presentation"><a class="nav-link active" href="index.html"><i class="fas fa-play"></i><span>Extended Event System</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="permissions.html"><i class="fas fa-user-lock"></i><span>Permission Manager</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-play"></i><span>Extended Event System</span></a></li>
+                    <li class="nav-item"><a class="nav-link active" href="permissions.html"><i class="fas fa-user-lock"></i><span>Permission Manager</span></a></li>
                 </ul>
             </div>
         </nav>
@@ -33,28 +33,24 @@
                 <nav class="navbar navbar-light navbar-expand bg-white shadow mb-4 topbar static-top">
                     <div class="container-fluid">
                         <ul class="nav navbar-nav flex-nowrap ml-auto">
-                            <li class="nav-item dropdown no-arrow" role="presentation">
-                                <div class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#"><span class="d-none d-lg-inline mr-2 text-gray-600 small" id="username">%servername%</span><img class="border rounded-circle img-profile" src="assets/img/bot-logo-circle-200px.png" id="serverIcon"></a>
+                            <li class="nav-item dropdown no-arrow">
+                                <div class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#"><span id="username" class="d-none d-lg-inline mr-2 text-gray-600 small">%servername%</span><img id="serverIcon" class="border rounded-circle img-profile" src="assets/img/bot-logo-circle-200px.png"></a>
                                     <div
-                                        class="dropdown-menu shadow dropdown-menu-right animated--grow-in" role="menu"><a class="dropdown-item" role="presentation" href="logout.html"><i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Logout</a></div>
+                                        class="dropdown-menu shadow dropdown-menu-right animated--grow-in"><a class="dropdown-item" href="logout.html"><i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>&nbsp;Logout</a></div>
                     </div>
                     </li>
                     </ul>
             </div>
             </nav>
-            <div class="container-fluid" id="main">
-                <div class="row">
-                    <div class="col d-xl-flex align-items-xl-start">
-                        <h3 class="text-dark mb-4">Extended Event System</h3>
-                    </div>
-                    <div class="col text-right d-xl-flex justify-content-xl-end align-items-xl-start"><button onclick="addEvent();" class="btn btn-primary" type="button">Create Event</button></div>
-                </div>
+            <div id="main-container" class="container-fluid">
+                <div class="d-sm-flex justify-content-between align-items-center mb-4">
+                    <h3 class="text-dark mb-0">Permission Manager</h3><a onclick="create();return false;" class="btn btn-primary btn-sm d-none d-sm-inline-block" role="button" href="#">Create Permission Group</a></div>
 
             </div>
         </div>
         <footer class="bg-white sticky-footer">
             <div class="container my-auto">
-                <div class="text-center my-auto copyright"><span>Copyright © Disc0rd.exe 2020</span></div>
+                <div class="text-center my-auto copyright"><span><br>Copyright © Disc0rd.exe 2020<br></span></div>
             </div>
         </footer>
     </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a></div>
@@ -64,8 +60,8 @@
     <script src="assets/js/script.min.js"></script>
     <script src="assets/js/sweetalert.min.js"></script>
     <script src="assets/js/main.js"></script>
-    <script src="assets/js/html.ees.main.js"></script>
-    <script src="assets/js/ees.main.js"></script>
+    <script src="assets/js/html.pm.main.js"></script>
+    <script src="assets/js/pm.main.js"></script>
 </body>
 
 </html>

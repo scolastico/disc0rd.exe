@@ -3,6 +3,7 @@ package com.scolastico.discord_exe.event.events;
 import com.scolastico.discord_exe.Disc0rd;
 import com.scolastico.discord_exe.etc.ErrorHandler;
 import com.scolastico.discord_exe.etc.Tools;
+import com.scolastico.discord_exe.etc.permissions.PermissionsManager;
 import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.event.handlers.CommandHandler;
 import com.scolastico.discord_exe.event.handlers.EventHandler;
@@ -43,24 +44,33 @@ public class CommandColorName implements EventHandler, CommandHandler, WebHandle
                 ServerSettings settings = mysql.getServerSettings(event.getGuild().getIdLong());
                 ServerSettings.ColorNameConfig colorNameConfig = settings.getColorNameConfig();
                 if (args.length == 0) {
-                    if (colorNameConfig.isEnabled()) {
-                        String random;
-                        do {
-                            random = Tools.getInstance().getAlphaNumericString(16);
-                        } while (colorChangeInfos.containsKey(random));
-                        colorChangeInfos.put(random, new ColorChangeInfo(event.getAuthor().getIdLong(), event.getGuild().getIdLong(), random, (new Date().getTime() / 1000) + 300));
-                        event.getAuthor().openPrivateChannel().complete().sendMessage("You can change the color of your nickname on the following page: " + Disc0rd.getConfig().getWebServer().getDomain() + "color-name/index.html#" + random).queue();
-                        embedBuilder.setTitle("Success,");
-                        embedBuilder.setDescription("i send you a private message!");
-                        embedBuilder.setColor(Color.green);
-                        event.getChannel().sendMessage(embedBuilder.build()).complete().delete().queueAfter(30, TimeUnit.SECONDS);
-                        return true;
-                    } else {
-                        embedBuilder.setTitle("Sorry,");
-                        embedBuilder.setDescription("this function is not enabled on this server! Ask the owner if he activates it with `disc0rd/color on`");
-                        embedBuilder.setColor(Color.red);
+                    Member member = event.getGuild().getMember(event.getAuthor());
+                    if (member != null) {
+                        if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "")) {
+                            if (colorNameConfig.isEnabled()) {
+                                String random;
+                                do {
+                                    random = Tools.getInstance().getAlphaNumericString(16);
+                                } while (colorChangeInfos.containsKey(random));
+                                colorChangeInfos.put(random, new ColorChangeInfo(event.getAuthor().getIdLong(), event.getGuild().getIdLong(), random, (new Date().getTime() / 1000) + 300));
+                                event.getAuthor().openPrivateChannel().complete().sendMessage("You can change the color of your nickname on the following page: " + Disc0rd.getConfig().getWebServer().getDomain() + "color-name/index.html#" + random).queue();
+                                embedBuilder.setTitle("Success,");
+                                embedBuilder.setDescription("i send you a private message!");
+                                embedBuilder.setColor(Color.green);
+                                event.getChannel().sendMessage(embedBuilder.build()).complete().delete().queueAfter(30, TimeUnit.SECONDS);
+                                return true;
+                            } else {
+                                embedBuilder.setTitle("Sorry,");
+                                embedBuilder.setDescription("this function is not enabled on this server! Ask the owner if he activates it with `disc0rd/color on`");
+                                embedBuilder.setColor(Color.red);
+                            }
+                        } else {
+                            embedBuilder.setTitle("Sorry,");
+                            embedBuilder.setDescription("but you dont have the permission to use this command!");
+                            embedBuilder.setColor(Color.red);
+                        }
+                        event.getChannel().sendMessage(embedBuilder.build()).queue();
                     }
-                    event.getChannel().sendMessage(embedBuilder.build()).queue();
                     return true;
                 } else if (args.length == 1) {
                     if (args[0].equalsIgnoreCase("activate") || args[0].equalsIgnoreCase("on")) {
@@ -69,7 +79,7 @@ public class CommandColorName implements EventHandler, CommandHandler, WebHandle
                             settings.setColorNameConfig(colorNameConfig);
                             mysql.setServerSettings(event.getGuild().getIdLong(), settings);
                             embedBuilder.setTitle("Success,");
-                            embedBuilder.setDescription("the setting was successfully saved!");
+                            embedBuilder.setDescription("the setting was successfully saved! ATTENTION, be careful with this setting, as this can result in undesirable side effects such as user rights that you should not have. As an example, it can be that admins can take away each other's roles. Apart from that, this module has other minor bugs.");
                             embedBuilder.setColor(Color.green);
                         } else {
                             embedBuilder.setTitle("Sorry,");
@@ -221,6 +231,7 @@ public class CommandColorName implements EventHandler, CommandHandler, WebHandle
     @Override
     public void registerEvents(EventRegister eventRegister) {
         EventRegister.getInstance().registerCommand(this);
+        PermissionsManager.getInstance().registerPermission("color", "Allow a user to use the color command.", false);
     }
 
     @Override
