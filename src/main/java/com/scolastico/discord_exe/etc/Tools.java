@@ -406,4 +406,8 @@ public class Tools {
         return banner;
     }
 
+    public Long getUnixTimeStamp() {
+        return System.currentTimeMillis() / 1000L;
+    }
+
 }

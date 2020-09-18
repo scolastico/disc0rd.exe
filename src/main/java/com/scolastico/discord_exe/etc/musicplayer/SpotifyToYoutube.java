@@ -2,6 +2,7 @@ package com.scolastico.discord_exe.etc.musicplayer;
 
 import com.scolastico.discord_exe.Disc0rd;
 import com.scolastico.discord_exe.etc.ErrorHandler;
+import com.scolastico.discord_exe.etc.Tools;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
 import com.wrapper.spotify.model_objects.specification.*;
@@ -35,7 +36,7 @@ public class SpotifyToYoutube {
             clientCredentialsRequest = spotifyApi.clientCredentials().build();
             clientCredentials = clientCredentialsRequest.execute();
             spotifyApi.setAccessToken(clientCredentials.getAccessToken());
-            expires = clientCredentials.getExpiresIn() + getUnixTimeStamp();
+            expires = clientCredentials.getExpiresIn() + Tools.getInstance().getUnixTimeStamp();
         } catch (Exception e) {
             ErrorHandler.getInstance().handleFatal(e);
         }
@@ -110,20 +111,16 @@ public class SpotifyToYoutube {
 
     private boolean checkToken() {
         try {
-            if (expires - getUnixTimeStamp() <= 30) {
+            if (expires - Tools.getInstance().getUnixTimeStamp() <= 30) {
                 clientCredentials = clientCredentialsRequest.execute();
                 spotifyApi.setAccessToken(clientCredentials.getAccessToken());
-                expires = clientCredentials.getExpiresIn() + getUnixTimeStamp();
+                expires = clientCredentials.getExpiresIn() + Tools.getInstance().getUnixTimeStamp();
             }
             return true;
         } catch (Exception e) {
             ErrorHandler.getInstance().handle(e);
         }
         return false;
-    }
-
-    private Long getUnixTimeStamp() {
-        return System.currentTimeMillis() / 1000L;
     }
 
 }

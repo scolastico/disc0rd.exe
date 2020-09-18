@@ -1,6 +1,7 @@
 package com.scolastico.discord_exe.event.events;
 
 import com.scolastico.discord_exe.Disc0rd;
+import com.scolastico.discord_exe.etc.Tools;
 import com.scolastico.discord_exe.etc.permissions.PermissionsManager;
 import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.event.handlers.EventHandler;
@@ -33,7 +34,7 @@ public class OnChatLeaderboard implements EventHandler, MessageReceivedHandler {
             if (!user.isBot()) if (PermissionsManager.getInstance().checkPermission(messageReceivedEvent.getGuild(), member, "leaderboard-collect-text")){
                 clearTimeOut();
                 if (!timeOut.containsKey(user.getIdLong())) {
-                    timeOut.put(user.getIdLong(), getUnixTimeStamp() + 60);
+                    timeOut.put(user.getIdLong(), Tools.getInstance().getUnixTimeStamp() + 60);
                     ServerSettings settings = Disc0rd.getMysql().getServerSettings(messageReceivedEvent.getGuild().getIdLong());
                     settings.getLeaderboard().addUserXP(user.getIdLong());
                     Disc0rd.getMysql().setServerSettings(messageReceivedEvent.getGuild().getIdLong(), settings);
@@ -45,17 +46,13 @@ public class OnChatLeaderboard implements EventHandler, MessageReceivedHandler {
     private void clearTimeOut() {
         ArrayList<Long> toDelete = new ArrayList<>();
         for (Long time:timeOut.keySet()) {
-            if (time < getUnixTimeStamp()) {
+            if (time < Tools.getInstance().getUnixTimeStamp()) {
                 toDelete.add(time);
             }
         }
         for (Long time:toDelete) {
             timeOut.remove(time);
         }
-    }
-
-    private Long getUnixTimeStamp() {
-        return System.currentTimeMillis() / 1000L;
     }
 
 }
