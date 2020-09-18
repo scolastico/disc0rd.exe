@@ -35,7 +35,7 @@ public class CommandColorName implements EventHandler, CommandHandler, WebHandle
     private static HashMap<String, ColorChangeInfo> colorChangeInfos = new HashMap<>();
 
     @Override
-    public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
+    public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId, Member member) {
         if (cmd.equalsIgnoreCase("color")) {
             if (event.getChannel().getType().equals(ChannelType.TEXT)) {
                 event.getMessage().delete().queue();
@@ -44,33 +44,30 @@ public class CommandColorName implements EventHandler, CommandHandler, WebHandle
                 ServerSettings settings = mysql.getServerSettings(event.getGuild().getIdLong());
                 ServerSettings.ColorNameConfig colorNameConfig = settings.getColorNameConfig();
                 if (args.length == 0) {
-                    Member member = event.getGuild().getMember(event.getAuthor());
-                    if (member != null) {
-                        if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "")) {
-                            if (colorNameConfig.isEnabled()) {
-                                String random;
-                                do {
-                                    random = Tools.getInstance().getAlphaNumericString(16);
-                                } while (colorChangeInfos.containsKey(random));
-                                colorChangeInfos.put(random, new ColorChangeInfo(event.getAuthor().getIdLong(), event.getGuild().getIdLong(), random, (new Date().getTime() / 1000) + 300));
-                                event.getAuthor().openPrivateChannel().complete().sendMessage("You can change the color of your nickname on the following page: " + Disc0rd.getConfig().getWebServer().getDomain() + "color-name/index.html#" + random).queue();
-                                embedBuilder.setTitle("Success,");
-                                embedBuilder.setDescription("i send you a private message!");
-                                embedBuilder.setColor(Color.green);
-                                event.getChannel().sendMessage(embedBuilder.build()).complete().delete().queueAfter(30, TimeUnit.SECONDS);
-                                return true;
-                            } else {
-                                embedBuilder.setTitle("Sorry,");
-                                embedBuilder.setDescription("this function is not enabled on this server! Ask the owner if he activates it with `disc0rd/color on`");
-                                embedBuilder.setColor(Color.red);
-                            }
+                    if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "")) {
+                        if (colorNameConfig.isEnabled()) {
+                            String random;
+                            do {
+                                random = Tools.getInstance().getAlphaNumericString(16);
+                            } while (colorChangeInfos.containsKey(random));
+                            colorChangeInfos.put(random, new ColorChangeInfo(event.getAuthor().getIdLong(), event.getGuild().getIdLong(), random, (new Date().getTime() / 1000) + 300));
+                            event.getAuthor().openPrivateChannel().complete().sendMessage("You can change the color of your nickname on the following page: " + Disc0rd.getConfig().getWebServer().getDomain() + "color-name/index.html#" + random).queue();
+                            embedBuilder.setTitle("Success,");
+                            embedBuilder.setDescription("i send you a private message!");
+                            embedBuilder.setColor(Color.green);
+                            event.getChannel().sendMessage(embedBuilder.build()).complete().delete().queueAfter(30, TimeUnit.SECONDS);
+                            return true;
                         } else {
                             embedBuilder.setTitle("Sorry,");
-                            embedBuilder.setDescription("but you dont have the permission to use this command!");
+                            embedBuilder.setDescription("this function is not enabled on this server! Ask the owner if he activates it with `disc0rd/color on`");
                             embedBuilder.setColor(Color.red);
                         }
-                        event.getChannel().sendMessage(embedBuilder.build()).queue();
+                    } else {
+                        embedBuilder.setTitle("Sorry,");
+                        embedBuilder.setDescription("but you dont have the permission to use this command!");
+                        embedBuilder.setColor(Color.red);
                     }
+                    event.getChannel().sendMessage(embedBuilder.build()).queue();
                     return true;
                 } else if (args.length == 1) {
                     if (args[0].equalsIgnoreCase("activate") || args[0].equalsIgnoreCase("on")) {

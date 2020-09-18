@@ -18,44 +18,39 @@ import java.util.HashMap;
 
 public class CommandQueue implements CommandHandler, EventHandler {
     @Override
-    public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
+    public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId, Member member) {
         if (cmd.equalsIgnoreCase("queue")) {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setColor(Color.RED);
             builder.setTitle("Sorry,");
             builder.setDescription("but the command isn't correct. Please check the arguments or try `disc0rd/help queue`.");
-            Member member = event.getGuild().getMember(event.getAuthor());
             if (args.length == 0) {
-                if (member != null) {
-                    if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "queue")) {
-                        if (member.getVoiceState() != null) {
-                            MusicPlayer player = MusicPlayerRegister.getInstance().getPlayer(event.getGuild().getIdLong());
-                            if (player != null) {
-                                builder = loadSite(player, 1);
-                            } else {
-                                builder.setDescription("There is no player currently. You can start the music player with `disc0rd/play <url>`.");
-                            }
+                if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "queue")) {
+                    if (member.getVoiceState() != null) {
+                        MusicPlayer player = MusicPlayerRegister.getInstance().getPlayer(event.getGuild().getIdLong());
+                        if (player != null) {
+                            builder = loadSite(player, 1);
+                        } else {
+                            builder.setDescription("There is no player currently. You can start the music player with `disc0rd/play <url>`.");
                         }
-                    } else {
-                        builder.setDescription("but you dont have the permission to use this command!");
                     }
+                } else {
+                    builder.setDescription("but you dont have the permission to use this command!");
                 }
             } else if (args.length == 1) {
-                if (member != null) {
-                    if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "queue")) {
-                        if (member.getVoiceState() != null) {
-                            MusicPlayer player = MusicPlayerRegister.getInstance().getPlayer(event.getGuild().getIdLong());
-                            if (player != null) {
-                                try {
-                                    builder = loadSite(player, Integer.parseInt(args[0]));
-                                } catch (NumberFormatException ignored) {}
-                            } else {
-                                builder.setDescription("There is no player currently. You can start the music player with `disc0rd/play <url>`.");
-                            }
+                if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "queue")) {
+                    if (member.getVoiceState() != null) {
+                        MusicPlayer player = MusicPlayerRegister.getInstance().getPlayer(event.getGuild().getIdLong());
+                        if (player != null) {
+                            try {
+                                builder = loadSite(player, Integer.parseInt(args[0]));
+                            } catch (NumberFormatException ignored) {}
+                        } else {
+                            builder.setDescription("There is no player currently. You can start the music player with `disc0rd/play <url>`.");
                         }
-                    } else {
-                        builder.setDescription("but you dont have the permission to use this command!");
                     }
+                } else {
+                    builder.setDescription("but you dont have the permission to use this command!");
                 }
             }
             event.getChannel().sendMessage(builder.build()).queue();

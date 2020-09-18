@@ -175,7 +175,7 @@ public class EventRegister extends ListenerAdapter {
 
                                 try {
 
-                                    if (handler.respondToCommand(cmd, args, event.getJDA(), event, event.getAuthor().getIdLong(), event.getChannel().getIdLong())) {
+                                    if (handler.respondToCommand(cmd, args, event.getJDA(), event, event.getAuthor().getIdLong(), event.getChannel().getIdLong(), member)) {
                                         Disc0rd.addExecutedCommand();
                                         break;
                                     }

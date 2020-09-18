@@ -17,46 +17,43 @@ import java.util.HashMap;
 
 public class CommandPause implements CommandHandler, EventHandler {
     @Override
-    public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
+    public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId, Member member) {
         if (cmd.equalsIgnoreCase("pause")) {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setColor(Color.RED);
             builder.setTitle("Sorry,");
             builder.setDescription("but the command isn't correct. Please check the arguments or try `disc0rd/help pause`.");
             if (args.length == 0) {
-                Member member = event.getGuild().getMember(event.getAuthor());
-                if (member != null) {
-                    if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "pause")) {
-                        if (member.getVoiceState() != null) {
-                            VoiceChannel channel = member.getVoiceState().getChannel();
-                            if (channel != null) {
-                                MusicPlayer player = MusicPlayerRegister.getInstance().getPlayer(event.getGuild().getIdLong());
-                                if (player != null) {
-                                    if (player.getChannel() == channel) {
-                                        if (player.getStatus()) {
-                                            player.pause();
-                                            builder.setColor(Color.YELLOW);
-                                            builder.setTitle("Music Player");
-                                            builder.setDescription("paused.");
-                                        } else {
-                                            player.play();
-                                            builder.setColor(Color.GREEN);
-                                            builder.setTitle("Music Player");
-                                            builder.setDescription("Un- paused.");
-                                        }
+                if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "pause")) {
+                    if (member.getVoiceState() != null) {
+                        VoiceChannel channel = member.getVoiceState().getChannel();
+                        if (channel != null) {
+                            MusicPlayer player = MusicPlayerRegister.getInstance().getPlayer(event.getGuild().getIdLong());
+                            if (player != null) {
+                                if (player.getChannel() == channel) {
+                                    if (player.getStatus()) {
+                                        player.pause();
+                                        builder.setColor(Color.YELLOW);
+                                        builder.setTitle("Music Player");
+                                        builder.setDescription("paused.");
                                     } else {
-                                        builder.setDescription("but you need to be in the same channel as the bot.");
+                                        player.play();
+                                        builder.setColor(Color.GREEN);
+                                        builder.setTitle("Music Player");
+                                        builder.setDescription("Un- paused.");
                                     }
                                 } else {
-                                    builder.setDescription("There is no player currently. You can start the music player with `disc0rd/play <url>`.");
+                                    builder.setDescription("but you need to be in the same channel as the bot.");
                                 }
                             } else {
-                                builder.setDescription("but you need to be in the an voice channel to do that.");
+                                builder.setDescription("There is no player currently. You can start the music player with `disc0rd/play <url>`.");
                             }
+                        } else {
+                            builder.setDescription("but you need to be in the an voice channel to do that.");
                         }
-                    } else {
-                        builder.setDescription("but you dont have the permission to use this command!");
                     }
+                } else {
+                    builder.setDescription("but you dont have the permission to use this command!");
                 }
             }
             event.getChannel().sendMessage(builder.build()).queue();

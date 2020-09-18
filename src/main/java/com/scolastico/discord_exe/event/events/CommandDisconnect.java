@@ -16,25 +16,22 @@ import java.util.HashMap;
 
 public class CommandDisconnect implements CommandHandler, EventHandler {
     @Override
-    public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
+    public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId, Member member) {
         if (cmd.equalsIgnoreCase("disconnect")) {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setColor(Color.RED);
             builder.setTitle("Sorry,");
             builder.setDescription("but the command isn't correct. Please check the arguments or try `disc0rd/help disconnect`.");
             if (args.length == 0) {
-                Member member = event.getGuild().getMember(event.getAuthor());
-                if (member != null) {
-                    if (member.getVoiceState() != null) {
-                        MusicPlayer player = MusicPlayerRegister.getInstance().getPlayer(event.getGuild().getIdLong());
-                        if (player != null) {
-                            MusicPlayerRegister.getInstance().killPlayer(event.getGuild().getIdLong());
-                            builder.setColor(Color.YELLOW);
-                            builder.setTitle("Music Player");
-                            builder.setDescription("Disconnected...");
-                        } else {
-                            builder.setDescription("There is no player currently.");
-                        }
+                if (member.getVoiceState() != null) {
+                    MusicPlayer player = MusicPlayerRegister.getInstance().getPlayer(event.getGuild().getIdLong());
+                    if (player != null) {
+                        MusicPlayerRegister.getInstance().killPlayer(event.getGuild().getIdLong());
+                        builder.setColor(Color.YELLOW);
+                        builder.setTitle("Music Player");
+                        builder.setDescription("Disconnected...");
+                    } else {
+                        builder.setDescription("There is no player currently.");
                     }
                 }
             }

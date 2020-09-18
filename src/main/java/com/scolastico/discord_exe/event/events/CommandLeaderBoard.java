@@ -31,10 +31,8 @@ public class CommandLeaderBoard implements EventHandler, CommandHandler {
     HashMap<Long, ConfirmData> confirmHashMap = new HashMap<>();
 
     @Override
-    public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
+    public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId, Member member) {
         if (cmd.equalsIgnoreCase("leaderboard")) {
-            Member member = event.getGuild().getMember(event.getAuthor());
-            if (member == null) return true;
             EmbedBuilder builder = new EmbedBuilder();
             builder.setColor(Color.red);
             builder.setTitle("Sorry,");
@@ -188,8 +186,6 @@ public class CommandLeaderBoard implements EventHandler, CommandHandler {
             event.getChannel().sendMessage(builder.build()).queue();
             return true;
         } else if (cmd.equalsIgnoreCase("rank")) {
-            Member member = event.getMember();
-            if (member == null) return false;
             EmbedBuilder builder = new EmbedBuilder();
             builder.setColor(Color.red);
             builder.setTitle("Sorry,");
