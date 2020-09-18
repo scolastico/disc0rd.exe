@@ -20,18 +20,20 @@ public class CommandGuildPanel implements EventHandler, CommandHandler {
     @Override
     public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId, Member member) {
         if (member != null) {
-            EmbedBuilder embedBuilder = new EmbedBuilder();
-            if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "admin")) {
-                event.getAuthor().openPrivateChannel().complete().sendMessage("You can login here: <" + Disc0rd.getConfig().getWebServer().getDomain() + "admin/login.html#" + GuildPanel.getAuthToken(event.getGuild().getIdLong()) + ">").queue();
-                embedBuilder.setTitle("Success,");
-                embedBuilder.setDescription("i send you a private message!");
-                embedBuilder.setColor(Color.green);
-            } else {
-                embedBuilder.setTitle("Sorry,");
-                embedBuilder.setDescription("but you dont have the permission to use this command!");
-                embedBuilder.setColor(Color.red);
+            if (cmd.equalsIgnoreCase("admin")) {
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+                if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "admin")) {
+                    event.getAuthor().openPrivateChannel().complete().sendMessage("You can login here: <" + Disc0rd.getConfig().getWebServer().getDomain() + "admin/login.html#" + GuildPanel.getAuthToken(event.getGuild().getIdLong()) + ">").queue();
+                    embedBuilder.setTitle("Success,");
+                    embedBuilder.setDescription("i send you a private message!");
+                    embedBuilder.setColor(Color.green);
+                } else {
+                    embedBuilder.setTitle("Sorry,");
+                    embedBuilder.setDescription("but you dont have the permission to use this command!");
+                    embedBuilder.setColor(Color.red);
+                }
+                event.getChannel().sendMessage(embedBuilder.build()).queue();
             }
-            event.getChannel().sendMessage(embedBuilder.build()).queue();
         }
         return false;
     }
