@@ -121,9 +121,9 @@ public class CommandEmbedGenerator implements CommandHandler, MessageReceivedHan
                             embedGeneratorData.getLastMessage().delete().queue();
                             builder.setDescription(
                                     "Ok please enter the now the description for your embed message.\n" +
-                                    "Or react with ...\n" +
-                                    " ... :x: for canceling the generator.\n" +
-                                    " ... :hash: for an empty description."
+                                            "Or react with ...\n" +
+                                            " ... :x: for canceling the generator.\n" +
+                                            " ... :hash: for an empty description."
                             );
                             builder.setFooter("Please react in 60 seconds or i will close the generator.");
                             Message message = event.getChannel().sendMessage(builder.build()).complete();
@@ -136,10 +136,10 @@ public class CommandEmbedGenerator implements CommandHandler, MessageReceivedHan
                             embedGeneratorData.getLastMessage().delete().queue();
                             builder.setDescription(
                                     "Ok please enter the now an hex color value.\n" +
-                                    "You can get one from here: <https://www.google.com/search?q=hex+color+picker>\n" +
-                                    "Or react with ...\n" +
-                                    " ... :x: for canceling the generator.\n" +
-                                    " ... :hash: for no color."
+                                            "You can get one from here: <http://go.scolasti.co/colorpicker>\n" +
+                                            "Or react with ...\n" +
+                                            " ... :x: for canceling the generator.\n" +
+                                            " ... :hash: for no color."
                             );
                             builder.setFooter("Please react in 60 seconds or i will close the generator.");
                             Message message = event.getChannel().sendMessage(builder.build()).complete();
@@ -206,7 +206,7 @@ public class CommandEmbedGenerator implements CommandHandler, MessageReceivedHan
                         embedGeneratorData.getLastMessage().delete().queue();
                         builder.setDescription(
                                 "Ok please enter the now an hex color value.\n" +
-                                        "You can get one from here: <https://www.google.com/search?q=hex+color+picker>\n" +
+                                        "You can get one from here: <http://go.scolasti.co/colorpicker>\n" +
                                         "Or react with ...\n" +
                                         " ... :x: for canceling the generator.\n" +
                                         " ... :hash: for no color."
