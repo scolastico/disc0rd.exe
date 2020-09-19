@@ -170,7 +170,7 @@ public class ConfigDataStore {
 
     public static class DefaultLimits {
         private int logLines = 50;
-        private int events = 25;
+        private int events = 50;
         private int actionsPerEvent = 10;
         private int permissions = 20;
         private int perMinuteWebHookCalls = 10;
