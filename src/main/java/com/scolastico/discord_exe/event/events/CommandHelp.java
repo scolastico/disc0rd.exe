@@ -8,6 +8,7 @@ import com.scolastico.discord_exe.event.handlers.EventHandler;
 import com.scolastico.discord_exe.mysql.ServerSettings;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.awt.*;
@@ -17,7 +18,7 @@ import java.util.HashMap;
 
 public class CommandHelp implements EventHandler, CommandHandler {
 
-    public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
+    public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId, Member member) {
 
         if(cmd.equalsIgnoreCase("help")) {
             EmbedBuilder message = new EmbedBuilder();

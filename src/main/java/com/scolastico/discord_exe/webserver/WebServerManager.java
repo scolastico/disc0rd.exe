@@ -98,7 +98,7 @@ public class WebServerManager implements HttpHandler {
         try {
             String response = webHandler.onWebServer(httpExchange);
             if (response != null) {
-                httpExchange.sendResponseHeaders(200, response.length());
+                httpExchange.sendResponseHeaders(200, response.getBytes().length);
                 OutputStream outputStream = httpExchange.getResponseBody();
                 try {
                     outputStream.write(response.getBytes());

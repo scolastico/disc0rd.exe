@@ -21,11 +21,9 @@ import java.util.HashMap;
 
 public class CommandW2G implements EventHandler,CommandHandler {
     @Override
-    public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
+    public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId, Member member) {
         if (cmd.equalsIgnoreCase("w2g") || cmd.equalsIgnoreCase("watch2gether")) {
             EmbedBuilder embedBuilder = new EmbedBuilder();
-            Member member = event.getGuild().getMember(event.getAuthor());
-            if (member == null) return false;
             if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "w2g")) {
                 try {
                     if (args.length == 0 || args.length == 1) {

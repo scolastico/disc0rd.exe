@@ -43,8 +43,7 @@ public class ExtendedEventSystem implements WebHandler {
         if (guildId != null) {
             ArrayList<ExtendedEvent> events = ExtendedEventManager.getInstance().getExtendedEvents(guildId);
             Gson gson = new Gson();
-            String ret = gson.toJson(events);
-            return "{\"status\":\"ok\", \"events\":" + ret.replaceAll("[^a-zA-Z0-9 .,!?&{}\\[\\]()=_\"':-]", "") + "}";
+            return "{\"status\":\"ok\", \"events\":" + gson.toJson(events) + "}";
         } else {
             return "{\"status\":\"error\", \"error\":\"no auth\"}";
         }

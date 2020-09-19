@@ -52,11 +52,10 @@ public class DefaultWebHandler {
                 OutputStream outputStream = httpExchange.getResponseBody();
                 String mimeType = URLConnection.guessContentTypeFromName(fileName);
                 if (mimeType != null) {
-                    httpExchange.getResponseHeaders().set("Content-Type", mimeType + "; charset=utf-8");
+                    httpExchange.getResponseHeaders().set("Content-Type", (fileName.endsWith(".css") ? "text/css" : mimeType) + "; charset=utf-8");
                 } else {
                     httpExchange.getResponseHeaders().set("Content-Type", "application/octet-stream; charset=utf-8");
                 }
-
                 int buffer = Disc0rd.getConfig().getWebServer().getBuffer();
                 byte[] read = new byte[buffer];
                 try {

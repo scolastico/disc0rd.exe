@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 public class CommandClear implements EventHandler, CommandHandler {
     @Override
-    public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
+    public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId, Member member) {
         if (cmd.equalsIgnoreCase("clear")) {
             EmbedBuilder builder = new EmbedBuilder();
             if (args.length == 0) {
@@ -28,40 +28,33 @@ public class CommandClear implements EventHandler, CommandHandler {
                 builder.setColor(Color.yellow);
             } else if (args.length == 1) {
                 try {
-                    Member member = event.getGuild().getMember(event.getAuthor());
-                    if (member != null) {
-                        if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "clear")) {
-                            int number = 1;
-                            try {
-                                number = Integer.parseInt(args[0]);
-                            } catch (Exception ignored) {
-                                builder.setTitle("Sorry,");
-                                builder.setDescription("but please enter only numeric values as argument!");
-                                builder.setColor(Color.red);
-                                event.getChannel().sendMessage(builder.build()).queue();
-                                return true;
-                            }
-                            if (number > 200 || number < 1) {
-                                builder.setTitle("Sorry,");
-                                builder.setDescription("but you can only delete 1-200 messages at once!");
-                                builder.setColor(Color.red);
-                            } else {
-                                MessageHistory messageHistory = event.getChannel().getHistoryBefore(event.getMessageIdLong(), number).complete();
-                                for (Message message:messageHistory.getRetrievedHistory()) {
-                                    message.delete().queue();
-                                }
-                                event.getMessage().delete().queue();
-                                builder.setTitle("Success,");
-                                builder.setDescription("i clearing the chat for you!");
-                                builder.setFooter("This message deletes itself after 20 seconds!");
-                                builder.setColor(Color.green);
-                                event.getChannel().sendMessage(builder.build()).complete().delete().queueAfter(20, TimeUnit.SECONDS);
-                                return true;
-                            }
-                        } else {
+                    if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "clear")) {
+                        int number = 1;
+                        try {
+                            number = Integer.parseInt(args[0]);
+                        } catch (Exception ignored) {
+                            builder.setTitle("Sorry,");
+                            builder.setDescription("but please enter only numeric values as argument!");
+                            builder.setColor(Color.red);
+                            event.getChannel().sendMessage(builder.build()).queue();
+                            return true;
+                        }
+                        if (number > 200 || number < 1) {
                             builder.setTitle("Sorry,");
                             builder.setDescription("but you can only delete 1-200 messages at once!");
                             builder.setColor(Color.red);
+                        } else {
+                            MessageHistory messageHistory = event.getChannel().getHistoryBefore(event.getMessageIdLong(), number).complete();
+                            for (Message message:messageHistory.getRetrievedHistory()) {
+                                message.delete().queue();
+                            }
+                            event.getMessage().delete().queue();
+                            builder.setTitle("Success,");
+                            builder.setDescription("i clearing the chat for you!");
+                            builder.setFooter("This message deletes itself after 20 seconds!");
+                            builder.setColor(Color.green);
+                            event.getChannel().sendMessage(builder.build()).complete().delete().queueAfter(20, TimeUnit.SECONDS);
+                            return true;
                         }
                     } else {
                         builder.setTitle("Sorry,");

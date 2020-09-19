@@ -7,6 +7,7 @@ import com.scolastico.discord_exe.event.handlers.EventHandler;
 import com.scolastico.discord_exe.webserver.context.OwnerPanel;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.awt.*;
@@ -15,7 +16,7 @@ import java.util.HashMap;
 public class CommandOwnerPanel implements EventHandler, CommandHandler {
 
     @Override
-    public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
+    public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId, Member member) {
         if (cmd.equalsIgnoreCase("owner-panel") && args.length == 0) {
             event.getMessage().delete().queue();
             if (event.getMessage().getAuthor().getIdLong() == Disc0rd.getConfig().getOwnerPanel().getOwnerId()) {

@@ -56,37 +56,39 @@ public class OnDeReactWithEmoji implements Disc0rdEvent, MessageReactionRemoveHa
 
     @Override
     public void onMessageReactionRemove(MessageReactionRemoveEvent event) {
-        if (event.getChannelType() == ChannelType.TEXT) {
-            String messageId = event.getReaction().getMessageId();
-            String emoteId = event.getReaction().getReactionEmote().getId();
-            Message message = event.getTextChannel().retrieveMessageById(event.getMessageId()).complete();
-            if (message == null) return;
-            for (ExtendedEvent extendedEvent: ExtendedEventManager.getInstance().getExtendedEvents(event.getGuild().getIdLong())) {
-                if (extendedEvent.getEvent().equals(getName())) {
-                    if (extendedEvent.getEventConfig().getOrDefault("Message ID", "").equals("") || extendedEvent.getEventConfig().getOrDefault("Message ID", "").equals(messageId)) {
-                        if (extendedEvent.getEventConfig().getOrDefault("Emote ID", "").equals("") || extendedEvent.getEventConfig().getOrDefault("Emote ID", "").equals(emoteId)) {
-                            ExtendedEventDataStore dataStore = new ExtendedEventDataStore(extendedEvent);
-                            User user = event.getUser();
-                            if (user == null) {
-                                ErrorHandler.getInstance().handle(new Exception("User is null?"));
-                                continue;
+        try {
+            if (event.getChannelType() == ChannelType.TEXT) {
+                String messageId = event.getReaction().getMessageId();
+                String emoteId = event.getReaction().getReactionEmote().getId();
+                Message message = event.getTextChannel().retrieveMessageById(event.getMessageId()).complete();
+                if (message == null) return;
+                for (ExtendedEvent extendedEvent: ExtendedEventManager.getInstance().getExtendedEvents(event.getGuild().getIdLong())) {
+                    if (extendedEvent.getEvent().equals(getName())) {
+                        if (extendedEvent.getEventConfig().getOrDefault("Message ID", "").equals("") || extendedEvent.getEventConfig().getOrDefault("Message ID", "").equals(messageId)) {
+                            if (extendedEvent.getEventConfig().getOrDefault("Emote ID", "").equals("") || extendedEvent.getEventConfig().getOrDefault("Emote ID", "").equals(emoteId)) {
+                                ExtendedEventDataStore dataStore = new ExtendedEventDataStore(extendedEvent);
+                                User user = event.getUser();
+                                if (user == null) {
+                                    ErrorHandler.getInstance().handle(new Exception("User is null?"));
+                                    continue;
+                                }
+                                dataStore.setDataStore("event-message", message.getContentRaw());
+                                dataStore.setDataStore("event-message-id", event.getMessageId());
+                                dataStore.setDataStore("event-react-user-name", user.getName());
+                                dataStore.setDataStore("event-react-user-id", event.getUserId());
+                                dataStore.setDataStore("event-message-author-name", message.getAuthor().getName());
+                                dataStore.setDataStore("event-message-author-id", message.getAuthor().getId());
+                                dataStore.setDataStore("event-emoji-name", event.getReaction().getReactionEmote().getName());
+                                dataStore.setDataStore("event-emoji-id", event.getReaction().getReactionEmote().getId());
+                                dataStore.setDataStore("event-channel-name", event.getChannel().getName());
+                                dataStore.setDataStore("event-channel-id", event.getChannel().getId());
+                                ExtendedEventManager.getInstance().executeAction(dataStore);
                             }
-                            dataStore.setDataStore("event-message", message.getContentRaw());
-                            dataStore.setDataStore("event-message-id", event.getMessageId());
-                            dataStore.setDataStore("event-react-user-name", user.getName());
-                            dataStore.setDataStore("event-react-user-id", event.getUserId());
-                            dataStore.setDataStore("event-message-author-name", message.getAuthor().getName());
-                            dataStore.setDataStore("event-message-author-id", message.getAuthor().getId());
-                            dataStore.setDataStore("event-emoji-name", event.getReaction().getReactionEmote().getName());
-                            dataStore.setDataStore("event-emoji-id", event.getReaction().getReactionEmote().getId());
-                            dataStore.setDataStore("event-channel-name", event.getChannel().getName());
-                            dataStore.setDataStore("event-channel-id", event.getChannel().getId());
-                            ExtendedEventManager.getInstance().executeAction(dataStore);
                         }
                     }
                 }
             }
-        }
+        } catch (Exception ignored) {}
     }
 
     @Override

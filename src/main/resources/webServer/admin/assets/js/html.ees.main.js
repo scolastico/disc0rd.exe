@@ -2,7 +2,7 @@ function getOrDefault(value, key, defaultValue) {
     try {
         if (value) {
             if (value[key]) {
-                return value[key];
+                return value[key].replaceAll('"', '&quot;');
             }
         }
     } catch (e) {}

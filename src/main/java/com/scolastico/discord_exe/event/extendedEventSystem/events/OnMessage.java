@@ -69,10 +69,10 @@ public class OnMessage implements Disc0rdEvent, EventHandler, MessageReceivedHan
                                 dataStore.setDataStore("event-sender-name", messageReceivedEvent.getAuthor().getName());
                                 dataStore.setDataStore("event-sender-id", messageReceivedEvent.getAuthor().getId());
                                 dataStore.setDataStore("event-channel", messageReceivedEvent.getChannel().getId());
-                                if (extendedEvent.getEventConfig().containsKey("Channel")) {
+                                if (extendedEvent.getEventConfig().containsKey("Channel") && (!extendedEvent.getEventConfig().get("Channel").equals(""))) {
                                     if (!messageReceivedEvent.getChannel().getId().isEmpty()) {
                                         if (extendedEvent.getEventConfig().get("Channel").equals(messageReceivedEvent.getChannel().getId())) {
-                                            if (extendedEvent.getEventConfig().containsKey("REGEX")) {
+                                            if (extendedEvent.getEventConfig().containsKey("REGEX") && (!extendedEvent.getEventConfig().get("REGEX").equals(""))) {
                                                 if (messageReceivedEvent.getMessage().getContentRaw().matches(extendedEvent.getEventConfig().get("REGEX"))) {
                                                     ExtendedEventManager.getInstance().executeAction(dataStore);
                                                 }
@@ -81,7 +81,7 @@ public class OnMessage implements Disc0rdEvent, EventHandler, MessageReceivedHan
                                             }
                                         }
                                     } else {
-                                        if (extendedEvent.getEventConfig().containsKey("REGEX")) {
+                                        if (extendedEvent.getEventConfig().containsKey("REGEX") && (!extendedEvent.getEventConfig().get("REGEX").equals(""))) {
                                             if (messageReceivedEvent.getMessage().getContentRaw().matches(extendedEvent.getEventConfig().get("REGEX"))) {
                                                 ExtendedEventManager.getInstance().executeAction(dataStore);
                                             }
@@ -90,7 +90,7 @@ public class OnMessage implements Disc0rdEvent, EventHandler, MessageReceivedHan
                                         }
                                     }
                                 } else {
-                                    if (extendedEvent.getEventConfig().containsKey("REGEX")) {
+                                    if (extendedEvent.getEventConfig().containsKey("REGEX") && (!extendedEvent.getEventConfig().get("REGEX").equals(""))) {
                                         if (messageReceivedEvent.getMessage().getContentRaw().matches(extendedEvent.getEventConfig().get("REGEX"))) {
                                             ExtendedEventManager.getInstance().executeAction(dataStore);
                                         }

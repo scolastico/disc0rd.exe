@@ -20,44 +20,41 @@ import java.util.regex.Pattern;
 public class CommandDebug implements EventHandler, CommandHandler {
 
     @Override
-    public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
+    public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId, Member member) {
         if (cmd.equalsIgnoreCase("debug")) {
-            Member member = event.getGuild().getMember(event.getAuthor());
-            if (member != null) {
-                if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "debug")) {
-                    if (args.length == 0) {
-                        debugMain(cmd, args, jda, event, senderId, serverId);
-                        return true;
-                    } else if (args.length == 1) {
-                        if (args[0].equalsIgnoreCase("emoji")) {
-                            debugEmoji(cmd, args, jda, event, senderId, serverId);
-                            return true;
-                        } else if (args[0].equalsIgnoreCase("id")) {
-                            debugId(cmd, args, jda, event, senderId, serverId);
-                            return true;
-                        }
-                    } else if (args.length == 2) {
-                        if (args[0].equalsIgnoreCase("emoji")) {
-                            debugEmoji(cmd, args, jda, event, senderId, serverId);
-                            return true;
-                        } else if (args[0].equalsIgnoreCase("id")) {
-                            debugId(cmd, args, jda, event, senderId, serverId);
-                            return true;
-                        }
-                    }
-                    EmbedBuilder embedBuilder = new EmbedBuilder();
-                    embedBuilder.setColor(Color.red);
-                    embedBuilder.setTitle("Sorry,");
-                    embedBuilder.setDescription("but i cant see this debug option!");
-                    event.getChannel().sendMessage(embedBuilder.build()).queue();
+            if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "debug")) {
+                if (args.length == 0) {
+                    debugMain(cmd, args, jda, event, senderId, serverId);
                     return true;
-                } else {
-                    EmbedBuilder embedBuilder = new EmbedBuilder();
-                    embedBuilder.setColor(Color.red);
-                    embedBuilder.setTitle("Sorry,");
-                    embedBuilder.setDescription("but you dont have the permission to use this command!");
-                    event.getChannel().sendMessage(embedBuilder.build()).queue();
+                } else if (args.length == 1) {
+                    if (args[0].equalsIgnoreCase("emoji")) {
+                        debugEmoji(cmd, args, jda, event, senderId, serverId);
+                        return true;
+                    } else if (args[0].equalsIgnoreCase("id")) {
+                        debugId(cmd, args, jda, event, senderId, serverId);
+                        return true;
+                    }
+                } else if (args.length == 2) {
+                    if (args[0].equalsIgnoreCase("emoji")) {
+                        debugEmoji(cmd, args, jda, event, senderId, serverId);
+                        return true;
+                    } else if (args[0].equalsIgnoreCase("id")) {
+                        debugId(cmd, args, jda, event, senderId, serverId);
+                        return true;
+                    }
                 }
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+                embedBuilder.setColor(Color.red);
+                embedBuilder.setTitle("Sorry,");
+                embedBuilder.setDescription("but i cant see this debug option!");
+                event.getChannel().sendMessage(embedBuilder.build()).queue();
+                return true;
+            } else {
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+                embedBuilder.setColor(Color.red);
+                embedBuilder.setTitle("Sorry,");
+                embedBuilder.setDescription("but you dont have the permission to use this command!");
+                event.getChannel().sendMessage(embedBuilder.build()).queue();
             }
         }
         return false;

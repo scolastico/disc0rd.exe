@@ -1,7 +1,6 @@
 package com.scolastico.discord_exe.event.events;
 
 import com.scolastico.discord_exe.Disc0rd;
-import com.scolastico.discord_exe.etc.Tools;
 import com.scolastico.discord_exe.etc.permissions.PermissionsManager;
 import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.event.handlers.CommandHandler;
@@ -19,10 +18,9 @@ public class CommandGuildPanel implements EventHandler, CommandHandler {
 
 
     @Override
-    public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId) {
-        if (cmd.equalsIgnoreCase("admin")) {
-            Member member = event.getGuild().getMember(event.getAuthor());
-            if (member != null) {
+    public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId, Member member) {
+        if (member != null) {
+            if (cmd.equalsIgnoreCase("admin")) {
                 EmbedBuilder embedBuilder = new EmbedBuilder();
                 if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "admin")) {
                     event.getAuthor().openPrivateChannel().complete().sendMessage("You can login here: <" + Disc0rd.getConfig().getWebServer().getDomain() + "admin/login.html#" + GuildPanel.getAuthToken(event.getGuild().getIdLong()) + ">").queue();

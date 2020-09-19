@@ -170,9 +170,27 @@ public class ConfigDataStore {
 
     public static class DefaultLimits {
         private int logLines = 50;
-        private int events = 25;
+        private int events = 50;
         private int actionsPerEvent = 10;
         private int permissions = 20;
+        private int perMinuteWebHookCalls = 10;
+        private int perMinuteOutgoingWebHookCalls = 10;
+
+        public int getPerMinuteWebHookCalls() {
+            return perMinuteWebHookCalls;
+        }
+
+        public void setPerMinuteWebHookCalls(int perMinuteWebHookCalls) {
+            this.perMinuteWebHookCalls = perMinuteWebHookCalls;
+        }
+
+        public int getPerMinuteOutgoingWebHookCalls() {
+            return perMinuteOutgoingWebHookCalls;
+        }
+
+        public void setPerMinuteOutgoingWebHookCalls(int perMinuteOutgoingWebHookCalls) {
+            this.perMinuteOutgoingWebHookCalls = perMinuteOutgoingWebHookCalls;
+        }
 
         public int getPermissions() {
             return permissions;
