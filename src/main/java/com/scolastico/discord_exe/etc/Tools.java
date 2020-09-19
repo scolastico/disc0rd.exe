@@ -29,9 +29,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class Tools {
@@ -105,6 +103,7 @@ public class Tools {
     public HashMap<String, String> getPostValuesFromHttpExchange(HttpExchange httpExchange) {
         HashMap<String, String> hashMap = new HashMap<>();
         try {
+            if (!httpExchange.getRequestHeaders().containsKey("Content-Type")) return hashMap;
             if (!httpExchange.getRequestHeaders().getFirst("Content-Type").equals("application/x-www-form-urlencoded")) return hashMap;
             StringBuilder stringBuilder = new StringBuilder();
             InputStream inputStream = httpExchange.getRequestBody();
@@ -296,6 +295,7 @@ public class Tools {
         }
         log = "[" + new Date().toString() + "] " + logText + "\n" + log;
         serverSettings.setLog(log);
+        Disc0rd.getMysql().setServerSettings(guildId, serverSettings);
     }
 
     public int countLines(String str){
@@ -317,6 +317,8 @@ public class Tools {
         if (serverLimits.getEvents() == 0) serverLimits.setEvents(defaultLimits.getEvents());
         if (serverLimits.getLogLines() == 0) serverLimits.setLogLines(defaultLimits.getLogLines());
         if (serverLimits.getPermissions() == 0) serverLimits.setPermissions(defaultLimits.getPermissions());
+        if (serverLimits.getPerMinuteWebHookCalls() == 0) serverLimits.setPerMinuteWebHookCalls(defaultLimits.getPerMinuteWebHookCalls());
+        if (serverLimits.getPerMinuteOutgoingWebHookCalls()== 0) serverLimits.setPerMinuteOutgoingWebHookCalls(defaultLimits.getPerMinuteOutgoingWebHookCalls());
         return serverLimits;
     }
 
@@ -404,6 +406,22 @@ public class Tools {
         banner = banner.replaceAll("%level%", Integer.toString(currentLevel));
         banner = banner.replaceAll("%percentage%", Double.toString(((((double)currentXpFromLevel/(double)levelDifference)*100)*315)/100));
         return banner;
+    }
+
+    public String[] splitSpring(String input, int maxLength) {
+        String[] splicedString = input.split(" ");
+        StringBuilder output = new StringBuilder();
+        ArrayList<String> list = new ArrayList<>();
+        for (int tmp = 0;tmp != splicedString.length;tmp++) {
+            String word = splicedString[tmp];
+            if ((output.length() + word.length()) >= maxLength) {
+                list.add(output.toString());
+                output = new StringBuilder();
+            }
+            output.append(word).append(" ");
+        }
+        if (output.length() != 0) list.add(output.toString());
+        return list.toArray(new String[0]);
     }
 
     public Long getUnixTimeStamp() {
