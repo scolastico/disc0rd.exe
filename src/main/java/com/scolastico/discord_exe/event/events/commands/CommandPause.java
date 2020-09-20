@@ -1,4 +1,4 @@
-package com.scolastico.discord_exe.event.events;
+package com.scolastico.discord_exe.event.events.commands;
 
 import com.scolastico.discord_exe.etc.musicplayer.MusicPlayer;
 import com.scolastico.discord_exe.etc.musicplayer.MusicPlayerRegister;
@@ -15,26 +15,33 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import java.awt.*;
 import java.util.HashMap;
 
-public class CommandClearQueue implements EventHandler, CommandHandler {
+public class CommandPause implements CommandHandler, EventHandler {
     @Override
     public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId, Member member) {
-        if (cmd.equalsIgnoreCase("clearQueue")) {
+        if (cmd.equalsIgnoreCase("pause")) {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setColor(Color.RED);
             builder.setTitle("Sorry,");
-            builder.setDescription("but the command isn't correct. Please check the arguments or try `disc0rd/help clearQueue`.");
+            builder.setDescription("but the command isn't correct. Please check the arguments or try `disc0rd/help pause`.");
             if (args.length == 0) {
-                if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "clear-queue")) {
+                if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "pause")) {
                     if (member.getVoiceState() != null) {
                         VoiceChannel channel = member.getVoiceState().getChannel();
                         if (channel != null) {
                             MusicPlayer player = MusicPlayerRegister.getInstance().getPlayer(event.getGuild().getIdLong());
                             if (player != null) {
                                 if (player.getChannel() == channel) {
-                                    player.clearQueue();
-                                    builder.setColor(Color.GREEN);
-                                    builder.setTitle("Music Player");
-                                    builder.setDescription("Cleared the queue.");
+                                    if (player.getStatus()) {
+                                        player.pause();
+                                        builder.setColor(Color.YELLOW);
+                                        builder.setTitle("Music Player");
+                                        builder.setDescription("paused.");
+                                    } else {
+                                        player.play();
+                                        builder.setColor(Color.GREEN);
+                                        builder.setTitle("Music Player");
+                                        builder.setDescription("Un- paused.");
+                                    }
                                 } else {
                                     builder.setDescription("but you need to be in the same channel as the bot.");
                                 }
@@ -57,25 +64,25 @@ public class CommandClearQueue implements EventHandler, CommandHandler {
 
     @Override
     public HashMap<String, String> getHelpSite(HashMap<String, String> helpSite) {
-        helpSite.put("clearQueue", "Clear the music player queue.");
+        helpSite.put("pause", "Pause the music player.");
         return helpSite;
     }
 
     @Override
     public HashMap<String, String> getHelpSiteDetails() {
         HashMap<String, String> ret = new HashMap<>();
-        ret.put("clearQueue", "Clear the music player queue.");
+        ret.put("pause", "Pause the music player.");
         return ret;
     }
 
     @Override
     public String getCommandName() {
-        return "clearQueue";
+        return "pause";
     }
 
     @Override
     public void registerEvents(EventRegister eventRegister) {
         eventRegister.registerCommand(this);
-        PermissionsManager.getInstance().registerPermission("clear-queue", "Allow a user to use the clearQueue command from the music player.", true);
+        PermissionsManager.getInstance().registerPermission("pause", "Allow a user to use the pause command from the music player.", true);
     }
 }
