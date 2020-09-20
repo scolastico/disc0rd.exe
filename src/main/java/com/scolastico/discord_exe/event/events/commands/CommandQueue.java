@@ -1,4 +1,4 @@
-package com.scolastico.discord_exe.event.events;
+package com.scolastico.discord_exe.event.events.commands;
 
 import com.scolastico.discord_exe.etc.musicplayer.MusicPlayer;
 import com.scolastico.discord_exe.etc.musicplayer.MusicPlayerRegister;

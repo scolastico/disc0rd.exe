@@ -6,6 +6,7 @@ import com.scolastico.discord_exe.event.handlers.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberLeaveEvent;
 import com.scolastico.discord_exe.mysql.ServerSettings;
@@ -23,13 +24,14 @@ import java.util.HashMap;
 
 public class EventRegister extends ListenerAdapter {
 
-    private ArrayList<CommandHandler> commandHandlers = new ArrayList<CommandHandler>();
-    private ArrayList<MessageReceivedHandler> messageReceivedHandlers = new ArrayList<MessageReceivedHandler>();
-    private ArrayList<MessageReactionAddHandler> messageReactionAddHandlers = new ArrayList<MessageReactionAddHandler>();
-    private ArrayList<MessageReactionRemoveHandler> messageReactionRemoveHandlers = new ArrayList<MessageReactionRemoveHandler>();
-    private ArrayList<GuildMemberJoinHandler> guildMemberJoinHandlers = new ArrayList<>();
-    private ArrayList<GuildMemberLeaveHandler> guildMemberLeaveHandlers = new ArrayList<>();
-    private HashMap<ScheduleHandler, Integer> scheduleHandlers = new HashMap<ScheduleHandler, Integer>();
+    private final ArrayList<CommandHandler> commandHandlers = new ArrayList<>();
+    private final ArrayList<MessageReceivedHandler> messageReceivedHandlers = new ArrayList<>();
+    private final ArrayList<MessageReactionAddHandler> messageReactionAddHandlers = new ArrayList<>();
+    private final ArrayList<MessageReactionRemoveHandler> messageReactionRemoveHandlers = new ArrayList<>();
+    private final ArrayList<GuildMemberJoinHandler> guildMemberJoinHandlers = new ArrayList<>();
+    private final ArrayList<GuildMemberLeaveHandler> guildMemberLeaveHandlers = new ArrayList<>();
+    private final ArrayList<GuildJoinHandler> guildJoinHandlers = new ArrayList<>();
+    private final HashMap<ScheduleHandler, Integer> scheduleHandlers = new HashMap<>();
     private static EventRegister instance = null;
 
     private EventRegister() {}
@@ -69,6 +71,10 @@ public class EventRegister extends ListenerAdapter {
 
     public void registerGuildMemberLeaveEvent(GuildMemberLeaveHandler handler) {
         if (!guildMemberLeaveHandlers.contains(handler)) guildMemberLeaveHandlers.add(handler);
+    }
+
+    public void registerGuildJoinEvent(GuildJoinHandler handler) {
+        if (!guildJoinHandlers.contains(handler)) guildJoinHandlers.add(handler);
     }
 
     public void fireSchedule() {
@@ -238,6 +244,17 @@ public class EventRegister extends ListenerAdapter {
         for (GuildMemberLeaveHandler handler:guildMemberLeaveHandlers) {
             try {
                 handler.onGuildMemberLeave(event);
+            } catch (Exception e) {
+                ErrorHandler.getInstance().handle(e);
+            }
+        }
+    }
+
+    @Override
+    public void onGuildJoin(@Nonnull GuildJoinEvent event) {
+        for (GuildJoinHandler handler:guildJoinHandlers) {
+            try {
+                handler.onGuildJoin(event);
             } catch (Exception e) {
                 ErrorHandler.getInstance().handle(e);
             }

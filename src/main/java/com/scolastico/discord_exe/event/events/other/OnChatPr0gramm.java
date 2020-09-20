@@ -1,4 +1,4 @@
-package com.scolastico.discord_exe.event.events;
+package com.scolastico.discord_exe.event.events.other;
 
 import com.scolastico.discord_exe.Disc0rd;
 import com.scolastico.discord_exe.etc.ErrorHandler;
