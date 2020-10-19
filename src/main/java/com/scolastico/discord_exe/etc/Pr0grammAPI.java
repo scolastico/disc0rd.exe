@@ -142,7 +142,6 @@ public class Pr0grammAPI {
                     userObject.getString("name"),
                     userObject.getLong("registered"),
                     userObject.getLong("score"),
-                    userObject.getInt("admin"),
                     userObject.getLong("banned"),
                     userObject.getLong("inactive"),
                     userObject.getInt("commentDelete"),
@@ -457,7 +456,6 @@ public class Pr0grammAPI {
         private String name;
         private long registered;
         private long score;
-        private int admin;
         private long banned;
         private long inactive;
         private long commentsDeleted;
@@ -471,12 +469,11 @@ public class Pr0grammAPI {
         private Badge[] badges;
         private int mark;
 
-        public Pr0grammUser(long id, String name, long registered, long score, int admin, long banned, long inactive, long commentsDeleted, long itemsDeleted, long commentCount, long commentLikesCount, long uploadCount, boolean likesArePublic, long likesCount, long tagCount, Badge[] badges, int mark) {
+        public Pr0grammUser(long id, String name, long registered, long score, long banned, long inactive, long commentsDeleted, long itemsDeleted, long commentCount, long commentLikesCount, long uploadCount, boolean likesArePublic, long likesCount, long tagCount, Badge[] badges, int mark) {
             this.id = id;
             this.name = name;
             this.registered = registered;
             this.score = score;
-            this.admin = admin;
             this.banned = banned;
             this.inactive = inactive;
             this.commentsDeleted = commentsDeleted;
@@ -505,10 +502,6 @@ public class Pr0grammAPI {
 
         public long getScore() {
             return score;
-        }
-
-        public int getAdmin() {
-            return admin;
         }
 
         public long getBanned() {

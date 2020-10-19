@@ -55,7 +55,7 @@ public class MusicPlayerRegister {
                     ErrorHandler.getInstance().handle(e);
                 }
             }
-        }, 20, 20, true);
+        }, 20, 20, false);
         AudioSourceManagers.registerRemoteSources(playerManager);
     }
 
