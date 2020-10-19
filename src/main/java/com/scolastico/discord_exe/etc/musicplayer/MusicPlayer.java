@@ -190,7 +190,8 @@ public class MusicPlayer {
 
   public void scheduler() {
     status = !player.isPaused() && player.getPlayingTrack() != null;
-    if (!guild.getAudioManager().isConnected() || member.getVoiceState() == null) {
+    if (!guild.getAudioManager().isConnected() ||
+        member.getVoiceState() == null) {
       if (idleTime < 0) {
         idleTime++;
         return;
