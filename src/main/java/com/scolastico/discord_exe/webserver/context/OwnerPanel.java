@@ -197,12 +197,11 @@ public class OwnerPanel implements WebHandler {
                         EmbedBuilder embedBuilder = new EmbedBuilder();
                         embedBuilder.setTitle(URLDecoder.decode(postValues.get("title"), StandardCharsets.UTF_8.toString()));
                         embedBuilder.setDescription(URLDecoder.decode(postValues.get("message"), StandardCharsets.UTF_8.toString()));
-                        embedBuilder.setFooter("This message deletes itself in 120 seconds!");
                         embedBuilder.setColor(Color.YELLOW);
                         for (Guild guild:Disc0rd.getJda().getGuilds()) {
                             if (guild.getTextChannels().size() != 0) {
                                 try {
-                                    guild.getTextChannels().get(0).sendMessage(embedBuilder.build()).complete().delete().queueAfter(120, TimeUnit.SECONDS);
+                                    guild.getTextChannels().get(0).sendMessage(embedBuilder.build()).queue();
                                 } catch (Exception ignore) {}
                             }
                         }

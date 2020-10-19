@@ -22,7 +22,6 @@ import java.util.*;
 
 public class Disc0rd {
 
-    private static Tools tools;
     private static ConfigHandler configHandler;
     private static ConfigDataStore config;
     private static MysqlHandler mysql;
@@ -31,9 +30,9 @@ public class Disc0rd {
     private static String version = "Can't read Version! This build is corrupt!";
     private static EventRegister eventRegister;
     private static Long executedCommands = 0L;
-    private static long startTime = System.currentTimeMillis();
+    private static final long startTime = System.currentTimeMillis();
     private static final CloseableHttpClient httpClient = HttpClients.createDefault();
-    private static ArrayList<Runnable> onExitRuns = new ArrayList<>();
+    private static final ArrayList<Runnable> onExitRuns = new ArrayList<>();
 
     private static final Thread onExit = new Thread(){
         public void run() {
@@ -102,7 +101,7 @@ public class Disc0rd {
     public static void main(String[] args) {
 
         try {
-            version = VersionController.getVersion() + "-" + VersionController.getCommit();
+            version = "c-" + VersionController.getCommit();
         } catch (Exception ignored) {}
 
         System.out.println("  _____  _           ___          _                ");
@@ -117,7 +116,7 @@ public class Disc0rd {
 
         Runtime.getRuntime().addShutdownHook(onExit);
 
-        tools = Tools.getInstance();
+        Tools tools = Tools.getInstance();
 
         System.out.print("Loading configuration module ");
         tools.asyncLoadingAnimationWhileWaitingResult(new Runnable() {
