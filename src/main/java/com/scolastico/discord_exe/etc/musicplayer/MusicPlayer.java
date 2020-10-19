@@ -116,7 +116,7 @@ public class MusicPlayer {
                     return;
                 }
             }
-            idleTime = 0;
+            if (idleTime > 0) idleTime = 0;
             playerManager.loadItemOrdered(this, trackUrl, new AudioLoadResultHandler() {
                 @Override
                 public void trackLoaded(AudioTrack track) {
