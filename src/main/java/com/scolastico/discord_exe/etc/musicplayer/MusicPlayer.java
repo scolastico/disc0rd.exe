@@ -105,7 +105,7 @@ public class MusicPlayer {
                         return;
                     }
                 } else if (matcher.group(1).equalsIgnoreCase("album")) {
-                    String[] urls = SpotifyToYoutube.getInstance().spotifyPlaylistToString(id);
+                    String[] urls = SpotifyToYoutube.getInstance().spotifyAlbumToString(id);
                     if (urls.length == 0) {
                         textChannel.sendMessage(builder.build()).queue();
                     } else {
