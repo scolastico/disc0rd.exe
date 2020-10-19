@@ -177,7 +177,10 @@ public class Pr0grammManager {
         pr0grammServerConfigs.remove(id);
         MysqlHandler handler = Disc0rd.getMysql();
         ServerSettings settings = handler.getServerSettings(id);
-        settings.setPr0grammServerConfig(new ServerSettings.Pr0grammServerConfig());
+        ServerSettings.Pr0grammServerConfig serverConfig = settings.getPr0grammServerConfig();
+        serverConfig.setLinkedAccount(null);
+        serverConfig.setLinkedMember(0L);
+        settings.setPr0grammServerConfig(serverConfig);
         handler.setServerSettings(id, settings);
         return true;
     }
@@ -282,7 +285,10 @@ public class Pr0grammManager {
         }
         for (Long key:toDelete) {
             ServerSettings settings = handler.getServerSettings(key);
-            settings.setPr0grammServerConfig(new ServerSettings.Pr0grammServerConfig());
+            ServerSettings.Pr0grammServerConfig serverConfig = settings.getPr0grammServerConfig();
+            serverConfig.setLinkedMember(0L);
+            serverConfig.setLinkedAccount(null);
+            settings.setPr0grammServerConfig(serverConfig);
             handler.setServerSettings(key, settings);
             pr0grammServerConfigs.remove(key);
         }
