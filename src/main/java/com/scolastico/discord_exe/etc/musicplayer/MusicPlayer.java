@@ -189,13 +189,12 @@ public class MusicPlayer {
   public void play() { player.setPaused(false); }
 
   public void scheduler() {
-    if (idleTime < 0) {
-      idleTime++;
-      return;
-    }
     status = !player.isPaused() && player.getPlayingTrack() != null;
-    if (!guild.getAudioManager().isConnected() ||
-        member.getVoiceState() == null) {
+    if (!guild.getAudioManager().isConnected() || member.getVoiceState() == null) {
+      if (idleTime < 0) {
+        idleTime++;
+        return;
+      }
       pause();
       idleTime = Disc0rd.getConfig().getMusicPlayerTimout();
       sendMessage = false;
