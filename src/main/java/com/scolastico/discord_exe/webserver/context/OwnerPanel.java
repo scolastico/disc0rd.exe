@@ -130,10 +130,11 @@ public class OwnerPanel implements WebHandler {
         String key = httpExchange.getRequestURI().getPath().replaceFirst(
             "/api/v1/admin/saveConfig/", "");
         if (otpHelper.isValid(Tools.getInstance().tryToParseInt(key))) {
-          String jsonString = Tools.getInstance().getJsonStringFromHttpExchange(httpExchange);
+          String jsonString =
+              Tools.getInstance().getJsonStringFromHttpExchange(httpExchange);
           if (jsonString != null) {
             Gson gson = new Gson();
-            Disc0rd.setConfig(gson.fromJson(jsonString,ConfigDataStore.class));
+            Disc0rd.setConfig(gson.fromJson(jsonString, ConfigDataStore.class));
             ConfigHandler configHandler = Disc0rd.getConfigHandler();
             configHandler.setConfigObject(Disc0rd.getConfig());
             configHandler.saveConfigObject();
@@ -159,11 +160,14 @@ public class OwnerPanel implements WebHandler {
             "/api/v1/admin/getConfig/", "");
         if (otpHelper.isValid(Tools.getInstance().tryToParseInt(key))) {
           Gson gson = new GsonBuilder()
-                  .registerTypeAdapter(Long.class, (JsonSerializer<Long>)
-                          (var, type, jsonSerializationContext) -> new
-                                  JsonPrimitive(String.valueOf(var)))
-                  .create();
-          return "{\"status\":\"ok\",\"config\":" + gson.toJson(Disc0rd.getConfig()) + "}";
+                          .registerTypeAdapter(
+                              Long.class,
+                              (JsonSerializer<Long>)(var, type,
+                                                     jsonSerializationContext)
+                                  -> new JsonPrimitive(String.valueOf(var)))
+                          .create();
+          return "{\"status\":\"ok\",\"config\":" +
+              gson.toJson(Disc0rd.getConfig()) + "}";
         } else {
           return "{\"status\":\"error\",\"error\":\"no otp auth\"}";
         }
