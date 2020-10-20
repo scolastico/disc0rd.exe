@@ -249,6 +249,7 @@ public class Disc0rd {
           } else {
             throw new Exception("tmp dir is not a dir");
           }
+          EmoteHandler.getInstance();
         } catch (Exception e) {
           ErrorHandler.getInstance().handleFatal(e);
         }

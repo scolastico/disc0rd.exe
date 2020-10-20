@@ -34,7 +34,7 @@ function saveConfig() {
     const xmlHttpSettingsSend = new XMLHttpRequest();
     xmlHttpSettingsSend.open( "POST", "../api/v1/admin/saveConfig/" + document.getElementById("otp").value, true );
     document.getElementById("otp").value = "";
-    xmlHttpSettingsSend.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlHttpSettingsSend.setRequestHeader("Content-type", "application/json");
     xmlHttpSettingsSend.onreadystatechange = function() {
         if (xmlHttpSettingsSend.readyState === 4 && xmlHttpSettingsSend.status === 200) {
             if (JSON.parse(xmlHttpSettingsSend.responseText).status === "ok") {
@@ -62,7 +62,7 @@ function saveConfig() {
             window.location.replace("logout.html");
         }
     };
-    xmlHttpSettingsSend.send( "config=" + encodeURIComponent(document.getElementById("config").value) );
+    xmlHttpSettingsSend.send(document.getElementById("config").value);
 }
 
 function loadConfig() {
@@ -80,7 +80,7 @@ function loadConfig() {
     xmlHttpSettingsSend.onreadystatechange = function() {
         if (xmlHttpSettingsSend.readyState === 4 && xmlHttpSettingsSend.status === 200) {
             if (JSON.parse(xmlHttpSettingsSend.responseText).status === "ok") {
-                document.getElementById("config").value = beautifyJsonString(decodeURIComponent(JSON.parse(xmlHttpSettingsSend.responseText).config));
+                document.getElementById("config").value = beautifyJsonString(JSON.stringify(JSON.parse(xmlHttpSettingsSend.responseText).config));
                 autosize(document.getElementById("config"));
                 const Toast = Swal.mixin({
                     toast: true,

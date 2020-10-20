@@ -25,17 +25,18 @@ public class Pr0grammAPI {
   /*
   Uses:
 
-  <dependency>
-              <groupId>org.apache.httpcomponents</groupId>
-              <artifactId>httpclient</artifactId>
-              <version>4.5.10</version>
-      </dependency>
-      <dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.10</version>
+    </dependency>
+    <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
       <version>20190722</version>
-  </dependency>
-   */
+    </dependency>
+
+  */
 
   private static final String pr0_url = "https://pr0gramm.com/api/";
   private final CloseableHttpClient httpClient = HttpClients.createDefault();

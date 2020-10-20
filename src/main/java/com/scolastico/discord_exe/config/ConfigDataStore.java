@@ -18,6 +18,15 @@ public class ConfigDataStore {
     private Spotify spotify = new Spotify();
     private String discordInvite = "https://discord.gg/BCQmpCy";
     private String documentation = "http://go.scolasti.co/disc0rddocumentation";
+    private Emotes emotes = new Emotes();
+
+    public Emotes getEmotes() {
+        return emotes;
+    }
+
+    public void setEmotes(Emotes emotes) {
+        this.emotes = emotes;
+    }
 
     public String getDocumentation() {
         return documentation;
@@ -145,6 +154,54 @@ public class ConfigDataStore {
 
     public void setWebServer(WebServerData webServer) {
         this.webServer = webServer;
+    }
+
+    public static class Emotes {
+        private long emoteOk = 767932772194451478L;
+        private long emoteNo = 767950709722841098L;
+        private long emoteNoPermission = 767932411198832640L;
+        private long emotePlay = 768003585312555021L;
+        private long emotePause = 768003585299447809L;
+
+        public long getEmotePlay() {
+            return emotePlay;
+        }
+
+        public void setEmotePlay(long emotePlay) {
+            this.emotePlay = emotePlay;
+        }
+
+        public long getEmotePause() {
+            return emotePause;
+        }
+
+        public void setEmotePause(long emotePause) {
+            this.emotePause = emotePause;
+        }
+
+        public long getEmoteNoPermission() {
+            return emoteNoPermission;
+        }
+
+        public void setEmoteNoPermission(long emoteNoPermission) {
+            this.emoteNoPermission = emoteNoPermission;
+        }
+
+        public long getEmoteOk() {
+            return emoteOk;
+        }
+
+        public void setEmoteOk(long emoteOk) {
+            this.emoteOk = emoteOk;
+        }
+
+        public long getEmoteNo() {
+            return emoteNo;
+        }
+
+        public void setEmoteNo(long emoteNo) {
+            this.emoteNo = emoteNo;
+        }
     }
 
     public static class Spotify {

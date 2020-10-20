@@ -1,5 +1,6 @@
 package com.scolastico.discord_exe.event.events.commands;
 
+import com.scolastico.discord_exe.etc.EmoteHandler;
 import com.scolastico.discord_exe.etc.musicplayer.MusicPlayer;
 import com.scolastico.discord_exe.etc.musicplayer.MusicPlayerRegister;
 import com.scolastico.discord_exe.etc.permissions.PermissionsManager;
@@ -8,6 +9,7 @@ import com.scolastico.discord_exe.event.handlers.CommandHandler;
 import com.scolastico.discord_exe.event.handlers.EventHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -19,10 +21,7 @@ public class CommandPlay implements CommandHandler, EventHandler {
     @Override
     public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId, Member member) {
         if (cmd.equalsIgnoreCase("play")) {
-            EmbedBuilder builder = new EmbedBuilder();
-            builder.setColor(Color.RED);
-            builder.setTitle("Sorry,");
-            builder.setDescription("but i cant find this command. Check your arguments or try `disc0rd/help play`.");
+            Emote emoteNo = EmoteHandler.getInstance().getEmoteNo();
             if (args.length == 0) {
                 if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "play")) {
                     if (member.getVoiceState() != null) {
@@ -33,24 +32,22 @@ public class CommandPlay implements CommandHandler, EventHandler {
                                 if (player.getChannel() == channel) {
                                     if (!player.getStatus()) {
                                         player.play();
-                                        builder.setColor(Color.GREEN);
-                                        builder.setTitle("Music Player");
-                                        builder.setDescription("un- paused.");
+                                        event.getMessage().addReaction(EmoteHandler.getInstance().getEmotePlay()).queue();
                                     } else {
-                                        builder.setDescription("the player is not paused.");
+                                        event.getMessage().addReaction(EmoteHandler.getInstance().getEmoteNo()).queue();
                                     }
                                 } else {
-                                    builder.setDescription("but you need to be in the same channel as the bot.");
+                                    event.getChannel().sendMessage("<:" + emoteNo.getName() + ":" + emoteNo.getId() + "> Sorry, but you need to be in the same voice channel as the bot.").queue();
                                 }
                             } else {
-                                builder.setDescription("There is no player currently. You can start the music player with `disc0rd/play <url>`.");
+                                event.getChannel().sendMessage("<:" + emoteNo.getName() + ":" + emoteNo.getId() + "> Sorry, but there is no player currently. You can start the music player with `disc0rd/play <url>`.").queue();
                             }
                         } else {
-                            builder.setDescription("but you need to be in the an voice channel to do that.");
+                            event.getChannel().sendMessage("<:" + emoteNo.getName() + ":" + emoteNo.getId() + "> Sorry, but you need to be in a voice channel.").queue();
                         }
                     }
                 } else {
-                    builder.setDescription("but you dont have the permission to use this command!");
+                    event.getMessage().addReaction(EmoteHandler.getInstance().getEmoteNoPermission()).queue();
                 }
             } else {
                 if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "play")) {
@@ -62,6 +59,7 @@ public class CommandPlay implements CommandHandler, EventHandler {
                                 player = new MusicPlayer(channel, event.getTextChannel());
                             }
                             if (player.getChannel() == channel) {
+                                player.setTextChannel(event.getTextChannel());
                                 StringBuilder arg = new StringBuilder();
                                 for (String tmp:args) {
                                     arg.append(tmp).append(" ");
@@ -69,16 +67,15 @@ public class CommandPlay implements CommandHandler, EventHandler {
                                 player.addToQueue(arg.substring(0, arg.length()-1));
                                 return true;
                             }
-                            builder.setDescription("but you need to be in the same channel as the bot.");
+                            event.getChannel().sendMessage("<:" + emoteNo.getName() + ":" + emoteNo.getId() + "> Sorry, but you need to be in the same voice channel as the bot.").queue();
                         } else {
-                            builder.setDescription("but you need to be in the an voice channel to do that.");
+                            event.getChannel().sendMessage("<:" + emoteNo.getName() + ":" + emoteNo.getId() + "> Sorry, but you need to be in a voice channel.").queue();
                         }
                     }
                 } else {
-                    builder.setDescription("but you dont have the permission to use this command!");
+                    event.getMessage().addReaction(EmoteHandler.getInstance().getEmoteNoPermission()).queue();
                 }
             }
-            event.getChannel().sendMessage(builder.build()).queue();
             return true;
         }
         return false;

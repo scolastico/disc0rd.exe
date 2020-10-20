@@ -1,6 +1,9 @@
 package com.scolastico.discord_exe.webserver.context;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
 import com.scolastico.discord_exe.Disc0rd;
 import com.scolastico.discord_exe.config.ConfigDataStore;
 import com.scolastico.discord_exe.config.ConfigHandler;
@@ -127,20 +130,14 @@ public class OwnerPanel implements WebHandler {
         String key = httpExchange.getRequestURI().getPath().replaceFirst(
             "/api/v1/admin/saveConfig/", "");
         if (otpHelper.isValid(Tools.getInstance().tryToParseInt(key))) {
-          if (httpExchange.getRequestMethod().equals("POST")) {
-            HashMap<String, String> postValues =
-                Tools.getInstance().getPostValuesFromHttpExchange(httpExchange);
-            if (postValues.containsKey("config")) {
-              Gson gson = new Gson();
-              Disc0rd.setConfig(gson.fromJson(
-                  URLDecoder.decode(postValues.get("config"),
-                                    StandardCharsets.UTF_8.toString()),
-                  ConfigDataStore.class));
-              ConfigHandler configHandler = Disc0rd.getConfigHandler();
-              configHandler.setConfigObject(Disc0rd.getConfig());
-              configHandler.saveConfigObject();
-              return "{\"status\":\"ok\"}";
-            }
+          String jsonString = Tools.getInstance().getJsonStringFromHttpExchange(httpExchange);
+          if (jsonString != null) {
+            Gson gson = new Gson();
+            Disc0rd.setConfig(gson.fromJson(jsonString,ConfigDataStore.class));
+            ConfigHandler configHandler = Disc0rd.getConfigHandler();
+            configHandler.setConfigObject(Disc0rd.getConfig());
+            configHandler.saveConfigObject();
+            return "{\"status\":\"ok\"}";
           }
           return "{\"status\":\"error\",\"error\":\"not supported\"}";
         } else {
@@ -161,11 +158,12 @@ public class OwnerPanel implements WebHandler {
         String key = httpExchange.getRequestURI().getPath().replaceFirst(
             "/api/v1/admin/getConfig/", "");
         if (otpHelper.isValid(Tools.getInstance().tryToParseInt(key))) {
-          Gson gson = new Gson();
-          return "{\"status\":\"ok\",\"config\":\"" +
-              URLEncoder.encode(gson.toJson(Disc0rd.getConfig()),
-                                StandardCharsets.UTF_8.toString()) +
-              "\"}";
+          Gson gson = new GsonBuilder()
+                  .registerTypeAdapter(Long.class, (JsonSerializer<Long>)
+                          (var, type, jsonSerializationContext) -> new
+                                  JsonPrimitive(String.valueOf(var)))
+                  .create();
+          return "{\"status\":\"ok\",\"config\":" + gson.toJson(Disc0rd.getConfig()) + "}";
         } else {
           return "{\"status\":\"error\",\"error\":\"no otp auth\"}";
         }

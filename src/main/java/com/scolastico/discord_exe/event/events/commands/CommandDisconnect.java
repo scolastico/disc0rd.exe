@@ -1,5 +1,6 @@
 package com.scolastico.discord_exe.event.events.commands;
 
+import com.scolastico.discord_exe.etc.EmoteHandler;
 import com.scolastico.discord_exe.etc.musicplayer.MusicPlayer;
 import com.scolastico.discord_exe.etc.musicplayer.MusicPlayerRegister;
 import com.scolastico.discord_exe.etc.permissions.PermissionsManager;
@@ -8,7 +9,9 @@ import com.scolastico.discord_exe.event.handlers.CommandHandler;
 import com.scolastico.discord_exe.event.handlers.EventHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.awt.*;
@@ -18,24 +21,31 @@ public class CommandDisconnect implements CommandHandler, EventHandler {
     @Override
     public boolean respondToCommand(String cmd, String[] args, JDA jda, MessageReceivedEvent event, long senderId, long serverId, Member member) {
         if (cmd.equalsIgnoreCase("disconnect")) {
-            EmbedBuilder builder = new EmbedBuilder();
-            builder.setColor(Color.RED);
-            builder.setTitle("Sorry,");
-            builder.setDescription("but the command isn't correct. Please check the arguments or try `disc0rd/help disconnect`.");
+            Emote emoteNo = EmoteHandler.getInstance().getEmoteNo();
             if (args.length == 0) {
-                if (member.getVoiceState() != null) {
-                    MusicPlayer player = MusicPlayerRegister.getInstance().getPlayer(event.getGuild().getIdLong());
-                    if (player != null) {
-                        MusicPlayerRegister.getInstance().killPlayer(event.getGuild().getIdLong());
-                        builder.setColor(Color.YELLOW);
-                        builder.setTitle("Music Player");
-                        builder.setDescription("Disconnected...");
+                if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "disconnect")) {
+                    if (member.getVoiceState() != null) {
+                        VoiceChannel channel = member.getVoiceState().getChannel();
+                        if (channel != null) {
+                            MusicPlayer player = MusicPlayerRegister.getInstance().getPlayer(event.getGuild().getIdLong());
+                            if (player != null) {
+                                if (player.getChannel() == channel) {
+                                    MusicPlayerRegister.getInstance().killPlayer(event.getGuild().getIdLong());
+                                    event.getMessage().addReaction(EmoteHandler.getInstance().getEmoteOk()).queue();
+                                } else {
+                                    event.getChannel().sendMessage("<:" + emoteNo.getName() + ":" + emoteNo.getId() + "> Sorry, but you need to be in the same channel as the bot.").queue();
+                                }
+                            } else {
+                                event.getChannel().sendMessage("<:" + emoteNo.getName() + ":" + emoteNo.getId() + "> Sorry, but there is no player currently").queue();
+                            }
+                        }
                     } else {
-                        builder.setDescription("There is no player currently.");
+                        event.getMessage().addReaction(EmoteHandler.getInstance().getEmoteNoPermission()).queue();
                     }
                 }
+            } else {
+                event.getChannel().sendMessage("<:" + emoteNo.getName() + ":" + emoteNo.getId() + "> Sorry, but i cant find this command. Check your arguments or try `disc0rd/help disconnect`.").queue();
             }
-            event.getChannel().sendMessage(builder.build()).queue();
             return true;
         }
         return false;

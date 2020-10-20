@@ -1,7 +1,6 @@
 package com.scolastico.discord_exe.webserver.context;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.*;
 import com.scolastico.discord_exe.Disc0rd;
 import com.scolastico.discord_exe.etc.ErrorHandler;
 import com.scolastico.discord_exe.etc.Tools;
@@ -53,7 +52,11 @@ public class GuildPermissions implements WebHandler {
             Long guildId = GuildPanel.getIdFromAuthorization(httpExchange);
             if (guildId != null) {
                 HashMap<UUID, PermissionsData> permissions = Disc0rd.getMysql().getServerSettings(guildId).getPermissionsData();
-                Gson gson = new Gson();
+                Gson gson = new GsonBuilder()
+                        .registerTypeAdapter(Long.class, (JsonSerializer<Long>)
+                                (var, type, jsonSerializationContext) -> new
+                                        JsonPrimitive(String.valueOf(var)))
+                        .create();
                 if (permissions.size() != 0) {
                     return "{\"status\":\"ok\",\"get\":" + gson.toJson(permissions) + "}";
                 } else {

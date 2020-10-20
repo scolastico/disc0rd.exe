@@ -97,7 +97,7 @@ try {
                             }
                             let obj = {
                                 'isUser': document.getElementById(id + '-isUserPermission').checked,
-                                'id': parseInt(document.getElementById(id + '-id').value),
+                                'id': document.getElementById(id + '-id').value,
                                 'permissions': permissions
                             };
                             const xmlHttp2 = new XMLHttpRequest();
