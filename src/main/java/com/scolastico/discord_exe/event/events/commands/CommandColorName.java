@@ -44,7 +44,7 @@ public class CommandColorName implements EventHandler, CommandHandler, WebHandle
                 ServerSettings settings = mysql.getServerSettings(event.getGuild().getIdLong());
                 ServerSettings.ColorNameConfig colorNameConfig = settings.getColorNameConfig();
                 if (args.length == 0) {
-                    if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "")) {
+                    if (PermissionsManager.getInstance().checkPermission(event.getGuild(), member, "color")) {
                         if (colorNameConfig.isEnabled()) {
                             String random;
                             do {
