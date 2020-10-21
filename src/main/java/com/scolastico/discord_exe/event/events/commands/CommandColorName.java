@@ -1,6 +1,7 @@
 package com.scolastico.discord_exe.event.events.commands;
 
 import com.scolastico.discord_exe.Disc0rd;
+import com.scolastico.discord_exe.etc.EmoteHandler;
 import com.scolastico.discord_exe.etc.ErrorHandler;
 import com.scolastico.discord_exe.etc.Tools;
 import com.scolastico.discord_exe.etc.permissions.PermissionsManager;
@@ -20,11 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.ChannelType;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.managers.RoleManager;
 
@@ -42,8 +39,8 @@ public class CommandColorName
                                   long serverId, Member member) {
     if (cmd.equalsIgnoreCase("color")) {
       if (event.getChannel().getType().equals(ChannelType.TEXT)) {
-        event.getMessage().delete().queue();
-        EmbedBuilder embedBuilder = new EmbedBuilder();
+        Emote emoteNo = EmoteHandler.getInstance().getEmoteNo();
+        Emote emoteOk = EmoteHandler.getInstance().getEmoteOk();
         MysqlHandler mysql = Disc0rd.getMysql();
         ServerSettings settings =
             mysql.getServerSettings(event.getGuild().getIdLong());
@@ -70,28 +67,20 @@ public class CommandColorName
                       Disc0rd.getConfig().getWebServer().getDomain() +
                       "color-name/index.html#" + random)
                   .queue();
-              embedBuilder.setTitle("Success,");
-              embedBuilder.setDescription("i send you a private message!");
-              embedBuilder.setColor(Color.green);
-              event.getChannel()
-                  .sendMessage(embedBuilder.build())
-                  .complete()
-                  .delete()
-                  .queueAfter(30, TimeUnit.SECONDS);
+              event.getMessage().addReaction(emoteOk).queue();
               return true;
             } else {
-              embedBuilder.setTitle("Sorry,");
-              embedBuilder.setDescription(
-                  "this function is not enabled on this server! Ask the owner if he activates it with `disc0rd/color on`");
-              embedBuilder.setColor(Color.red);
+              event.getChannel()
+                      .sendMessage(
+                              "<:" + emoteNo.getName() + ":" + emoteNo.getId() +
+                                      "> Sorry, but this function is not enabled on this server! Ask the owner if he activates it with `disc0rd/color on`.")
+                      .queue();
             }
           } else {
-            embedBuilder.setTitle("Sorry,");
-            embedBuilder.setDescription(
-                "but you dont have the permission to use this command!");
-            embedBuilder.setColor(Color.red);
+            event.getMessage()
+                    .addReaction(EmoteHandler.getInstance().getEmoteNoPermission())
+                    .queue();
           }
-          event.getChannel().sendMessage(embedBuilder.build()).queue();
           return true;
         } else if (args.length == 1) {
           if (args[0].equalsIgnoreCase("activate") ||
@@ -101,17 +90,18 @@ public class CommandColorName
               colorNameConfig.setEnabled(true);
               settings.setColorNameConfig(colorNameConfig);
               mysql.setServerSettings(event.getGuild().getIdLong(), settings);
-              embedBuilder.setTitle("Success,");
-              embedBuilder.setDescription(
-                  "the setting was successfully saved! ATTENTION, be careful with this setting, as this can result in undesirable side effects such as user rights that you should not have. As an example, it can be that admins can take away each other's roles. Apart from that, this module has other minor bugs.");
-              embedBuilder.setColor(Color.green);
+              event.getChannel()
+                      .sendMessage(
+                              "<:" + emoteOk.getName() + ":" + emoteOk.getId() +
+                                      "> Success, the setting was successfully saved! ATTENTION, be careful with this setting, as this can result in undesirable side effects such as user rights that you should not have. As an example, it can be that admins can take away each other's roles. Apart from that, this module has other minor bugs.")
+                      .queue();
             } else {
-              embedBuilder.setTitle("Sorry,");
-              embedBuilder.setDescription(
-                  "but only the guild owner has the permission to use this command!");
-              embedBuilder.setColor(Color.red);
+              event.getChannel()
+                      .sendMessage(
+                              "<:" + emoteNo.getName() + ":" + emoteNo.getId() +
+                                      "> Sorry, but only the guild owner has the permission to use this command!")
+                      .queue();
             }
-            event.getChannel().sendMessage(embedBuilder.build()).queue();
             return true;
           } else if (args[0].equalsIgnoreCase("deactivate") ||
                      args[0].equalsIgnoreCase("off")) {
@@ -120,27 +110,29 @@ public class CommandColorName
               colorNameConfig.setEnabled(false);
               settings.setColorNameConfig(colorNameConfig);
               mysql.setServerSettings(event.getGuild().getIdLong(), settings);
-              embedBuilder.setTitle("Success,");
-              embedBuilder.setDescription(
-                  "the setting was successfully saved!");
-              embedBuilder.setColor(Color.green);
+              event.getChannel()
+                      .sendMessage(
+                              "<:" + emoteOk.getName() + ":" + emoteOk.getId() +
+                                      "> Success, the setting was successfully saved!")
+                      .queue();
             } else {
-              embedBuilder.setTitle("Sorry,");
-              embedBuilder.setDescription(
-                  "but only the guild owner has the permission to use this command!");
-              embedBuilder.setColor(Color.red);
+              event.getChannel()
+                      .sendMessage(
+                              "<:" + emoteNo.getName() + ":" + emoteNo.getId() +
+                                      "> Sorry, but only the guild owner has the permission to use this command!")
+                      .queue();
             }
-            event.getChannel().sendMessage(embedBuilder.build()).queue();
             return true;
           } else if (args[0].equalsIgnoreCase("listBlockedColors")) {
-            embedBuilder.setTitle("All blocked colors:");
-            embedBuilder.addField("#000000", "", true);
             List<String> blockedColors = colorNameConfig.getDisabledColors();
+            StringBuilder blockedColorsString = new StringBuilder();
             for (String color : blockedColors) {
-              embedBuilder.addField(color, "", true);
+              blockedColorsString.append(", ").append(color);
             }
-            embedBuilder.setColor(Color.yellow);
-            event.getChannel().sendMessage(embedBuilder.build()).queue();
+            event.getChannel().sendMessage(
+                    "All blocked colors:\n" +
+                            "#000000" + blockedColorsString.toString()
+            ).queue();
           }
         } else if (args.length == 2) {
           Pattern colorPattern =
@@ -151,10 +143,12 @@ public class CommandColorName
                                             event.getAuthor())) {
               if (args[1].length() == 7) {
                 if (!m.matches()) {
-                  embedBuilder.setTitle("Sorry,");
-                  embedBuilder.setDescription("but the color `" + args[1] +
-                                              "` is not a valid hex color!");
-                  embedBuilder.setColor(Color.red);
+                  event.getChannel()
+                          .sendMessage(
+                                  "<:" + emoteNo.getName() + ":" + emoteNo.getId() +
+                                          "> Sorry, but the color `" + args[1] +
+                                          "` is not a valid hex color!")
+                          .queue();
                 }
                 List<String> blockedColors =
                     colorNameConfig.getDisabledColors();
@@ -165,32 +159,38 @@ public class CommandColorName
                 settings.setColorNameConfig(colorNameConfig);
                 Disc0rd.getMysql().setServerSettings(
                     event.getGuild().getIdLong(), settings);
-                embedBuilder.setTitle("Success,");
-                embedBuilder.setDescription("the color `" + args[1] +
-                                            "` was added to the black list!");
-                embedBuilder.setColor(Color.green);
+                event.getChannel()
+                        .sendMessage(
+                                "<:" + emoteOk.getName() + ":" + emoteOk.getId() +
+                                        "> Success, the color `" + args[1] +
+                                        "` was added to the black list!")
+                        .queue();
               } else {
-                embedBuilder.setTitle("Sorry,");
-                embedBuilder.setDescription("but the color `" + args[1] +
-                                            "` is not a valid hex color!");
-                embedBuilder.setColor(Color.red);
+                event.getChannel()
+                        .sendMessage(
+                                "<:" + emoteNo.getName() + ":" + emoteNo.getId() +
+                                        "> Sorry, but the color `" + args[1] +
+                                        "` is not a valid hex color!")
+                        .queue();
               }
             } else {
-              embedBuilder.setTitle("Sorry,");
-              embedBuilder.setDescription(
-                  "but only the guild owner has the permission to use this command!");
-              embedBuilder.setColor(Color.red);
+              event.getChannel()
+                      .sendMessage(
+                              "<:" + emoteNo.getName() + ":" + emoteNo.getId() +
+                                      "> Sorry, but only the guild owner has the permission to use this command!")
+                      .queue();
             }
-            event.getChannel().sendMessage(embedBuilder.build()).queue();
           } else if (args[0].equalsIgnoreCase("unblock")) {
             if (Tools.getInstance().isOwner(event.getGuild(),
                                             event.getAuthor())) {
               if (args[1].length() == 7) {
                 if (!m.matches()) {
-                  embedBuilder.setTitle("Sorry,");
-                  embedBuilder.setDescription("but the color `" + args[1] +
-                                              "` is not a valid hex color!");
-                  embedBuilder.setColor(Color.red);
+                  event.getChannel()
+                          .sendMessage(
+                                  "<:" + emoteNo.getName() + ":" + emoteNo.getId() +
+                                          "> Sorry, but the color `" + args[1] +
+                                          "` is not a valid hex color!")
+                          .queue();
                 }
                 List<String> blockedColors =
                     colorNameConfig.getDisabledColors();
@@ -201,24 +201,27 @@ public class CommandColorName
                 settings.setColorNameConfig(colorNameConfig);
                 Disc0rd.getMysql().setServerSettings(
                     event.getGuild().getIdLong(), settings);
-                embedBuilder.setTitle("Success,");
-                embedBuilder.setDescription(
-                    "the color `" + args[1] +
-                    "` was removed from the black list!");
-                embedBuilder.setColor(Color.green);
+                event.getChannel()
+                        .sendMessage(
+                                "<:" + emoteOk.getName() + ":" + emoteOk.getId() +
+                                        "> Success, the color `" + args[1] +
+                                        "` was removed from the black list!")
+                        .queue();
               } else {
-                embedBuilder.setTitle("Sorry,");
-                embedBuilder.setDescription("but the color `" + args[1] +
-                                            "` is not a valid hex color!");
-                embedBuilder.setColor(Color.red);
+                event.getChannel()
+                        .sendMessage(
+                                "<:" + emoteNo.getName() + ":" + emoteNo.getId() +
+                                        "> Sorry, but the color `" + args[1] +
+                                        "` is not a valid hex color!")
+                        .queue();
               }
             } else {
-              embedBuilder.setTitle("Sorry,");
-              embedBuilder.setDescription(
-                  "but only the guild owner has the permission to use this command!");
-              embedBuilder.setColor(Color.red);
+              event.getChannel()
+                      .sendMessage(
+                              "<:" + emoteNo.getName() + ":" + emoteNo.getId() +
+                                      "> Sorry, but only the guild owner has the permission to use this command!")
+                      .queue();
             }
-            event.getChannel().sendMessage(embedBuilder.build()).queue();
           } else if (args[0].equalsIgnoreCase("sensitivity")) {
             if (Tools.getInstance().isOwner(event.getGuild(),
                                             event.getAuthor())) {
@@ -228,24 +231,27 @@ public class CommandColorName
                 settings.setColorNameConfig(colorNameConfig);
                 Disc0rd.getMysql().setServerSettings(
                     event.getGuild().getIdLong(), settings);
-                embedBuilder.setTitle("Success,");
-                embedBuilder.setDescription("the sensitivity is set to `" +
-                                            sensitivity +
-                                            "` from the default value `30`.");
-                embedBuilder.setColor(Color.green);
+                event.getChannel()
+                        .sendMessage(
+                                "<:" + emoteOk.getName() + ":" + emoteOk.getId() +
+                                        "> Success, the sensitivity is set to `" +
+                                        sensitivity +
+                                        "` from the default value `30`.")
+                        .queue();
               } else {
-                embedBuilder.setTitle("Sorry,");
-                embedBuilder.setDescription(
-                    "but the sensitivity can only between -1 and 120!");
-                embedBuilder.setColor(Color.red);
+                event.getChannel()
+                        .sendMessage(
+                                "<:" + emoteNo.getName() + ":" + emoteNo.getId() +
+                                        "> Sorry, but the sensitivity can only between -1 and 120!")
+                        .queue();
               }
             } else {
-              embedBuilder.setTitle("Sorry,");
-              embedBuilder.setDescription(
-                  "but only the guild owner has the permission to use this command!");
-              embedBuilder.setColor(Color.red);
+              event.getChannel()
+                      .sendMessage(
+                              "<:" + emoteNo.getName() + ":" + emoteNo.getId() +
+                                      "> Sorry, but only the guild owner has the permission to use this command!")
+                      .queue();
             }
-            event.getChannel().sendMessage(embedBuilder.build()).queue();
           }
         }
       } else {
@@ -402,10 +408,10 @@ public class CommandColorName
   }
 
   private static class ColorChangeInfo {
-    private long userId;
-    private long guildId;
-    private String key;
-    private long enabledUntil;
+    private final long userId;
+    private final long guildId;
+    private final String key;
+    private final long enabledUntil;
 
     public ColorChangeInfo(long userId, long guildId, String key,
                            long enabledUntil) {
