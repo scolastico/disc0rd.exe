@@ -136,7 +136,8 @@ public class Disc0rd {
     tools.asyncLoadingAnimationWhileWaitingResult(new Runnable() {
       public void run() {
         try {
-          JDABuilder builder = JDABuilder.createDefault(config.getDiscordToken());
+          JDABuilder builder =
+              JDABuilder.createDefault(config.getDiscordToken());
           builder.setAutoReconnect(true);
           jda = builder.build().awaitReady();
         } catch (LoginException | InterruptedException e) {
