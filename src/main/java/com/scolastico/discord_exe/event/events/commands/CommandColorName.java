@@ -358,7 +358,8 @@ public class CommandColorName
                   roleManager.setMentionable(false).queue();
                   roleManager.setName("custom color - " + colorHash).queue();
                   Member botMember =
-                      guild.retrieveMember(Disc0rd.getJda().getSelfUser()).complete();
+                      guild.retrieveMember(Disc0rd.getJda().getSelfUser())
+                          .complete();
                   if (botMember == null) {
                     ErrorHandler.getInstance().handle(
                         new Exception("Not in guild?"));
