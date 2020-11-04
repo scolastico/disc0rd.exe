@@ -26,7 +26,7 @@ public class Disc0rd {
   private static MysqlHandler mysql;
   private static JDA jda;
   private static boolean ready = false;
-  private static String version = "Can't read Version! This build is corrupt!";
+  private static String version = "error";
   private static EventRegister eventRegister;
   private static Long executedCommands = 0L;
   private static final long startTime = System.currentTimeMillis();

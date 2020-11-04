@@ -326,7 +326,7 @@ public class CommandColorName
               User user =
                   Disc0rd.getJda().getUserById(colorChangeInfo.getUserId());
               if (guild != null && user != null) {
-                Member member = guild.getMember(user);
+                Member member = guild.retrieveMember(user).complete();
                 if (member != null) {
                   MysqlHandler mysql = Disc0rd.getMysql();
                   ServerSettings serverSettings =
@@ -358,7 +358,8 @@ public class CommandColorName
                   roleManager.setMentionable(false).queue();
                   roleManager.setName("custom color - " + colorHash).queue();
                   Member botMember =
-                      guild.getMember(Disc0rd.getJda().getSelfUser());
+                      guild.retrieveMember(Disc0rd.getJda().getSelfUser())
+                          .complete();
                   if (botMember == null) {
                     ErrorHandler.getInstance().handle(
                         new Exception("Not in guild?"));
