@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -321,7 +320,8 @@ public class Pr0grammManager {
           pr0grammServerConfigs.get(key);
       Guild guild = jda.getGuildById(key);
       if (guild != null) {
-        Member member = guild.retrieveMemberById(config.getLinkedMember()).complete();
+        Member member =
+            guild.retrieveMemberById(config.getLinkedMember()).complete();
         if (member != null) {
           if (Tools.getInstance().isOwner(guild, member.getUser())) {
             try {
