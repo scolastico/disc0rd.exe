@@ -278,23 +278,23 @@ public class Pr0grammAPI {
   }
 
   public static class Pr0grammPost {
-    private long id;
-    private boolean promoted;
-    private long userId;
-    private int up;
-    private int down;
-    private long created;
-    private String image;
-    private String thumbnail;
-    private String full;
-    private int width;
-    private int height;
-    private boolean audio;
-    private String source;
-    private int flags;
-    private String user;
-    private int mark;
-    private int gift;
+    private final long id;
+    private final boolean promoted;
+    private final long userId;
+    private final int up;
+    private final int down;
+    private final long created;
+    private final String image;
+    private final String thumbnail;
+    private final String full;
+    private final int width;
+    private final int height;
+    private final boolean audio;
+    private final String source;
+    private final int flags;
+    private final String user;
+    private final int mark;
+    private final int gift;
 
     private Pr0grammPost(long id, boolean promoted, long userId, int up,
                          int down, long created, String image, String thumbnail,
@@ -392,22 +392,22 @@ public class Pr0grammAPI {
   }
 
   public static class Pr0grammUser {
-    private long id;
-    private String name;
-    private long registered;
-    private long score;
-    private long banned;
-    private long inactive;
-    private long commentsDeleted;
-    private long itemsDeleted;
-    private long commentCount;
-    private long commentLikesCount;
-    private long uploadCount;
-    private boolean likesArePublic;
-    private long likesCount;
-    private long tagCount;
-    private Badge[] badges;
-    private int mark;
+    private final long id;
+    private final String name;
+    private final long registered;
+    private final long score;
+    private final long banned;
+    private final long inactive;
+    private final long commentsDeleted;
+    private final long itemsDeleted;
+    private final long commentCount;
+    private final long commentLikesCount;
+    private final long uploadCount;
+    private final boolean likesArePublic;
+    private final long likesCount;
+    private final long tagCount;
+    private final Badge[] badges;
+    private final int mark;
 
     public Pr0grammUser(long id, String name, long registered, long score,
                         long banned, long inactive, long commentsDeleted,
@@ -466,10 +466,10 @@ public class Pr0grammAPI {
     public int getMark() { return mark; }
 
     public static class Badge {
-      private String link;
-      private String image;
-      private String description;
-      private long created;
+      private final String link;
+      private final String image;
+      private final String description;
+      private final long created;
 
       private Badge(String link, String image, String description,
                     long created) {

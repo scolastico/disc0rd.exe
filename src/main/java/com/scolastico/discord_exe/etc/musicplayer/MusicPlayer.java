@@ -31,7 +31,7 @@ public class MusicPlayer {
     guild.getAudioManager().openAudioConnection(channel);
     guild.getAudioManager().setSendingHandler(
         new AudioPlayerSendHandler(player));
-    member = guild.getMember(Disc0rd.getJda().getSelfUser());
+    member = guild.retrieveMember(Disc0rd.getJda().getSelfUser()).complete();
     assert member != null;
   }
 

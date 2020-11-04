@@ -37,7 +37,7 @@ public class VersionController {
                 JSONObject object = new JSONObject(versionInfo);
                 commit = object.getString("git.commit.id.abbrev");
             } catch (Exception e) {
-                return "error";
+                return "dev";
             }
         }
         return commit;

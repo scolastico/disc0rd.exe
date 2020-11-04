@@ -154,10 +154,10 @@ public class Pr0grammOAuth implements WebHandler {
     }
 
     private static class AuthKeyInformation {
-        private long validUntil;
-        private String key;
-        private long guildId;
-        private long memberId;
+        private final long validUntil;
+        private final String key;
+        private final long guildId;
+        private final long memberId;
 
         public AuthKeyInformation(String key, long guildId, long memberId) {
             this.key = key;

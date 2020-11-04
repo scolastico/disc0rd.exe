@@ -106,11 +106,16 @@ public class CommandLeaderBoard implements EventHandler, CommandHandler {
                             Matcher matcher = pattern.matcher(args[1]);
                             if (matcher.find()) {
                                 String id = matcher.group(1);
-                                if (args[1].equalsIgnoreCase("<@!" + id + ">")) {
+                                member = event.getGuild().retrieveMemberById(id).complete();
+                                if (member != null) {
                                     if (!member.getUser().isBot()) {
-                                        return sendBanner(event, member);
+                                        sendBanner(event, member);
+                                        return true;
+                                    } else {
+                                        builder.setDescription("but this user isn't a real user. I only take care of real users!");
                                     }
-                                    builder.setDescription("but this user isn't a real user. I only take care of real users!");
+                                } else {
+                                    builder.setDescription("but i cant find this user.!");
                                 }
                             }
                         } catch (Exception e) {
@@ -204,10 +209,17 @@ public class CommandLeaderBoard implements EventHandler, CommandHandler {
                         if (matcher.find()) {
                             String id = matcher.group(1);
                             if (args[0].equalsIgnoreCase("<@!" + id + ">")) {
-                                if (!member.getUser().isBot()) {
-                                    return sendBanner(event, member);
+                                member = event.getGuild().retrieveMemberById(id).complete();
+                                if (member != null) {
+                                    if (!member.getUser().isBot()) {
+                                        sendBanner(event, member);
+                                        return true;
+                                    } else {
+                                        builder.setDescription("but this user isn't a real user. I only take care of real users!");
+                                    }
+                                } else {
+                                    builder.setDescription("but i cant find this user.!");
                                 }
-                                builder.setDescription("but this user isn't a real user. I only take care of real users!");
                             }
                         }
                     } catch (Exception e) {

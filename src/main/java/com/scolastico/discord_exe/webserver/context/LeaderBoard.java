@@ -40,7 +40,7 @@ public class LeaderBoard implements WebHandler {
                 JDA jda = Disc0rd.getJda();
                 Guild guild = jda.getGuildById(guildId);
                 if (guild != null) {
-                    Member member = guild.getMemberById(memberId);
+                    Member member = guild.retrieveMemberById(memberId).complete();
                     if (member != null) {
                         httpExchange.getResponseHeaders().set("Content-Type", "text/html; charset=utf-8;");
                         return Tools.getInstance().getLeaderboardBannerSVG(guild, member);
@@ -67,8 +67,8 @@ public class LeaderBoard implements WebHandler {
                 HashMap<Integer, ArrayList<LeaderBoardData>> data = new HashMap<>();
                 for (Long id:users.keySet()) {
                     try {
-                        Member member = guild.getMemberById(id);
-                        if (member != null) if (!member.isFake()) if (!member.getUser().isBot()) {
+                        Member member = guild.retrieveMemberById(id).complete();
+                        if (member != null) if (!member.getUser().isBot()) {
                             long xp = users.get(id);
                             int level = Tools.getInstance().getLeaderboardLevel(xp);
                             int position = Tools.getInstance().getLeaderboardPlace(guild, member);

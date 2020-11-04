@@ -21,7 +21,7 @@ public class GiveRole implements Disc0rdAction {
             dataStore.setCancelled(true);
             return dataStore;
         }
-        Member user = guild.getMemberById(Tools.getInstance().getStringWithVarsFromDataStore(dataStore, config.getOrDefault("User ID", "0")));
+        Member user = guild.retrieveMemberById(Tools.getInstance().getStringWithVarsFromDataStore(dataStore, config.getOrDefault("User ID", "0"))).complete();
         if (user == null) {
             Tools.getInstance().writeGuildLogLine(dataStore.getExtendedEvent().getGuild(), "[Give Role to User] [" + idFromAction + "] User not found!");
             dataStore.setCancelled(true);

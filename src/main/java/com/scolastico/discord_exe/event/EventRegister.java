@@ -133,7 +133,7 @@ public class EventRegister extends ListenerAdapter {
 
                 if (event.getChannel().getType() == ChannelType.TEXT) {
 
-                    Member member = event.getGuild().getMember(event.getAuthor());
+                    Member member = event.getGuild().retrieveMember(event.getAuthor()).complete();
 
                     if (member != null) if (!event.getAuthor().isBot()) {
 

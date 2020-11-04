@@ -29,7 +29,7 @@ public class OnChatLeaderboard implements EventHandler, MessageReceivedHandler {
     public void handleMessageReceived(MessageReceivedEvent messageReceivedEvent) {
         if (messageReceivedEvent.getChannel().getType() == ChannelType.TEXT) {
             User user = messageReceivedEvent.getAuthor();
-            Member member = messageReceivedEvent.getGuild().getMember(user);
+            Member member = messageReceivedEvent.getGuild().retrieveMember(user).complete();
             if (member == null) return;
             if (!user.isBot()) if (PermissionsManager.getInstance().checkPermission(messageReceivedEvent.getGuild(), member, "leaderboard-collect-text")){
                 clearTimeOut();

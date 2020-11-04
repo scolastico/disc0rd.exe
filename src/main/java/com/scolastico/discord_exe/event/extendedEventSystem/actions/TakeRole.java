@@ -21,7 +21,7 @@ public class TakeRole implements Disc0rdAction {
             dataStore.setCancelled(true);
             return dataStore;
         }
-        Member user = guild.getMemberById(Tools.getInstance().getStringWithVarsFromDataStore(dataStore, config.getOrDefault("User ID", "0")));
+        Member user = guild.retrieveMemberById(Tools.getInstance().getStringWithVarsFromDataStore(dataStore, config.getOrDefault("User ID", "0"))).complete();
         if (user == null) {
             Tools.getInstance().writeGuildLogLine(dataStore.getExtendedEvent().getGuild(), "[Take role from User] [" + idFromAction + "] User not found!");
             dataStore.setCancelled(true);
