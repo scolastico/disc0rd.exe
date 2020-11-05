@@ -1,0 +1,9 @@
+enable: true
+image: 'restyled/restyler-google-java-format:v1.6'
+command:
+  - google-java-format
+  - '--replace'
+arguments: []
+include:
+  - '**/*.java'
+interpreters: []
