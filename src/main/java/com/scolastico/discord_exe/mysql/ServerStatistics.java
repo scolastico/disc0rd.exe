@@ -1,62 +1,63 @@
 package com.scolastico.discord_exe.mysql;
 
+import com.scolastico.discord_exe.etc.Tools;
 import java.util.ArrayList;
 import java.util.HashMap;
 import net.dv8tion.jda.api.entities.Invite;
 
 public class ServerStatistics {
 
-  private HashMap<Long, StatisticsJoin> joins = new HashMap<>();
-  private HashMap<Long, StatisticsLeft> lefts = new HashMap<>();
-  private HashMap<Long, StatisticsMessageActivity> messageActivity = new HashMap<>();
-  private HashMap<Long, StatisticsVoiceActivity> voiceActivity = new HashMap<>();
+  private HashMap<Long, ArrayList<StatisticsJoin>> joins = new HashMap<>();
+  private HashMap<Long, ArrayList<StatisticsLeft>> lefts = new HashMap<>();
+  private HashMap<Long, ArrayList<StatisticsMessageActivity>> messageActivity = new HashMap<>();
+  private HashMap<Long, ArrayList<StatisticsVoiceActivity>> voiceActivity = new HashMap<>();
   private StatisticsCustomData customData = new StatisticsCustomData();
 
-  public HashMap<Long, StatisticsJoin> getJoins() {
+  public HashMap<Long, ArrayList<StatisticsJoin>> getJoins() {
     return joins;
   }
 
-  public void addJoin(Long time, StatisticsJoin join) {
-    joins.put(time, join);
+  public void addJoin(StatisticsJoin join) {
+    addToHashMap(joins, join);
   }
 
-  public void setJoins(HashMap<Long, StatisticsJoin> joins) {
+  public void setJoins(HashMap<Long, ArrayList<StatisticsJoin>> joins) {
     this.joins = joins;
   }
 
-  public HashMap<Long, StatisticsLeft> getLefts() {
+  public HashMap<Long, ArrayList<StatisticsLeft>> getLefts() {
     return lefts;
   }
 
-  public void addLeft(Long time, StatisticsLeft left) {
-    lefts.put(time, left);
+  public void addLeft(StatisticsLeft left) {
+    addToHashMap(lefts, left);
   }
 
-  public void setLefts(HashMap<Long, StatisticsLeft> lefts) {
+  public void setLefts(HashMap<Long, ArrayList<StatisticsLeft>> lefts) {
     this.lefts = lefts;
   }
 
-  public HashMap<Long, StatisticsMessageActivity> getMessageActivity() {
+  public HashMap<Long, ArrayList<StatisticsMessageActivity>> getMessageActivity() {
     return messageActivity;
   }
 
-  public void addMessageActivity(Long time, StatisticsMessageActivity messageActivity) {
-    this.messageActivity.put(time, messageActivity);
+  public void addMessageActivity(StatisticsMessageActivity messageActivity) {
+    addToHashMap(this.messageActivity, messageActivity);
   }
 
-  public void setMessageActivity(HashMap<Long, StatisticsMessageActivity> messageActivity) {
+  public void setMessageActivity(HashMap<Long, ArrayList<StatisticsMessageActivity>> messageActivity) {
     this.messageActivity = messageActivity;
   }
 
-  public HashMap<Long, StatisticsVoiceActivity> getVoiceActivity() {
+  public HashMap<Long, ArrayList<StatisticsVoiceActivity>> getVoiceActivity() {
     return voiceActivity;
   }
 
-  public void addVoiceActivity(Long time, StatisticsVoiceActivity voiceActivity) {
-    this.voiceActivity.put(time, voiceActivity);
+  public void addVoiceActivity(StatisticsVoiceActivity voiceActivity) {
+    addToHashMap(this.voiceActivity, voiceActivity);
   }
 
-  public void setVoiceActivity(HashMap<Long, StatisticsVoiceActivity> voiceActivity) {
+  public void setVoiceActivity(HashMap<Long, ArrayList<StatisticsVoiceActivity>> voiceActivity) {
     this.voiceActivity = voiceActivity;
   }
 
@@ -66,6 +67,19 @@ public class ServerStatistics {
 
   public void setCustomData(StatisticsCustomData customData) {
     this.customData = customData;
+  }
+
+  private <T> void addToHashMap(HashMap<Long, ArrayList<T>> hashMap, T obj) {
+    Long time = Tools.getInstance().getUnixTimeStamp();
+    ArrayList<T> list;
+    if (hashMap.containsKey(time)) {
+      list = hashMap.get(time);
+    } else {
+      list = new ArrayList<>();
+    }
+    list.add(obj);
+    hashMap.remove(time);
+    hashMap.put(time, list);
   }
 
   public static class StatisticsJoin {

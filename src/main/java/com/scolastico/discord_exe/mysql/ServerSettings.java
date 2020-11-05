@@ -17,6 +17,15 @@ public class ServerSettings {
     private Pr0grammServerConfig pr0grammServerConfig = new Pr0grammServerConfig();
     private Leaderboard leaderboard = new Leaderboard();
     private HashMap<UUID, PermissionsData> permissionsData = new HashMap<>();
+    private ServerStatistics statistics = new ServerStatistics();
+
+    public ServerStatistics getStatistics() {
+        return statistics;
+    }
+
+    public void setStatistics(ServerStatistics statistics) {
+        this.statistics = statistics;
+    }
 
     public HashMap<UUID, PermissionsData> getPermissionsData() {
         return permissionsData;

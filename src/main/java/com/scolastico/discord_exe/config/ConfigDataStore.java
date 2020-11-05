@@ -21,6 +21,15 @@ public class ConfigDataStore {
   private Emotes emotes = new Emotes();
   private String motd = "Try disc0rd/help!";
   private String twitchUrl = "";
+  private Statistics statistics = new Statistics();
+
+  public Statistics getStatistics() {
+    return statistics;
+  }
+
+  public void setStatistics(Statistics statistics) {
+    this.statistics = statistics;
+  }
 
   public String getTwitchUrl() {
     return twitchUrl;
@@ -126,6 +135,45 @@ public class ConfigDataStore {
 
   public void setWebServer(WebServerData webServer) {
     this.webServer = webServer;
+  }
+
+  public static class Statistics {
+    private int deleteJoins = 30;
+    private int deleteLefts = 30;
+    private int deleteMessageActivity = 7;
+    private int deleteVoiceActivity = 7;
+
+    public int getDeleteJoins() {
+      return deleteJoins;
+    }
+
+    public void setDeleteJoins(int deleteJoins) {
+      this.deleteJoins = deleteJoins;
+    }
+
+    public int getDeleteLefts() {
+      return deleteLefts;
+    }
+
+    public void setDeleteLefts(int deleteLefts) {
+      this.deleteLefts = deleteLefts;
+    }
+
+    public int getDeleteMessageActivity() {
+      return deleteMessageActivity;
+    }
+
+    public void setDeleteMessageActivity(int deleteMessageActivity) {
+      this.deleteMessageActivity = deleteMessageActivity;
+    }
+
+    public int getDeleteVoiceActivity() {
+      return deleteVoiceActivity;
+    }
+
+    public void setDeleteVoiceActivity(int deleteVoiceActivity) {
+      this.deleteVoiceActivity = deleteVoiceActivity;
+    }
   }
 
   public static class Emotes {
