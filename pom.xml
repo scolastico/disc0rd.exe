@@ -151,6 +151,11 @@
             <artifactId>spotify-web-api-java</artifactId>
             <version>6.4.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>30.0-jre</version>
+        </dependency>
     </dependencies>
 
     <repositories>
