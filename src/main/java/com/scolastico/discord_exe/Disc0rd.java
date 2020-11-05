@@ -7,6 +7,7 @@ import com.scolastico.discord_exe.etc.musicplayer.SpotifyToYoutube;
 import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.event.extendedEventSystem.ExtendedEventManager;
 import com.scolastico.discord_exe.event.handlers.EventHandler;
+import com.scolastico.discord_exe.event.handlers.ScheduleHandler;
 import com.scolastico.discord_exe.mysql.MysqlHandler;
 import com.scolastico.discord_exe.webserver.WebServerManager;
 import java.io.File;
@@ -15,6 +16,8 @@ import java.util.*;
 import javax.security.auth.login.LoginException;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Activity.ActivityType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.reflections.Reflections;
@@ -33,6 +36,8 @@ public class Disc0rd {
   private static final CloseableHttpClient httpClient =
       HttpClients.createDefault();
   private static final ArrayList<Runnable> onExitRuns = new ArrayList<>();
+  private static String motd = null;
+  private static String twitch = null;
 
   private static final Thread onExit = new Thread() {
     public void run() {
@@ -251,6 +256,13 @@ public class Disc0rd {
             throw new Exception("tmp dir is not a dir");
           }
           EmoteHandler.getInstance();
+          Activity activity;
+          if (config.getTwitchUrl().equals("")) {
+            activity = Activity.playing(config.getMotd());
+          } else {
+            activity = Activity.streaming(config.getMotd(), config.getTwitchUrl());
+          }
+          jda.getPresence().setActivity(activity);
         } catch (Exception e) {
           ErrorHandler.getInstance().handleFatal(e);
         }

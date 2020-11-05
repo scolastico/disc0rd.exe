@@ -128,7 +128,8 @@ function loadConfig() {
 }
 
 function sendSettings() {
-  if (document.getElementById("w2gDefaultPlayback").value === "") {
+  if (document.getElementById("w2gDefaultPlayback").value === "" &&
+      document.getElementById("motd").value === "") {
     swal.fire({
       type: "error",
       title: "Oops...",
@@ -166,7 +167,11 @@ function sendSettings() {
   };
   xmlHttpSettingsSend.send(
     "w2gDefaultPlayback=" +
-      encodeURIComponent(document.getElementById("w2gDefaultPlayback").value)
+      encodeURIComponent(document.getElementById("w2gDefaultPlayback").value) +
+      "&motd=" +
+      encodeURIComponent(document.getElementById("motd").value) +
+      "&twitch=" +
+      encodeURIComponent(document.getElementById("twitch").value)
   );
 }
 
@@ -175,9 +180,10 @@ xmlHttpSettings.open("GET", "../api/v1/admin/getSettings", true);
 xmlHttpSettings.onreadystatechange = function () {
   if (xmlHttpSettings.readyState === 4 && xmlHttpSettings.status === 200) {
     if (JSON.parse(xmlHttpSettings.responseText).status === "ok") {
-      document.getElementById("w2gDefaultPlayback").value = JSON.parse(
-        xmlHttpSettings.responseText
-      ).settings.w2gDefaultPlayback;
+      const response = JSON.parse(xmlHttpSettings.responseText);
+      document.getElementById("w2gDefaultPlayback").value = response.settings.w2gDefaultPlayback;
+      document.getElementById("motd").value = response.settings.motd;
+      document.getElementById("twitch").value = response.settings.twitch;
     } else {
       window.location.replace("logout.html");
     }

@@ -19,6 +19,24 @@ public class ConfigDataStore {
   private String discordInvite = "https://discord.gg/BCQmpCy";
   private String documentation = "http://go.scolasti.co/disc0rddocumentation";
   private Emotes emotes = new Emotes();
+  private String motd = "Try disc0rd/help!";
+  private String twitchUrl = "";
+
+  public String getTwitchUrl() {
+    return twitchUrl;
+  }
+
+  public void setTwitchUrl(String twitchUrl) {
+    this.twitchUrl = twitchUrl;
+  }
+
+  public String getMotd() {
+    return motd;
+  }
+
+  public void setMotd(String motd) {
+    this.motd = motd;
+  }
 
   public Emotes getEmotes() { return emotes; }
 

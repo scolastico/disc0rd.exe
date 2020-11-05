@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 
@@ -35,9 +36,7 @@ public class OwnerPanel implements WebHandler {
 
   private static HashMap<String, Long> authKeys = new HashMap<>();
   private static HashMap<String, Long> authCookies = new HashMap<>();
-  private OtpHelper otpHelper = OtpHelper.getInstance();
-  private static final String success_page =
-      "<!doctype html><title>Success!</title><style>body{text-align: center; padding: 150px;}h1{font-size: 50px;}body{font: 20px Helvetica, sans-serif; color: #333;}article{display: block; text-align: left; width: 650px; margin: 0 auto;}a{color: #dc8100; text-decoration: none;}a:hover{color: #333; text-decoration: none;}</style><article> <h1>Success!</h1> <div> <p>You have been successfully logged in via Spotify! You can now safely leave this page and concentrate on Discord again!</p></div></article>";
+  private final OtpHelper otpHelper = OtpHelper.getInstance();
 
   public static String getAuthCode() {
     clearHashMaps();
@@ -185,13 +184,24 @@ public class OwnerPanel implements WebHandler {
       if (httpExchange.getRequestMethod().equals("POST")) {
         HashMap<String, String> postValues =
             Tools.getInstance().getPostValuesFromHttpExchange(httpExchange);
-        if (postValues.containsKey("w2gDefaultPlayback")) {
+        if (postValues.containsKey("w2gDefaultPlayback") && postValues.containsKey("motd")) {
           try {
             Disc0rd.getConfig().setW2gDefaultPlayback(
                 URLDecoder.decode(postValues.get("w2gDefaultPlayback"),
                                   StandardCharsets.UTF_8.toString()));
+            Disc0rd.getConfig().setMotd(
+                URLDecoder.decode(postValues.get("motd"),
+                    StandardCharsets.UTF_8.toString()));
+            if (postValues.get("twitch") == null) {
+              Disc0rd.getConfig().setTwitchUrl("");
+            } else {
+              Disc0rd.getConfig().setTwitchUrl(
+                  URLDecoder.decode(postValues.get("twitch"),
+                      StandardCharsets.UTF_8.toString()));
+            }
           } catch (Exception e) {
             ErrorHandler.getInstance().handle(e);
+            return "{\"status\":\"error\",\"error\":\"internal error\"}";
           }
           ConfigHandler configHandler = Disc0rd.getConfigHandler();
           configHandler.setConfigObject(Disc0rd.getConfig());
@@ -201,6 +211,13 @@ public class OwnerPanel implements WebHandler {
             ErrorHandler.getInstance().handle(e);
             return "{\"status\":\"error\",\"error\":\"internal error\"}";
           }
+          Activity activity;
+          if (Disc0rd.getConfig().getTwitchUrl().equals("")) {
+            activity = Activity.playing(Disc0rd.getConfig().getMotd());
+          } else {
+            activity = Activity.streaming(Disc0rd.getConfig().getMotd(), Disc0rd.getConfig().getTwitchUrl());
+          }
+          Disc0rd.getJda().getPresence().setActivity(activity);
           return "{\"status\":\"ok\"}";
         }
       }
@@ -212,8 +229,11 @@ public class OwnerPanel implements WebHandler {
 
   private String getSettings(HttpExchange httpExchange) {
     if (isLoggedIn(httpExchange)) {
-      return "{\"status\":\"ok\",\"settings\":{\"w2gDefaultPlayback\":\"" +
-          Disc0rd.getConfig().getW2gDefaultPlayback() + "\"}}";
+      HashMap<String, String> json = new HashMap<>();
+      json.put("w2gDefaultPlayback", Disc0rd.getConfig().getW2gDefaultPlayback());
+      json.put("motd", Disc0rd.getConfig().getMotd());
+      json.put("twitch", Disc0rd.getConfig().getTwitchUrl());
+      return "{\"status\":\"ok\",\"settings\":" + new Gson().toJson(json) + "}";
     } else {
       return "{\"status\":\"error\",\"error\":\"no auth\"}";
     }
