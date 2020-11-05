@@ -9,3 +9,8 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    ignore_updates:
+      - match:
+          dependency_name: "commons-io:commons-io"
+      - match:
+          dependency_name: "org.apache.httpcomponents:httpclient"
