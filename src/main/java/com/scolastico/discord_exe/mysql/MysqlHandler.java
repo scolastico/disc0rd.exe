@@ -27,6 +27,7 @@ public class MysqlHandler {
 
         connection = DriverManager.getConnection("jdbc:mysql://" + server + "/" + db + "?user=" + user + "&password=" + pass + "&serverTimezone=UTC&autoReconnect=true");
         connection.prepareStatement("CREATE TABLE IF NOT EXISTS `" + prefix + "serverSettings` (`id` BIGINT NOT NULL, `json` text NOT NULL, PRIMARY KEY( `id` ));").execute();
+        connection.prepareStatement("CREATE TABLE IF NOT EXISTS `" + prefix + "serverStatistics` (`id` BIGINT NOT NULL, `json` text NOT NULL, PRIMARY KEY( `id` ));").execute();
 
     }
 
@@ -73,6 +74,29 @@ public class MysqlHandler {
         try {
             String json = gson.toJson(settings);
             connection.prepareStatement("INSERT INTO `" + prefix + "serverSettings` (id, json) VALUES(" + id + ", '" + json + "') ON DUPLICATE KEY UPDATE json='" + URLEncoder.encode(json, StandardCharsets.UTF_8.toString()) + "';").execute();
+        } catch (SQLException | UnsupportedEncodingException e) {
+            ErrorHandler.getInstance().handle(e);
+        }
+    }
+
+    public ServerStatistics getServerStatistics(long id) {
+        String json = "{}";
+        try {
+            ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM `" + prefix + "serverStatistics` WHERE `id`=" + id + ";");
+            while (rs.next()) {
+                json = URLDecoder.decode(rs.getString("json"), StandardCharsets.UTF_8.toString());
+            }
+        } catch (SQLException | UnsupportedEncodingException e) {
+            ErrorHandler.getInstance().handle(e);
+        }
+        return gson.fromJson(json, ServerStatistics.class);
+    }
+
+    public void setServerStatistics(long id, ServerStatistics statistics) {
+        try {
+            String json = gson.toJson(statistics);
+            json = URLEncoder.encode(json, StandardCharsets.UTF_8.toString());
+            connection.prepareStatement("INSERT INTO `" + prefix + "serverStatistics` (id, json) VALUES(" + id + ", '" + json + "') ON DUPLICATE KEY UPDATE json='" + json + "';").execute();
         } catch (SQLException | UnsupportedEncodingException e) {
             ErrorHandler.getInstance().handle(e);
         }
