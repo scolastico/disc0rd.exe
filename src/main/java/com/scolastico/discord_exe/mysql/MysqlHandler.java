@@ -52,11 +52,20 @@ public class MysqlHandler {
         synchronized (this) {
             try {
                 ArrayList<Long> toDelete = new ArrayList<>();
+                int mysqlCacheTime = Disc0rd.getConfig().getMysqlCache();
+                Long timeStamp = Tools.getInstance().getUnixTimeStamp();
                 for (Long id:cache.keySet()) {
-                    CacheEntry entry = cache.get(id);
-                    if ((Tools.getInstance().getUnixTimeStamp() - entry.getLastUse()) >= Disc0rd.getConfig().getMysqlCache()) {
-                        toDelete.add(id);
-                        setServerSettings(id, cache.get(id).getSettings());
+                    try {
+                        CacheEntry entry = cache.get(id);
+                        if ((timeStamp - entry.getLastUse()) >= mysqlCacheTime) {
+                            toDelete.add(id);
+                            setServerSettings(id, cache.get(id).getSettings());
+                        } else if ((timeStamp - entry.getLastSave()) >= mysqlCacheTime) {
+                            setServerSettings(id, cache.get(id).getSettings());
+                            entry.setLastSave();
+                        }
+                    } catch (Exception e) {
+                        ErrorHandler.getInstance().handle(e);
                     }
                 }
                 for (Long id:toDelete) {
@@ -113,6 +122,7 @@ public class MysqlHandler {
     }
 
     private static class CacheEntry {
+        private Long lastSave = Tools.getInstance().getUnixTimeStamp();
         private Long lastUse = Tools.getInstance().getUnixTimeStamp();
         private final ServerSettings settings;
 
@@ -120,8 +130,16 @@ public class MysqlHandler {
             this.settings = settings;
         }
 
+        public Long getLastSave() {
+            return lastSave;
+        }
+
         public Long getLastUse() {
             return lastUse;
+        }
+
+        public void setLastSave() {
+            lastSave = Tools.getInstance().getUnixTimeStamp();
         }
 
         public ServerSettings getSettings() {
