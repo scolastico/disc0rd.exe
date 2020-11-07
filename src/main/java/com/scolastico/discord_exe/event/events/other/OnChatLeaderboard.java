@@ -46,8 +46,6 @@ public class OnChatLeaderboard implements EventHandler, MessageReceivedHandler {
             ServerSettings settings = Disc0rd.getMysql().getServerSettings(
                 messageReceivedEvent.getGuild().getIdLong());
             settings.getLeaderboard().addUserXP(user.getIdLong());
-            Disc0rd.getMysql().setServerSettings(
-                messageReceivedEvent.getGuild().getIdLong(), settings);
           }
         }
     }

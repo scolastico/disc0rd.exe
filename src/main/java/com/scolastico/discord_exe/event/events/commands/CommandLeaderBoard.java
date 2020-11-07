@@ -57,8 +57,6 @@ public class CommandLeaderBoard implements EventHandler, CommandHandler {
             ServerSettings settings = Disc0rd.getMysql().getServerSettings(
                 event.getGuild().getIdLong());
             settings.getLeaderboard().setEnabled(true);
-            Disc0rd.getMysql().setServerSettings(event.getGuild().getIdLong(),
-                                                 settings);
             builder.setTitle("Success,");
             builder.setDescription("the leader board is now enabled!");
             builder.setColor(Color.green);
@@ -72,8 +70,6 @@ public class CommandLeaderBoard implements EventHandler, CommandHandler {
             ServerSettings settings = Disc0rd.getMysql().getServerSettings(
                 event.getGuild().getIdLong());
             settings.getLeaderboard().setEnabled(false);
-            Disc0rd.getMysql().setServerSettings(event.getGuild().getIdLong(),
-                                                 settings);
             builder.setTitle("Success,");
             builder.setDescription("the leader board is now disabled!");
             builder.setColor(Color.green);
@@ -93,8 +89,6 @@ public class CommandLeaderBoard implements EventHandler, CommandHandler {
                 ServerSettings settings = Disc0rd.getMysql().getServerSettings(
                     event.getGuild().getIdLong());
                 settings.setLeaderboard(new ServerSettings.Leaderboard());
-                Disc0rd.getMysql().setServerSettings(
-                    event.getGuild().getIdLong(), settings);
                 builder.setColor(Color.YELLOW);
                 builder.setTitle("Success,");
                 builder.setDescription(
@@ -215,8 +209,6 @@ public class CommandLeaderBoard implements EventHandler, CommandHandler {
                   HashMap<Long, Long> imported =
                       MEE6Api.getInstance().getXP(event.getGuild().getIdLong());
                   settings.getLeaderboard().setUsers(imported);
-                  Disc0rd.getMysql().setServerSettings(
-                      event.getGuild().getIdLong(), settings);
                   builder.setColor(Color.YELLOW);
                   builder.setTitle("Success,");
                   builder.setDescription(

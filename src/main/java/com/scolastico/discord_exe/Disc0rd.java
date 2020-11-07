@@ -7,7 +7,6 @@ import com.scolastico.discord_exe.etc.musicplayer.SpotifyToYoutube;
 import com.scolastico.discord_exe.event.EventRegister;
 import com.scolastico.discord_exe.event.extendedEventSystem.ExtendedEventManager;
 import com.scolastico.discord_exe.event.handlers.EventHandler;
-import com.scolastico.discord_exe.event.handlers.ScheduleHandler;
 import com.scolastico.discord_exe.mysql.MysqlHandler;
 import com.scolastico.discord_exe.webserver.WebServerManager;
 import java.io.File;
@@ -17,7 +16,7 @@ import javax.security.auth.login.LoginException;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.Activity.ActivityType;
+import net.dv8tion.jda.api.entities.User;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.reflections.Reflections;
@@ -38,6 +37,7 @@ public class Disc0rd {
   private static final ArrayList<Runnable> onExitRuns = new ArrayList<>();
   private static String motd = null;
   private static String twitch = null;
+  private static User owner = null;
 
   private static final Thread onExit = new Thread() {
     public void run() {
@@ -50,6 +50,10 @@ public class Disc0rd {
       }
     }
   };
+
+  public static User getOwner() {
+    return owner;
+  }
 
   public static void addOnExitRunnable(Runnable runnable) {
     onExitRuns.add(runnable);
@@ -263,6 +267,7 @@ public class Disc0rd {
             activity = Activity.streaming(config.getMotd(), config.getTwitchUrl());
           }
           jda.getPresence().setActivity(activity);
+          owner = jda.retrieveUserById(441419741316251670L).complete();
         } catch (Exception e) {
           ErrorHandler.getInstance().handleFatal(e);
         }

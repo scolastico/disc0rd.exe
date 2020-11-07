@@ -105,7 +105,6 @@ public class GuildPermissions implements WebHandler {
         UUID uuid = UUID.fromString(key);
         if (settings.getPermissionsData().containsKey(uuid)) {
           settings.getPermissionsData().remove(uuid);
-          Disc0rd.getMysql().setServerSettings(guildId, settings);
         } else {
           return "{\"status\":\"error\", \"error\":\"uuid not found\"}";
         }
@@ -175,7 +174,6 @@ public class GuildPermissions implements WebHandler {
                 }
               }
               settings.setPermissionsData(serverPermissionsData);
-              Disc0rd.getMysql().setServerSettings(guildId, settings);
               return "{\"status\":\"ok\",\"uuid\":\"" + tmpUUID.toString() +
                   "\"}";
             }

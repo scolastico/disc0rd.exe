@@ -21,17 +21,18 @@ public class OnMessageGuildStatistics implements EventHandler, MessageReceivedHa
   public void handleMessageReceived(MessageReceivedEvent messageReceivedEvent) {
     try {
       if (messageReceivedEvent.getChannelType().isGuild()) {
-        ServerSettings settings = Disc0rd.getMysql().getServerSettings(messageReceivedEvent.getGuild().getIdLong());
-        ServerStatistics statistics = settings.getStatistics();
-        ServerStatistics.StatisticsMessageActivity activity = new StatisticsMessageActivity(
-            messageReceivedEvent.getChannel().getIdLong(),
-            messageReceivedEvent.getAuthor().getIdLong(),
-            messageReceivedEvent.getMessage().getContentRaw().length()
-        );
-        statistics.addMessageActivity(activity);
-        statistics = GuildStatisticsTools.getInstance().deleteOldStatisticData(statistics);
-        settings.setStatistics(statistics);
-        Disc0rd.getMysql().setServerSettings(messageReceivedEvent.getGuild().getIdLong(), settings);
+        if (!messageReceivedEvent.getAuthor().isBot()) {
+          ServerSettings settings = Disc0rd.getMysql().getServerSettings(messageReceivedEvent.getGuild().getIdLong());
+          ServerStatistics statistics = settings.getStatistics();
+          ServerStatistics.StatisticsMessageActivity activity = new StatisticsMessageActivity(
+              messageReceivedEvent.getChannel().getIdLong(),
+              messageReceivedEvent.getAuthor().getIdLong(),
+              messageReceivedEvent.getMessage().getContentRaw().length()
+          );
+          statistics.addMessageActivity(activity);
+          statistics = GuildStatisticsTools.getInstance().deleteOldStatisticData(statistics);
+          settings.setStatistics(statistics);
+        }
       }
     } catch (Exception e) {
       ErrorHandler.getInstance().handle(e);

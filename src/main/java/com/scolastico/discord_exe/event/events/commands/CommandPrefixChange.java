@@ -23,7 +23,6 @@ public class CommandPrefixChange implements EventHandler, CommandHandler {
                 if (Tools.getInstance().isOwner(event.getGuild(), event.getAuthor())) {
                     ServerSettings settings = Disc0rd.getMysql().getServerSettings(event.getGuild().getIdLong());
                     settings.setCmdPrefix(args[0]);
-                    Disc0rd.getMysql().setServerSettings(event.getGuild().getIdLong(), settings);
                     builder.setColor(Color.green);
                     builder.setTitle("Success,");
                     builder.setDescription("the command prefix is set to `" + args[0] + "`");

@@ -100,7 +100,6 @@ public class CommandColorName
                                             event.getAuthor())) {
               colorNameConfig.setEnabled(true);
               settings.setColorNameConfig(colorNameConfig);
-              mysql.setServerSettings(event.getGuild().getIdLong(), settings);
               embedBuilder.setTitle("Success,");
               embedBuilder.setDescription(
                   "the setting was successfully saved! ATTENTION, be careful with this setting, as this can result in undesirable side effects such as user rights that you should not have. As an example, it can be that admins can take away each other's roles. Apart from that, this module has other minor bugs.");
@@ -119,7 +118,6 @@ public class CommandColorName
                                             event.getAuthor())) {
               colorNameConfig.setEnabled(false);
               settings.setColorNameConfig(colorNameConfig);
-              mysql.setServerSettings(event.getGuild().getIdLong(), settings);
               embedBuilder.setTitle("Success,");
               embedBuilder.setDescription(
                   "the setting was successfully saved!");
@@ -163,8 +161,6 @@ public class CommandColorName
                   colorNameConfig.setDisabledColors(blockedColors);
                 }
                 settings.setColorNameConfig(colorNameConfig);
-                Disc0rd.getMysql().setServerSettings(
-                    event.getGuild().getIdLong(), settings);
                 embedBuilder.setTitle("Success,");
                 embedBuilder.setDescription("the color `" + args[1] +
                                             "` was added to the black list!");
@@ -199,8 +195,6 @@ public class CommandColorName
                   colorNameConfig.setDisabledColors(blockedColors);
                 }
                 settings.setColorNameConfig(colorNameConfig);
-                Disc0rd.getMysql().setServerSettings(
-                    event.getGuild().getIdLong(), settings);
                 embedBuilder.setTitle("Success,");
                 embedBuilder.setDescription(
                     "the color `" + args[1] +
@@ -226,8 +220,6 @@ public class CommandColorName
               if (!(sensitivity > 120 || sensitivity < -1)) {
                 colorNameConfig.setSensitivity(sensitivity);
                 settings.setColorNameConfig(colorNameConfig);
-                Disc0rd.getMysql().setServerSettings(
-                    event.getGuild().getIdLong(), settings);
                 embedBuilder.setTitle("Success,");
                 embedBuilder.setDescription("the sensitivity is set to `" +
                                             sensitivity +
@@ -375,7 +367,6 @@ public class CommandColorName
                   roles.put(member.getIdLong(), role.getIdLong());
                   colorNameConfig.setRoles(roles);
                   serverSettings.setColorNameConfig(colorNameConfig);
-                  mysql.setServerSettings(guild.getIdLong(), serverSettings);
                   colorChangeInfos.remove(key);
                   return "{\"status\":\"ok\"}";
                 }

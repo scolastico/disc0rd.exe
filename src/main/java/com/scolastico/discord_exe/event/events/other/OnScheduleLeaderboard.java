@@ -42,7 +42,6 @@ public class OnScheduleLeaderboard implements EventHandler, ScheduleHandler {
                     }
                 }
             }
-            Disc0rd.getMysql().setServerSettings(guild.getIdLong(), settings);
         }
     }
 }

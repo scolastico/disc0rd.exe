@@ -114,7 +114,6 @@ public class CommandPr0gramm implements EventHandler, CommandHandler {
                         if (Pr0grammManager.getInstance().isAuthorizedGuild(event.getGuild().getIdLong())) {
                             ServerSettings settings = Disc0rd.getMysql().getServerSettings(event.getGuild().getIdLong());
                             settings.getPr0grammServerConfig().setAutoDetectLinks(!settings.getPr0grammServerConfig().isAutoDetectLinks());
-                            Disc0rd.getMysql().setServerSettings(event.getGuild().getIdLong(), settings);
                             builder.setTitle("Success,");
                             builder.setDescription(settings.getPr0grammServerConfig().isAutoDetectLinks() ? "i will now auto detect urls!" : "i will no longer automatically recognize URLs!");
                             builder.setColor(Color.green);

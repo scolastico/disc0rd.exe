@@ -295,7 +295,6 @@ public class Tools {
         }
         log = "[" + new Date().toString() + "] " + logText + "\n" + log;
         serverSettings.setLog(log);
-        Disc0rd.getMysql().setServerSettings(guildId, serverSettings);
     }
 
     public int countLines(String str){

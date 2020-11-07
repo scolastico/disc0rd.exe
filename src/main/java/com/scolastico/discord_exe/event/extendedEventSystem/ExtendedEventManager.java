@@ -100,7 +100,6 @@ public class ExtendedEventManager {
         ArrayList<ExtendedEvent> extendedEvents = settings.getExtendedEvents();
         extendedEvents.add(extendedEvent);
         settings.setExtendedEvents(extendedEvents);
-        Disc0rd.getMysql().setServerSettings(extendedEvent.getGuild(), settings);
     }
 
     public void deleteExtendedEvent(ExtendedEvent extendedEvent) {
@@ -115,7 +114,6 @@ public class ExtendedEventManager {
             extendedEvents.remove(event);
         }
         settings.setExtendedEvents(extendedEvents);
-        Disc0rd.getMysql().setServerSettings(extendedEvent.getGuild(), settings);
     }
 
     public ExtendedEvent getExtendedEvent(long guildId, String name) {

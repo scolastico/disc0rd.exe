@@ -25,7 +25,7 @@ public class CommandDisc0rd implements CommandHandler, EventHandler {
                 builder.setTitle("Disc0rd.exe - About");
                 builder.setDescription(
                                 "Currently Version: " + Disc0rd.getVersion() + "\n" +
-                                "Developer: <@" + Disc0rd.getConfig().getOwnerPanel().getOwnerId() + ">\n" +
+                                "Developer: " + Disc0rd.getOwner().getAsTag() + "\n" +
                                 "Website: <" + Disc0rd.getConfig().getWebServer().getDomain() + ">\n" +
                                 "Documentation: <" + Disc0rd.getConfig().getDocumentation() + ">\n" +
                                 "\n" +

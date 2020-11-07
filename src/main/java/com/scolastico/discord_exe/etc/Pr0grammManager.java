@@ -9,7 +9,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -178,7 +177,7 @@ public class Pr0grammManager {
     pr0grammServerConfigs = new HashMap<>();
     MysqlHandler handler = Disc0rd.getMysql();
     HashMap<Long, ServerSettings> serverSettingsHashMap =
-        handler.getAllServerSettingsWithId();
+        handler.getAllServerSettings();
     for (Long id : serverSettingsHashMap.keySet()) {
       if (serverSettingsHashMap.get(id)
               .getPr0grammServerConfig()
@@ -200,7 +199,6 @@ public class Pr0grammManager {
     config.setLinkedMember(memberId);
     pr0grammServerConfigs.put(id, config);
     settings.setPr0grammServerConfig(config);
-    handler.setServerSettings(id, settings);
     return true;
   }
 
@@ -215,7 +213,6 @@ public class Pr0grammManager {
     serverConfig.setLinkedAccount(null);
     serverConfig.setLinkedMember(0L);
     settings.setPr0grammServerConfig(serverConfig);
-    handler.setServerSettings(id, settings);
     return true;
   }
 
@@ -247,7 +244,6 @@ public class Pr0grammManager {
             username, true, false, false, channelId));
     ServerSettings settings = handler.getServerSettings(guildId);
     settings.setPr0grammServerConfig(serverConfig);
-    handler.setServerSettings(guildId, settings);
     return true;
   }
 
@@ -270,7 +266,6 @@ public class Pr0grammManager {
       serverConfig.removeSubscription(toDelete);
       ServerSettings settings = handler.getServerSettings(guildId);
       settings.setPr0grammServerConfig(serverConfig);
-      handler.setServerSettings(guildId, settings);
       return true;
     }
     return false;
@@ -300,7 +295,6 @@ public class Pr0grammManager {
       serverConfig.addSubscription(toAdd);
       ServerSettings settings = handler.getServerSettings(guildId);
       settings.setPr0grammServerConfig(serverConfig);
-      handler.setServerSettings(guildId, settings);
       return true;
     }
     return false;
@@ -349,7 +343,6 @@ public class Pr0grammManager {
       serverConfig.setLinkedMember(0L);
       serverConfig.setLinkedAccount(null);
       settings.setPr0grammServerConfig(serverConfig);
-      handler.setServerSettings(key, settings);
       pr0grammServerConfigs.remove(key);
     }
   }

@@ -22,6 +22,15 @@ public class ConfigDataStore {
   private String motd = "Try disc0rd/help!";
   private String twitchUrl = "";
   private Statistics statistics = new Statistics();
+  private int mysqlCache = 30;
+
+  public int getMysqlCache() {
+    return mysqlCache;
+  }
+
+  public void setMysqlCache(int mysqlCache) {
+    this.mysqlCache = mysqlCache;
+  }
 
   public Statistics getStatistics() {
     return statistics;
