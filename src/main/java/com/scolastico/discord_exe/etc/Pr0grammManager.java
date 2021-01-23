@@ -139,7 +139,7 @@ public class Pr0grammManager {
                 pr0grammServerConfigs.get(guildId);
             for (ServerSettings.Pr0grammServerConfig.Pr0grammSubscription
                      subscription : config.getSubscriptions()) {
-              if (subscription.getUsername().equals(post.getUser())) {
+              if (subscription.getUsername().equalsIgnoreCase(post.getUser())) {
                 if ((flag == 1 && subscription.isSfw()) ||
                     (flag == 2 && subscription.isNsfw()) ||
                     (flag == 3 && subscription.isNsfl())) {
