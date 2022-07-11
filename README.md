@@ -5,6 +5,9 @@
 [![](https://shields.scolasti.co/github/languages/top/scolastico/disc0rd.exe)](#)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/71d533724e734db8b21952959423500d)](#)
 
+## NOTICE
+A rework is planned but no date is given.
+
 ## Installation
 
 To compile the latest version execute following:
